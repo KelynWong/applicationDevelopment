@@ -3,7 +3,7 @@
 ## Names:
 
 1. `Wong En Ting, Kelyn`
-2. `Teh Huan Xi Kester`
+2. `Teh Huan Xi Kesterrrr`
 
 ## Setup
 
