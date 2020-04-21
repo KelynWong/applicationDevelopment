@@ -2,8 +2,8 @@
 
 ## Names:
 
-1. `[NAME HERE]`
-2. `[NAME HERE]`
+1. `Wong En Ting, Kelyn`
+2. `Teh Huan Xi Kester`
 
 ## Setup
 
