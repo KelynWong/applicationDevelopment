@@ -76,10 +76,10 @@ Link: [Component Diagram](https://www.plantuml.com/plantuml/svg/0/JK-x3i8m3Dpz5L
 
 ### Questions:
 
-1. Does the frontend communicate with the mobile? `(Yes/No)`
-2. Does the frontend communicate directly with the database? `(Yes/No)`
-3. How should the frontend display data from the database? `(Answer here)`
-4. How does the frontend communicate with backend? `(Answer here)`
+1. Does the frontend communicate with the mobile? `(No)`
+2. Does the frontend communicate directly with the database? `(No)`
+3. How should the frontend display data from the database? `(In a structured manner like tables and diagrams)`
+4. How does the frontend communicate with backend? `(Through an API)`
 
 ---
 
@@ -151,11 +151,11 @@ Links:
 
 Choose the correct API/Viewer to be used for each of the `???` steps in the diagram:
 
--   Q1. `[Insert/Result]` API (Delete one of the options)
--   Q2. `[Data/Result]` Viewer
--   Q3. `[Insert/Result]` API
--   Q4. `[Data/Result]` Viewer
--   Q5. `[Insert/Result]` API
+-   Q1. `[Insert]` API (Delete one of the options)
+-   Q2. `[Data]` Viewer
+-   Q3. `[Result]` API
+-   Q4. `[Result]` Viewer
+-   Q5. `[Result]` API
 
 There's a note that mentions
 
