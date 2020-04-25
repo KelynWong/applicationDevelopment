@@ -1,0 +1,88 @@
+/* The sidebar menu */
+
+#first {
+  height: 100vh;
+  /* Full-height: remove this if you want "auto" height */
+}
+
+.second {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.box1{
+  height: 70px;
+
+  margin: 0;
+  padding: 0;
+  color: white;
+  background-color:#069993;
+}
+#try{
+  text-align: bottom;
+}
+.box2{
+  height: 150px;
+}
+.box3{
+  height: 300px;
+}
+.box4{
+  position: absolute;
+  bottom:0;
+}
+
+
+
+/*
+    ADDITIONAL DEMO STYLE, NOT IMPORTANT TO MAKE THINGS WORK BUT TO MAKE IT A BIT NICER :)
+*/
+
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #fafafa;
+}
+
+
+a, a:hover, a:focus {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+#sidebar {
+  /* don't forget to add all the previously mentioned styles here too */
+  
+  color: #fff;
+  transition: all 0.3s;
+}
+
+
+#sidebar .sidebar-header {
+  padding: 50px;
+
+}
+
+#sidebar ul p {
+  color: #fff;
+  padding: 10px;
+}
+
+#sidebar ul li a {
+  padding: 10px;
+  font-size: 1.1em;
+  display: block;
+}
+
+#sidebar ul li a:hover {
+  color: black;
+  background: #fff;
+}
+
+#sidebar ul li.active>a {
+  color: #fff;
+  background: #069993;
+}
+
