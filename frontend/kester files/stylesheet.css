@@ -1,32 +1,37 @@
 #divider {
-  height: 100vh;
+  min-height: 100vh;
 }
 #row {
   margin: 0;
   padding: 0;
-  height: 100%;
   display: flex;
+  flex:1;
   flex-direction: column;
 }
 
 .box1{
   height: 70px;
+  flex: 1;
+  min-height: 70px;
+  max-height: 70px;
   margin: 0;
   padding: 0;
   color: white;
   background-color:#069993;
 }
 .box2{
-  height: 150px;
+  flex: 2.5;
+  height: 150px; 
   min-height: 150px;
 }
 .box3{
-  height: auto;
+  height: auto; 
   min-height: 340px;
-  flex:1;
+  flex: 8;
   background-color: red;
 }
 .box4{
+  flex: 1.5;
   bottom:0;
   height: 100px;
   min-height:80px;
@@ -43,7 +48,6 @@ body {
   font-family: 'Poppins', sans-serif;
   background: #fafafa;
 }
-
 a, a:hover, a:focus {
   color: inherit;
   text-decoration: none;
