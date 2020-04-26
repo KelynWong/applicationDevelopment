@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Viewer</title>
+    <!--JQuery -> For Javascript implementation! -->
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js" type="text/javascript"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -21,26 +23,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--CSS-->
     <link rel="stylesheet" href="stylesheet.css">
-    <!--JQuery -> For Javascript implementation! -->
-    <script scr="https://code.jquery.com/jquery-3.5.0.min.js" type="text/javascript"></script>
+    <!-- Bootstrap Datatables -->
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script> -->
+
 </head>
 
 <body>
+    <!-- <script>
+        $(document).ready(function () {
+            // var height = document.getElementById('row').clientHeight;
+            // var string = height.toString() + "px";
+            // console.log(string);
+            $('#example').DataTable({
+                "scrollY": "45vh",
+                "scrollCollapse": true,
+                "paging": true,
+                "dom": '<"container-fluid">'
+            });
+            console.log();
+
+        });
+    </script> -->
     <div class="container-fluid">
-        <div class="row" id="divider">
-            <div class="col-2 bg-dark" id="row">
+        <div class="row" id="rows">
+
+            <div class="col-2 bg-dark" id="row1">
                 <div class="wrapper">
                     <!-- Sidebar -->
                     <nav id="sidebar">
                         <div class="sidebar-header">
                             <h3>Logo Space</h3>
                         </div>
-
                         <ul class="list-unstyled components">
                             <li class="active">
                                 <a href="#">Data Page</a>
                             </li>
-
                             <li>
                                 <a href="#">Result Page</a>
                             </li>
@@ -49,14 +68,19 @@
                 </div>
             </div>
 
-            <div class="col-10 bg-white" id="row">
-                <div class="box1">
-                    <p id="try">Hello</p>
+            <div class="col bg-white" id="row2">
+                <div class="box1" id="box1">
+                    <p>Data Page</p>
                 </div>
-                <div class="bg-warning box2">hello</div>
-                <div class="box3">hello</div>
-                <div class="box4">Table Navigation area.</div>
+                <div class="box2" id="box2">
+                    <p>Filter Area</p>
+                </div>
+                <div class="box3" id="box3">
+                    <p>Table Area</p>
+                </div>
+                <div class="box4" id="box4">Table Navigation area.</div>
             </div>
+
         </div>
     </div>
 </body>
