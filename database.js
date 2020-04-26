@@ -12,36 +12,22 @@ function connect(){
 function resetTable(){
     const client = connect();
     const query = `
-        DROP TABLE IF EXIST Company;
-        CREATE TABLE WebUITest.Company (
-            CompanyID int(11) NOT NULL AUTO_INCREMENT,
-            Name varchar(50) DEFAULT NULL,
-            PRIMARY KEY (CompanyID)
-        );
-
-        DROP TABLE IF EXIST Advertisment;
-        CREATE TABLE WebUITest.Advertisment (
-            AdID int(11) NOT NULL AUTO_INCREMENT,
-            CompanyID int(11) DEFAULT NULL,
-            Cost decimal(19, 2) DEFAULT NULL,
-            AudienceReach bigint(20) DEFAULT NULL,
-            AdTypeName varchar(255) DEFAULT NULL,
-            PRIMARY KEY (AdID)
-          )
-        ALTER TABLE WebUITest.Advertisment
-        ADD CONSTRAINT FK_Advertisment_AdTypeLU_AdTypeName FOREIGN KEY (AdTypeName)
-        REFERENCES WebUITest.AdTypeLU (AdTypeName) ON UPDATE CASCADE;
-        ALTER TABLE WebUITest.Advertisment
-        ADD CONSTRAINT FK_Advertisment_Company_CompanyID FOREIGN KEY (CompanyID)
-        REFERENCES WebUITest.Company (CompanyID) ON UPDATE CASCADE;
-
-        DROP TABLE IF EXIST AdTypeLU;
-        CREATE TABLE WebUITest.AdTypeLU (
-            AdTypeName varchar(255) NOT NULL,
-            PRIMARY KEY (AdTypeName)
-          )
-        ALTER TABLE WebUITest.AdTypeLU
-        ADD UNIQUE INDEX AdTypeName (AdTypeName);
+      DROP TABLE IF EXIST Company;
+      CREATE TABLE Company (
+        companyId int(11) NOT NULL,
+        PRIMARY KEY (companyId)
+      )
+    
+      DROP TABLE IF EXIST Advertisment;
+      CREATE TABLE Advertisment (
+        optionId int(11) NOT NULL,
+        companyId int(11) DEFAULT NULL,
+        cost decimal(19, 2) DEFAULT NULL,
+        audienceReach bigint(20) DEFAULT NULL,
+        adTypeName varchar(255) DEFAULT NULL,
+        PRIMARY KEY (optionID),
+        CONSTRAINT FK_Advertisment_Company_CompanyID FOREIGN KEY (companyId) REFERENCES Company (companyId) ON UPDATE CASCADE
+      )
     `;
     client.query(query, (err, res) => {
         console.log(err, res)
