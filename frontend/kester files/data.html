@@ -19,11 +19,11 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
-    <!-- Font awesome - For icons(I'm planning material.io but lets see-->
+    <!-- Font awesome - For icons used in sidebar-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--CSS-->
     <link rel="stylesheet" href="stylesheet.css">
-    <!-- Bootstrap Datatables -->
+    <!-- Bootstrap Datatables Imports -->
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/v/dt/dt-1.10.20/sp-1.0.1/r-2.2.3/sl-1.3.1/datatables.min.css" />
 
@@ -33,49 +33,23 @@
 </head>
 
 <body>
-    <script>$(document).ready(function () {
-            $('#example').DataTable({
-
-                "scrollX": true,
-                responsive: true,
-                "scrollY": "200px",
-                "scrollCollapse": true,
-                searchPanes: {
-                    // panes: [
-                    //     {
-                    //         header: 'Custom',
-                    //         options: [
-                    //             {
-                    //                 label: 'Accountants from Tokyo',
-                    //                 value: function (rowData, rowIdx) {
-                    //                     return rowData[1] === 'Accountant' && rowData[2] === 'Tokyo';
-                    //                 }
-                    //             }
-                    //         ],
-                    //         dtOpts: {
-                    //             searching: true,
-                    //             order: [[1, 'desc']]
-                    //         },
-
-                    //     }
-                    // ],
-                    layout: 'columns-4',
-                },
-                columnDefs: [
-                    {
-                        searchPanes: {
-                            show: false,
-                        },
-                        targets: [3],
-                    },
-                    {
-                        searchPanes: {
-                            show: false,
-                        },
-                        targets: [],
-                    }
+    <script>
+        //Try not to edit the options in table unless strictly necessary ~Kester
+        $(document).ready(function () {
+            var table = $('#theTable').DataTable({ //Renamed the table to literally, theTable.
+                "columns": [
+                    { name: 's/n' },
+                    { name: 'optionid' },
+                    { name: 'companyid' },
+                    { name: 'audiencereach' },
+                    { name: 'cost' }
                 ],
-                dom: '<"#row0"<"#sample1"P><"#sample2"t><"#sample3"i><"#sample4"p><"#sample5"l>>',
+                "scrollX": true,
+                "scrollY": "50vh",
+                "scrollCollapse": true,
+                responsive: true,
+                //The DOM model for the table are only modeled at t,i,p,l.
+                // Legend~
                 // l - length
                 // f -filter
                 // t - table 
@@ -86,11 +60,40 @@
                 // <"#id" > -div with an id 
                 // <"class" > div with a class
                 // <"#id.class" div with an id and class
+                dom: '<"#tableContainer"<"#tableArea"t><"#paginationArea"ipl>>',
+                // Only tableArea will have flex, paginationArea won't. Thus the written DOM.
             });
-        });</script>
+
+            //Kelyn's filtering.
+            $('.dataTables_length').addClass('bs-select');
+
+            table.column('companyid:name').every(function () {
+                var that = this;
+                $('.companyidInput').on('keyup', function () {
+                    var value = $(this).val();
+                    console.log('this ', value);
+                    if (that.search() !== value) {
+                        that.search(value).draw();
+                    }
+                });
+            });
+
+            table.column('audiencereach:name').every(function () {
+                var that = this;
+                $('.audiencereachInput').on('keyup', function () {
+                    var value = $(this).val();
+                    console.log('this ', value);
+                    if (that.search() !== value) {
+                        that.search(value).draw();
+                    }
+                });
+            });
+        });
+    </script>
+
     <div class="container-fluid">
         <div class="row" id="rows">
-
+            <!-- Row 1 -->
             <div class="bg-dark" id="row1">
                 <div class="wrapper">
                     <!-- Sidebar -->
@@ -99,29 +102,36 @@
                             <h3>Logo Space</h3>
                         </div>
                         <ul class="list-unstyled components">
-                            <li class="active">
-                                <a href="#">Data Page</a>
+                            <li class="active nav-item">
+                                <a class="nav-link" href="#"><i class="fa fa-table"></i> Data Viewer</a>
                             </li>
-                            <li>
-                                <a href="#">Result Page</a>
+                            <li class= "nav-item">
+                                <a class="nav-link" href="#"><i class="fa fa-bar-chart"></i> Results</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-
+            <!-- Row 2 -->
             <div class="bg-white" id="row2">
-                <div class="box1" id="box1">
+                <div class="titleBox" id="titleBox">
                     <h3>Data Page - Still in the works!</h3>
                 </div>
-                <!-- <div class="box2" id="box2">
-                    <p>Filter Area</p>
+                <div class="filterArea" id="filterArea">
+                    <h2>Filter by:</h2>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        <input type="text" placeholder="CompanyId" class="form-control companyidInput">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i>
+                        </div>
+                        <input type="text" placeholder="Audience reach" class="form-control audiencereachInput">
+                    </div>
                 </div>
-                <div class="box3" id="box3">
-                    <p>Table Area</p>
-                </div> 
-                <div class="box4" id="box4">Table Navigation area.</div> -->
-                <table id="example" class="responsive nowrap display" style="width:100%">
+                <!-- Table -->
+                <table id="theTable" class="responsive nowrap display table-bordered table-striped " style="width:100%">
                     <thead>
                         <tr>
                             <th class="th-sm">s/n
@@ -136,7 +146,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class='myTable'>
                         <tr>
                             <td>Tiger Nixon</td>
                             <td>System Architect</td>
@@ -537,10 +547,9 @@
                             <td>$112,000</td>
                         </tr>
                     </tbody>
-
                 </table>
-            </div>
 
+            </div>
         </div>
     </div>
 </body>
