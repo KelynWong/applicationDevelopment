@@ -39,12 +39,11 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                 </div>
-                <input type="text" placeholder="CompanyId" class="form-control">
+                <input type="text" placeholder="CompanyId" class="form-control companyidInput">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fa fa-user"></i>
                 </div>
-                <input type="text" placeholder="Audience reach" class="form-control">
-                </span><button class="btn btn-primary">Filter</button>
+                <input type="text" placeholder="Audience reach" class="form-control audiencereachInput">
             </div>
         </div>
 
@@ -65,7 +64,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class='myTable'>
                 <tr>
                     <td>Tiger Nixon</td>
                     <td>System Architect</td>
@@ -485,12 +484,41 @@
 </body>
 <script>
     $(document).ready(function () {
-        $('#dtVerticalScrollExample').DataTable({
+        var table = $('#dtVerticalScrollExample').DataTable({
+            "columns": [
+                { name: 's/n' },
+                { name: 'optionid' },
+                { name: 'companyid' },
+                { name: 'audiencereach' },
+                { name: 'cost' }
+            ],
             "scrollY": "280px",
             "scrollCollapse": true,
-            "dom": '<"top"l>rt<"bottom"p><"clear">'
+            "dom": '<"top"l>rt<"bottom"p><"clear">',
         });
         $('.dataTables_length').addClass('bs-select');
+
+        table.column('companyid:name').every( function () {
+            var that = this;
+            $( '.companyidInput').on( 'keyup', function () {
+                var value = $(this).val();
+                console.log('this ', value);
+                if ( that.search() !== value ) {
+                    that.search(value).draw();
+                }
+            } );
+        } );
+
+        table.column('audiencereach:name').every( function () {
+            var that = this;
+            $( '.audiencereachInput').on( 'keyup', function () {
+                var value = $(this).val();
+                console.log('this ', value);
+                if ( that.search() !== value ) {
+                    that.search(value).draw();
+                }
+            } );
+        } );
     });
 </script>
 
