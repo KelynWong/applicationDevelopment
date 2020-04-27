@@ -1,7 +1,8 @@
 #rows {
   min-height: 100vh;
-
 }
+
+/* Row 1 stuff */
 
 #row1 {
   margin: 0;
@@ -12,16 +13,7 @@
   min-width: 200px;
 }
 
-#row2 {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  overflow: hidden;
-  flex: 10;
-  flex-direction: column;
-}
-
-#box1 {
+#titleBox {
   height: 70px;
   flex: 1;
   min-height: 70px;
@@ -32,37 +24,70 @@
   background-color: #069993;
 }
 
-#box2 {
-  flex: 2.5;
-  height: 150px;
-  min-height: 150px;
-  max-height: 150px;
+/* Row 2 stuff */
+
+#row2 {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  overflow-x: hidden;
+  flex: 10;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#filterArea {
+  min-height: 100px;
   background-color: yellow;
 }
 
-#box3 {
-  height: auto;
-  min-height: 300px;
-  flex: 8;
+#tableArea {
+  /* min-height: 300px; */
+  flex: 1;
   background-color: grey;
 }
 
-#box4 {
-  flex: 1.5;
+#paginationArea {
   bottom: 0;
-  height: 100px;
-  min-height: 80px;
+  /* height: 100px;
+  min-height: 80px; */
+}
+
+/* Table CSS(Modifies the default placements) */
+
+#tableContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#theTable_info {
+  /* background-color: green; */
+  float: none;
+}
+
+#theTable_paginate {
+  /* background-color: blue; */
+  float: left;
+}
+
+#theTable_length {
+  /* background-color: red; */
+  float: right;
+}
+
+#theTable_wrapper {
+  flex: auto;
 }
 
 /*
-RECHECK
+RECHECK - The code below are experimental~
 */
 
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 body {
   font-family: 'Poppins', sans-serif;
   background: #fafafa;
-
 }
 
 a, a:hover, a:focus {
@@ -72,7 +97,6 @@ a, a:hover, a:focus {
 }
 
 #sidebar {
-  /* don't forget to add all the previously mentioned styles here too */
   color: #fff;
   transition: all 0.3s;
 }
@@ -100,35 +124,4 @@ a, a:hover, a:focus {
 #sidebar ul li.active>a {
   color: #fff;
   background: #069993;
-}
-
-/* test.html css */
-/* .example_wrapper{
-  display: flex;
-}
-.dtsp-panesContainer {
-  background-color: grey;
-  height: 30%;
-}
-.dtsp-searchPanes{
-  height: 300px;
-} */
-#example{
-  min-width: 1000px;
-}
-#sample1 {
-  height: 350px;
-}
-#sample2{
-  height: 300px;
-  padding-top: 10px;
-}
-#example_info {
-  background-color: green;
-}
-#example_paginate {
-  background-color: blue;
-}
-#example_length {
-  background-color: red;
 }
