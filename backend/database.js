@@ -35,6 +35,15 @@ function resetTable(){
       });
 }
 
+function insertCompany(companies){
+  let i = 1;
+  const template = companies.map(company => `(${i++})`).join(',');
+  const values = companies.reduce((reduced, company) => [...reduced, company.companyId], [])
+  const query = `INSERT INTO Company(companyId) VALUES ${template};`
+  console.log(values, query);
+}
+
 module.exports = {
     resetTable,
+    insertCompany
 }
