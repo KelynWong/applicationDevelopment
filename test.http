@@ -1,0 +1,19 @@
+POST http://localhost:3000/insert HTTP/1.1
+Content-Type: application/json
+
+{
+    "data": [
+        {
+            "companyId": 1000000001
+        },
+        {
+            "companyId": 1000000002
+        },
+        {
+            "companyId": 1000000003
+        },
+        {
+            "companyId": 1000000004
+        },
+    ]
+}

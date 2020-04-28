@@ -12,9 +12,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const database = require('./database')
 
 app.post('/insert/', function (req,res, next){
   const { data } = req.body;
+  database.insertCompany(data);
   res.json(data);
 })
 
