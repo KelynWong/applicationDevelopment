@@ -16,6 +16,9 @@ const database = require('./database')
 
 app.post('/insert/', function (req,res, next){
   const { data } = req.body;
+  console.log({data}) //this returns undefined? 
+  // Removing the {} allows the req.body to be read, but I am not entirely sure what you're doing.
+  //the param you send into the post api requires to be an array in order to use .map btw
   database.insertCompany(data, (error, result) =>{
     if(error){
       console.log(data)

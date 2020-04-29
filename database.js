@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { Client } = require('pg'); //This is correct.
 const CONNECTION_STRING = 'postgres://ycghstxz:23a4dlohmcqwC3wStzaSk1My5gy-eyf2@john.db.elephantsql.com:5432/ycghstxz';
 
 function connect(){
@@ -35,15 +35,16 @@ function resetTable(){
       });
 }
 
-function insertCompany(companies, callback){
+function insertCompany(companies, callback){ //Please explain to me what in the world is happening here :)
   let i = 1;
-  const template = companies.map(company => `(${i++})`).join(',');
+  //Function runs at this point.
+  const template = companies.map(company => `(${i++})`).join(','); //Companies is required to be an array based on documentation from what I've searched.
   console.log('template: ' + template)
   const values = companies.reduce((reduced, company) => [...reduced, company.companyId], [])
   const query = `INSERT INTO Company (companyId) VALUES ${template};`
   
   const client = connect();
-  client.query(query, values, (err, result) =>{
+  client.query(query, values, (err, result) =>{ //Dependent on above values.
     callback(err, result);
     console.log("query: " + query)
     console.log("values: " + values)
