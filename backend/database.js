@@ -35,15 +35,39 @@ function resetTable(){
       });
 }
 
-function insertCompany(companies){
+function insertCompany(companies, callback){
   let i = 1;
   const template = companies.map(company => `(${i++})`).join(',');
+  console.log('template: ' + template)
   const values = companies.reduce((reduced, company) => [...reduced, company.companyId], [])
-  const query = `INSERT INTO Company(companyId) VALUES ${template};`
-  console.log(values, query);
+  const query = `INSERT INTO Company (companyId) VALUES ${template};`
+  
+  const client = connect();
+  client.query(query, values, (err, result) =>{
+    callback(err, result);
+    console.log("query: " + query)
+    console.log("values: " + values)
+    client.end();
+  });
 }
+
+// function insertAdvertisment(advertisments, callback){
+//   let i = 1;
+//   const template = advertisments.map(advertisment => `(${i++})`).join(',');
+//   const values = advertisments.reduce((reduced, advertisment) => [...reduced, advertisment.optionId, advertisment.companyId, advertisment.cost, advertisment.audienceReach, advertisment.adTypeName], [])
+//   const query = `INSERT INTO Advertisment (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
+  
+//   const client = connect();
+//   client.query(query, values, (err, result) =>{
+//     callback(err, result);
+//     console.log("query: " + query)
+//     console.log("values: " + values)
+//     client.end();
+//   });
+// }
 
 module.exports = {
     resetTable,
-    insertCompany
+    insertCompany,
+    // insertAdvertisment
 }
