@@ -16,8 +16,14 @@ const database = require('./database')
 
 app.post('/insert/', function (req,res, next){
   const { data } = req.body;
-  database.insertCompany(data);
-  res.json(data);
+  database.insertCompany(data, (error, result) =>{
+    if(error){
+      console.log(data)
+      return next(error);
+    }
+    console.log(result)
+    res.json(data);
+  });
 })
 
 
