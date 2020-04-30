@@ -1,31 +1,33 @@
+// This file sends http requests!
+// VScode extension humao.rest-client
 POST http://localhost:3000/insertAdvertisement/ HTTP/1.1
 Content-Type: application/json
 
 {
     "data": [
         {
-            "optionId": 1000000005,
+            "optionId": 1000000009,
             "companyId": 1000000001,
             "cost": 1000.00,
             "audienceReach": 4000,
             "adTypeName": "Fixed"
         },
         {
-            "optionId": 1000000006,
+            "optionId": 1000000010,
             "companyId": 1000000001,
             "cost": 800.00,
             "audienceReach": 5000,
             "adTypeName": "Fixed"
         },
         {
-            "optionId": 1000000007,
+            "optionId": 1000000011,
             "companyId": 1000000001,
             "cost": 100.00,
             "audienceReach": 200,
             "adTypeName": "Not Fixed"
         },
         {
-            "optionId": 1000000008,
+            "optionId": 1000000012,
             "companyId": 1000000001,
             "cost": 5000.00,
             "audienceReach": 7000,
@@ -41,7 +43,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/basic/Alldata?companyId=1000000001&page=2&pageSize=1
+GET http://localhost:3000/basic/Alldata?companyId=1000000001&page=2&pageSize=5
 Content-Type: application/json
 
 ###
