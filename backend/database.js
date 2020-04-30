@@ -1,82 +1,96 @@
-const { Client } = require('pg'); //This is correct.
+//This file handles database connections.
+
+//Connection URI
+const { Client } = require('pg'); //Middleware 
 const CONNECTION_STRING = 'postgres://ycghstxz:23a4dlohmcqwC3wStzaSk1My5gy-eyf2@john.db.elephantsql.com:5432/ycghstxz';
 
-function connect(){
-    const client = new Client({
-        connectionString: CONNECTION_STRING,
-      });
-    client.connect();
-    return client;
+//Creates connection
+function connect() {
+  const client = new Client({
+    connectionString: CONNECTION_STRING,
+  });
+  client.connect();
+  return client;
 }
 
-function resetTable(){
-    const client = connect();
-    const query = `
-      DROP TABLE IF EXIST Advertisement;
-      CREATE TABLE Advertisment (
-        optionId int(11) NOT NULL,
-        companyId int(11) DEFAULT NULL,
-        cost decimal DEFAULT NULL,
-        audienceReach bigint(20) DEFAULT NULL,
-        adTypeName varchar(255) DEFAULT NULL,
-        PRIMARY KEY (optionID)
-      )
-    `;
-    client.query(query, (err, res) => {
-        console.log(err, res)
-        client.end()
-      });
-}
-
-function insertAdvertisment(advertisments, callback){
-  let i = 1;
-  const template = advertisments.map(advertisment => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
-  const values = advertisments.reduce((reduced, advertisment) => [...reduced, advertisment.optionId, advertisment.companyId, advertisment.cost, advertisment.audienceReach, advertisment.adTypeName], [])
-  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
-  
+// 0. Reset table script
+function resetTable() {
   const client = connect();
-  client.query(query, values, (err, result) =>{ //Dependent on above values.
+  const query = `
+    DROP TABLE IF EXISTS Advertisement;
+    CREATE TABLE Advertisement (
+      optionId int NOT NULL,
+      companyId int DEFAULT NULL,
+      cost decimal DEFAULT NULL,
+      audienceReach bigint DEFAULT NULL,
+      adTypeName varchar(255) DEFAULT NULL,
+      PRIMARY KEY (optionID)
+    )
+    `;
+  client.query(query, (err, res) => {
+    console.log(err, res)
+    client.end()
+  });
+}
+
+//POST 1. Insert Advertisement details
+function insertAdvertisement(data, callback) {
+  let i = 1;
+  //$ sign infront of value.
+  const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
+
+  //Values need to be in a single array.
+  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceReach, data.adTypeName], [])
+  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
+
+  //This part below sends the query over.
+  const client = connect();
+  client.query(query, values, (err, result) => { //Dependent on above values.
     callback(err, result);
-    console.log("query: " + query)
-    console.log("values: " + values)
+    console.log("query: " + query);
+    console.log("values: " + values);
     client.end();
   });
 }
 
-function getData(companyId, audienceReach, page, pageSize, callback){
-  let whereClause; 
-  let i=1;
+//GET 2. Retrieve all data
+function getData(companyId, audienceReach, page, pageSize, callback) {
+  //This part below determines what sql query is produced based on the page state.
+  let whereClause;
+  let i = 1;
   const values = [];
-  if(!companyId && !audienceReach) whereClause = "";
-  else{
-    whereClause= 'WHERE ';
-    if(companyId){
+  if (!companyId && !audienceReach) whereClause = "";
+  else {
+    whereClause = 'WHERE ';
+    if (companyId) { //if companyid exists
       whereClause += `companyId = $${i++}`
-      values.push(parseInt(companyId));
-    } 
-    if(audienceReach){
+      values.push(parseInt(companyId)); //Array.push companyid
+    }
+    if (audienceReach) { //if audienceReach exists
       whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
-      values.push(parseInt(audienceReach));
-    } 
+      values.push(parseInt(audienceReach)); //Array.push audiencereach
+    }
   }
-  let limitOffsetClause
-  if(!page && !pageSize) limitOffsetClause = "";
-  else{
-    limitOffsetClause =  `LIMIT $${i++} OFFSET $${i++}`
-    values.push(parseInt(page));
-    values.push(parseInt(page) * parseInt(pageSize));
-  } 
+  //This part below determines the amount of data being sent to a page.
+  let limitOffsetClause;
+  if (!page && !pageSize) limitOffsetClause = "";
+  else {
+    limitOffsetClause = `LIMIT $${i++} OFFSET $${i++}`
+    values.push(parseInt(pageSize)); //Limit = page size 10 - Amount of data taken.
+    values.push(parseInt(page - 1) * parseInt(pageSize)); //Offset = (page-1) * pagesize - Amount of data skipped before.
+  }
   const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause};`
 
+  //Connect to database
   const client = connect();
-  client.query(query, values, function(err, {rows}){
+  client.query(query, values, function (err, { rows }) {
     client.end();
     callback(err, rows);
   })
 }
 
 module.exports = {
-    resetTable,
-    insertAdvertisment,
-    getData
+  resetTable,
+  insertAdvertisement,
+  getData
 }
