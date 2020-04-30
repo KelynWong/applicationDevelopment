@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { Client } = require('pg'); //This is correct.
 const CONNECTION_STRING = 'postgres://ycghstxz:23a4dlohmcqwC3wStzaSk1My5gy-eyf2@john.db.elephantsql.com:5432/ycghstxz';
 
 function connect(){
@@ -35,7 +35,7 @@ function insertAdvertisment(advertisments, callback){
   const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
   
   const client = connect();
-  client.query(query, values, (err, result) =>{
+  client.query(query, values, (err, result) =>{ //Dependent on above values.
     callback(err, result);
     console.log("query: " + query)
     console.log("values: " + values)
