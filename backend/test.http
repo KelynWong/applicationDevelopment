@@ -1,19 +1,50 @@
-POST http://localhost:3000/insert/ HTTP/1.1
+POST http://localhost:3000/insertAdvertisement/ HTTP/1.1
 Content-Type: application/json
 
 {
     "data": [
         {
-            "companyId": 1000000001
+            "optionId": 1000000005,
+            "companyId": 1000000001,
+            "cost": 1000.00,
+            "audienceReach": 4000,
+            "adTypeName": "Fixed"
         },
         {
-            "companyId": 1000000002
+            "optionId": 1000000006,
+            "companyId": 1000000001,
+            "cost": 800.00,
+            "audienceReach": 5000,
+            "adTypeName": "Fixed"
         },
         {
-            "companyId": 1000000003
+            "optionId": 1000000007,
+            "companyId": 1000000001,
+            "cost": 100.00,
+            "audienceReach": 200,
+            "adTypeName": "Not Fixed"
         },
         {
-            "companyId": 1000000004
+            "optionId": 1000000008,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceReach": 7000,
+            "adTypeName": "Fixed"
         }
     ]
 }
+
+###
+
+GET http://localhost:3000/basic/Alldata?companyId=1000000001&audienceReach=4000&page=1&pageSize=1
+Content-Type: application/json
+
+###
+
+GET http://localhost:3000/basic/Alldata?companyId=1000000001&page=2&pageSize=1
+Content-Type: application/json
+
+###
+
+GET http://localhost:3000/basic/Alldata
+Content-Type: application/json

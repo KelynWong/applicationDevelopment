@@ -26,9 +26,12 @@ Each API should include
 
 ### Parameters
 
-| parameter | datatype        | example   |
-| --------- | --------------- | --------- |
-|    nil    |       nil       |    nil    |
+|   parameter   | datatype        | example    |
+| ------------- | --------------- | ---------- |
+| companyId     | 10 digit number | 1000000001 |
+| audienceReach |       int       |    4000    |
+| page          |       int       |    1       |
+| pageSize      |       int       |    1       |
 
 ### Response Body
 
@@ -36,10 +39,11 @@ Each API should include
 {
     "result": [
         {
-            "optionId": int,
-            "companyId": int,
-            "audienceReach": int,
-            "cost": dec(10, 2)
+            "optionid": int,
+            "companyid": int,
+            "cost": dec(10, 2),
+            "audiencereach": int,
+            "adtypename": String
         }
     ]
 }
@@ -66,22 +70,11 @@ GET /basic/AllData
 {
     "result": [
         {
-            "optionId": 1234567890,
-            "companyId": 1234567891,
-            "audienceReach": 2000,
-            "cost": 100.00
-        }
-        {
-            "optionId": 1234567891,
-            "companyId": 1234567890,
-            "audienceReach": 10000,
-            "cost": 300.00
-        }
-        {
-            "optionId": 1234567892,
-            "companyId": 1234567890,
-            "audienceReach": 20000,
-            "cost": 400.00
+            "optionid": 1000000005,
+            "companyid": 1000000001,
+            "cost": "1000.00",
+            "audiencereach": "4000",
+            "adtypename": "Fixed"
         }
     ]
 }
@@ -91,80 +84,10 @@ GET /basic/AllData
 
 ```json
 {
-	"error": "Server Error",
-	"code": 500
+	"error": "Not found",
+	"code": 404
 }
 ```
-
-
-## [Data viewer page] Get All Data (with filtering) ---------------------------------------------------------------
-
-| attribute   | value                  |
-| ----------- | ---------------------- |
-| HTTP Method | GET                    |
-| Endpoint    | /basic/allDataFiltered |
-
-### Parameters
-
-| parameter     | datatype        | example    |
-| ------------- | --------------- | ---------- |
-| companyId     | 10 digit number | 1234567890 |
-| audienceReach | Integer         | 100000     |
-
-### Response Body
-
-```json
-{
-    "result": [
-        {
-            "optionId": int,
-            "companyId": int,
-            "audienceReach": int,
-            "cost": dec(10, 2)
-        }
-    ]
-}
-```
-
-### Error
-
-```json
-{
-	"error": string,
-	"code": number
-}
-```
-
-### Sample Request
-
-```http
-GET /basic/AllDataFiltered?companyId=1234567890&audienceReach=10000
-```
-
-### Sample Response
-
-```json
-{
-    "result": [
-        {
-            "optionId": 1234567891,
-            "companyId": 1234567890,
-            "audienceReach": 10000,
-            "cost": 300.00
-        }
-    ]
-}
-```
-
-### Sample Error
-
-```json
-{
-	"error": "Server Error",
-	"code": 500
-}
-```
-
 
 
 ## [Results page] Get Results ---------------------------------------------------------------
@@ -235,15 +158,12 @@ GET /basic/Results?optionId=1234567890&cost=10000
 }
 ```
 
-
-
-
 ## Insert Data ----------------------------------------------------------------------------
 
 | attribute   | value         |
-| ----------- | -----------   |
-| HTTP Method | Insert        |
-| Endpoint    | /insert       |
+| ----------- | ------------- |
+| HTTP Method | post          |
+| Endpoint    | /insertAdvertismement |
 
 ### Parameters
 
@@ -281,7 +201,7 @@ GET /basic/Results?optionId=1234567890&cost=10000
 ### Sample Request
 
 ```http
-POST /insert?optionID=1234567890&companyID=1234567890&audienceReach=10000&cost=300.00&adTypeName=Fixed
+POST /insertAdvertisement/
 ```
 
 ### Sample Response

@@ -14,17 +14,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const database = require('./database')
 
-app.post('/insert/', function (req,res, next){
+app.post('/insertAdvertisement/', function (req,res, next){
   const { data } = req.body;
-  database.insertCompany(data, (error, result) =>{
+  database.insertAdvertisment(data, (error, result) =>{
     if(error){
-      console.log(data)
+      console.log("data: ", data)
       return next(error);
     }
     console.log(result)
     res.json(data);
   });
-})
+});
+
+app.get('/basic/Alldata', function(req, res, next){
+  const { companyId, audienceReach, page, pageSize } = req.query;
+  database.getData(companyId, audienceReach, page, pageSize, (error, result) => {
+    if(error){
+      return next(error);
+    }
+    res.json(result);
+  })
+});
 
 
 // catch 404 and forward to error handler
