@@ -12,21 +12,14 @@ function connect(){
 function resetTable(){
     const client = connect();
     const query = `
-      DROP TABLE IF EXIST Company;
-      CREATE TABLE Company (
-        companyId int(11) NOT NULL,
-        PRIMARY KEY (companyId)
-      )
-    
-      DROP TABLE IF EXIST Advertisment;
+      DROP TABLE IF EXIST Advertisement;
       CREATE TABLE Advertisment (
         optionId int(11) NOT NULL,
         companyId int(11) DEFAULT NULL,
-        cost decimal(19, 2) DEFAULT NULL,
+        cost decimal DEFAULT NULL,
         audienceReach bigint(20) DEFAULT NULL,
         adTypeName varchar(255) DEFAULT NULL,
-        PRIMARY KEY (optionID),
-        CONSTRAINT FK_Advertisment_Company_CompanyID FOREIGN KEY (companyId) REFERENCES Company (companyId) ON UPDATE CASCADE
+        PRIMARY KEY (optionID)
       )
     `;
     client.query(query, (err, res) => {
@@ -35,12 +28,11 @@ function resetTable(){
       });
 }
 
-function insertCompany(companies, callback){
+function insertAdvertisment(advertisments, callback){
   let i = 1;
-  const template = companies.map(company => `(${i++})`).join(',');
-  console.log('template: ' + template)
-  const values = companies.reduce((reduced, company) => [...reduced, company.companyId], [])
-  const query = `INSERT INTO Company (companyId) VALUES ${template};`
+  const template = advertisments.map(advertisment => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
+  const values = advertisments.reduce((reduced, advertisment) => [...reduced, advertisment.optionId, advertisment.companyId, advertisment.cost, advertisment.audienceReach, advertisment.adTypeName], [])
+  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
   
   const client = connect();
   client.query(query, values, (err, result) =>{
@@ -51,23 +43,40 @@ function insertCompany(companies, callback){
   });
 }
 
-// function insertAdvertisment(advertisments, callback){
-//   let i = 1;
-//   const template = advertisments.map(advertisment => `(${i++})`).join(',');
-//   const values = advertisments.reduce((reduced, advertisment) => [...reduced, advertisment.optionId, advertisment.companyId, advertisment.cost, advertisment.audienceReach, advertisment.adTypeName], [])
-//   const query = `INSERT INTO Advertisment (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
-  
-//   const client = connect();
-//   client.query(query, values, (err, result) =>{
-//     callback(err, result);
-//     console.log("query: " + query)
-//     console.log("values: " + values)
-//     client.end();
-//   });
-// }
+function getData(companyId, audienceReach, page, pageSize, callback){
+  let whereClause; 
+  let i=1;
+  const values = [];
+  if(!companyId && !audienceReach) whereClause = "";
+  else{
+    whereClause= 'WHERE ';
+    if(companyId){
+      whereClause += `companyId = $${i++}`
+      values.push(parseInt(companyId));
+    } 
+    if(audienceReach){
+      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      values.push(parseInt(audienceReach));
+    } 
+  }
+  let limitOffsetClause
+  if(!page && !pageSize) limitOffsetClause = "";
+  else{
+    limitOffsetClause =  `LIMIT $${i++} OFFSET $${i++}`
+    values.push(parseInt(page));
+    values.push(parseInt(page) * parseInt(pageSize));
+  } 
+  const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause};`
+
+  const client = connect();
+  client.query(query, values, function(err, {rows}){
+    client.end();
+    callback(err, rows);
+  })
+}
 
 module.exports = {
     resetTable,
-    insertCompany,
-    // insertAdvertisment
+    insertAdvertisment,
+    getData
 }
