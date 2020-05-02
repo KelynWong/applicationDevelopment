@@ -86,6 +86,7 @@ function getData(companyId, audienceReach, page, pageSize, callback) {
   client.query(query, values, function (err, { rows }) {
     client.end();
     callback(err, rows);
+    console.log(rows)
   })
 }
 

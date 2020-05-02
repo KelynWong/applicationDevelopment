@@ -31,13 +31,13 @@ app.post('/insertAdvertisement/', function (req, res, next) {
 });
 
 //GET 2. Retrieve all data
-app.get('/basic/Alldata', function (req, res, next) {
+app.get('/basic/Alldata/', function (req, res, next) {
   const { companyId, audienceReach, page, pageSize } = req.query;
   database.getData(companyId, audienceReach, page, pageSize, (error, result) => {
     if (error) {
       return next(error);
     }
-    res.json(result);
+    return res.json(result);
   })
 });
 
