@@ -33,7 +33,7 @@ function resetTable() {
   });
 }
 
-//POST 1. Insert Advertisement details
+// POST 1. Insert Advertisement details ---
 function insertAdvertisement(data, callback) {
   let i = 1;
   //$ sign infront of value.
@@ -53,34 +53,36 @@ function insertAdvertisement(data, callback) {
   });
 }
 
-//GET 2. Retrieve all data
-function getData(companyId, audienceReach, page, pageSize, callback) {
+// GET 2. Retrieve all data ---
+function getData(pageNo, pageSize, callback) {
+  
   //This part below determines what sql query is produced based on the page state.
-  let whereClause;
   let i = 1;
   const values = [];
-  if (!companyId && !audienceReach) whereClause = "";
-  else {
-    whereClause = 'WHERE ';
-    if (companyId) { //if companyid exists
-      whereClause += `companyId = $${i++}`
-      values.push(parseInt(companyId)); //Array.push companyid
-    }
-    if (audienceReach) { //if audienceReach exists
-      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
-      values.push(parseInt(audienceReach)); //Array.push audiencereach
-    }
-  }
+  // let whereClause;
+  // if (!companyId && !audienceReach) whereClause = "";
+  // else {
+  //   whereClause = 'WHERE ';
+  //   if (companyId) { //if companyid exists
+  //     whereClause += `companyId = $${i++}`
+  //     values.push(parseInt(companyId)); //Array.push companyid
+  //   }
+  //   if (audienceReach) { //if audienceReach exists
+  //     whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+  //     values.push(parseInt(audienceReach)); //Array.push audiencereach
+  //   }
+  // }
   //This part below determines the amount of data being sent to a page.
   let limitOffsetClause;
-  if (!page && !pageSize) limitOffsetClause = "";
+  if (!pageNo && !pageSize) limitOffsetClause = "";
   else {
     limitOffsetClause = `LIMIT $${i++} OFFSET $${i++}`
     values.push(parseInt(pageSize)); //Limit = page size 10 - Amount of data taken.
-    values.push(parseInt(page - 1) * parseInt(pageSize)); //Offset = (page-1) * pagesize - Amount of data skipped before.
+    values.push(parseInt(pageNo) * parseInt(pageSize)); //Offset = (pageNo -index) * pagesize - Amount of data skipped before.
   }
-  const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause};`
 
+  const query = `SELECT * FROM Advertisement ${limitOffsetClause};`
+  console.log(query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {
@@ -89,8 +91,20 @@ function getData(companyId, audienceReach, page, pageSize, callback) {
   })
 }
 
+//3. GET row count of table advertisement ---
+function getRowCount(callback){
+  const query = `SELECT COUNT(*) FROM advertisement;`
+  const client = connect();
+  client.query(query, function (err, { rows }) {
+    client.end();
+    callback(err, rows);
+  })
+
+}
+
 module.exports = {
   resetTable,
   insertAdvertisement,
-  getData
+  getData,
+  getRowCount
 }
