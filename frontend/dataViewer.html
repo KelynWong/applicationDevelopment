@@ -37,12 +37,24 @@
         //Try not to edit the options in table unless strictly necessary ~Kester
         $(document).ready(function () {
             var table = $('#theTable').DataTable({ //Renamed the table to literally, theTable.
+                // serverSide: true,
+                // "ajax":{
+                //     type: "GET",
+                //     url: "http://localhost:3000/basic/Alldata?page=" + page.info() + "&pageSize=" + page.len(),
+                //     dataType: "json",
+                //     success: function (result, status, xhr) {
+                //         table.row.add(result).draw()
+                //     },
+                //     error: function (xhr, status, error) {
+                //         alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+                //     }
+                // },
                 "columns": [
-                    { name: 's/n' },
                     { name: 'optionid' },
                     { name: 'companyid' },
+                    { name: 'cost' },
                     { name: 'audiencereach' },
-                    { name: 'cost' }
+                    { name: 'adTypeName' }
                 ],
                 "scrollX": true,
                 "scrollY": "50vh",
@@ -135,15 +147,15 @@
                 <table id="theTable" class="responsive nowrap display table-bordered table-striped " style="width:100%">
                     <thead>
                         <tr>
-                            <th class="th-sm">s/n
-                            </th>
                             <th class="th-sm">Option ID
                             </th>
                             <th class="th-sm">Company ID
                             </th>
+                            <th class="th-sm">Cost
+                            </th>
                             <th class="th-sm">Audience reach
                             </th>
-                            <th class="th-sm">Cost
+                            <th class="th-sm">adTypeName
                             </th>
                         </tr>
                     </thead>

@@ -40,3 +40,32 @@ function fractionalKnapsack(audience, cost, budget){
 }
 
 console.log(fractionalKnapsack([1,2,3,4],[3,1,4,2], 4))
+
+//------------------- ADVANCED -----------------------
+function FullKnapsack(audience, cost, budget){
+    let n = audience.length-1;
+    let result = 0;
+    console.log("n: " + n);
+    console.log("audience: " + audience);
+    console.log("cost: " + cost);
+    console.log("budget: " + budget);
+    console.log("result: " + result)
+    if(n==0 || budget==0){
+        result=0;
+    }else if(cost[n] > budget){
+        n-= 1
+        result = FullKnapsack(audience, cost, budget);
+    }else{
+        var dontPut = FullKnapsack(audience, cost, budget);
+        var put = audience[n] + FullKnapsack(audience, cost, budget - cost[n]);
+        if(dontPut < put){
+            result = put;
+        }else{
+            result = dontPut;
+        }
+        n-= 1;
+    }
+    return result;
+}
+
+console.log(FullKnapsack([1,1,1,1],[1,2,3,4], 4))
