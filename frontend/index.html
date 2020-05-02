@@ -7,14 +7,12 @@
 
 3) To start frontend, npx http-server. To start backend, npm start (its actually being hosted on port:3000!)
 
-4) dataviewer.html renamed to index.html
-
 Issues:
-- Can't get response out of axios function
+- Can't get response out of axios function :()
 
-- Pagination responsiveness(i'm on it)
+- Pagination responsiveness(still on it!)
 
-- Your(Kelyn) filters no longer work :( but theres a specific comment inside to help u tho! -->
+- Got ur filter idea, go ahead!! -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -111,10 +109,28 @@ Issues:
             });
 
             
+
+
+            //Basically the flow:
+            // 1. GET the number of rows from the table and set up pagination based off Page Size(Default 5)
+            // 2. Retrieve data from table based off Page Size(Default 5) and Page Number(Default 1). 
+            // - Since its the first page, no offset is needed, thus the algorithm makes the offset 0.
+            // 3. After that, it comes down to user interaction.
+            // 4. If the next, previous buttons are pressed:
+            // - 1) Increment/Decrease the paginationIndex based on what was clicked.
+            // - 2) Modify the class name of buttons so that the button represented by the paginationIndex("tabindex is checked!")
+            //      will be modified css wise.
+            // - 3) "Change the page" by deleting table data and POST to get data from table(This uses the same exact algorithm as step 2 in flow.)
+            //      - Utilises offset and limit to get the data needed for the respective page!
+            // 5. If the number buttons are pressed:
+            // - Vice versa as to 4, but paginationIndex is changed to the button's respective index.
+            // That should be all!
+
+
             // Pagination algorithm:
             // Sample paginate_button generated.
             // <a class="paginate_button" id="paginate_button" tabindex="0"</a> tabindex is very important here, it affects the index overflow part for the next button.
-            var openingTag = '<a class="paginate_button" id="paginate_button" tabindex="';
+            var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
             var middleTag = '">'
             var closingTag = '</a>'
             var elipsis = '<a class="ellipsis">…</a>'
@@ -159,6 +175,8 @@ Issues:
             $(document).on('click', '#theTable_previous', function () {
                 if (paginationIndex != 0) {
                     paginationIndex -= 1;
+                    $(".paginate_button[tabindex='" + paginationIndex + "']").attr('class', 'paginate_button current');
+                    $(".paginate_button[tabindex='" + (paginationIndex+1) + "']").attr('class', 'paginate_button');
                     console.log(paginationIndex);
                     const pageNo = paginationIndex;
                     const requestBody = {
@@ -185,8 +203,13 @@ Issues:
                 })
                 lastPage = Math.max(...array);
                 if (paginationIndex < lastPage) {
+                    console.log(paginationIndex); 
                     paginationIndex += 1;
+                $(".paginate_button[tabindex='" + paginationIndex + "']").attr('class', 'paginate_button current');
+                $(".paginate_button[tabindex='" + (paginationIndex-1) + "']").attr('class', 'paginate_button');
+                    
                     const pageNo = paginationIndex;
+                    console.log(pageNo);
                     const requestBody = {
                         pageNo: pageNo,
                         pageSize: pageSize
@@ -207,7 +230,7 @@ Issues:
                 const pageSize = table.page.info().length;
 
                 // Pagination algorithm:
-                var openingTag = '<a class="paginate_button" id="paginate_button" tabindex="';
+                var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
                 var middleTag = '">'
                 var closingTag = '</a>'
                 var elipsis = '<a class="ellipsis">…</a>'
@@ -242,19 +265,19 @@ Issues:
                         data.forEach((param) => {
                             table.row.add(param).draw()
                         });
+                        $(".paginate_button[tabindex='" + 0 + "']").click();
+
                     });
                 
                 paginationIndex = 0; //Sets back to page 1.(Highly important)
-                //The table doesnt update immediately though, thinking of forcing button click on element
             });
 
 
 
             //This specific onclick settles all pagination numbers
-            $(document).on('click', '#paginate_button', function () {
-                var pageNumberClicked = ($(this).closest("#paginate_button"));
+            $(document).on('click', '#generatedButton', function () {
+                var pageNumberClicked = ($(this).closest(".paginate_button"));
                 paginationIndex = pageNumberClicked[0].tabIndex;
-
                 console.log(paginationIndex);
 
                 // Retrieve data from database based on limit(pageSize) and offset(pageNo * pageSize) values
@@ -275,8 +298,8 @@ Issues:
 
                     });
 
-                //Pagination algorithm:
-                var openingTag = '<a class="paginate_button" id="paginate_button" tabindex="';
+                // Pagination algorithm:
+                var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
                 var middleTag = '">'
                 var closingTag = '</a>'
                 var elipsis = '<a class="ellipsis">…</a>'
@@ -298,7 +321,10 @@ Issues:
                             }
                             $(".finalPageNumber").append(elipsis + openingTag + (final - 1) + middleTag + (final) + closingTag);
                         }
+                        $(".paginate_button").attr('class', 'paginate_button');
+                        $(".paginate_button[tabindex='" + paginationIndex + "']").attr('class', 'paginate_button current');
                     });
+
             });
         });
     </script>
@@ -366,13 +392,11 @@ Issues:
                 <div class="pagination" id="pagination">
                     <a class="paginate_button previous disabled" tabindex="-1"
                         id="theTable_previous">Previous</a>
-                    <a class="paginate_button current" id="paginate_button" tabindex="0">1</a>
+                    <a class="paginate_button current" id="generatedButton" tabindex="0">1</a>
                     <div class="pageNumbers"></div>
                     <div class="finalPageNumber"></div>
-                    <a class="paginate_button next" tabindex="0" id="theTable_next">Next</a>
-
+                    <a class="paginate_button next" tabindex="-1" id="theTable_next">Next</a>
                 </div>
-
             </div>
         </div>
     </div>
