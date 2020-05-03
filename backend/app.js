@@ -16,8 +16,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const cors = require("cors");
+app.use(cors());
+app.options('*', cors());
+
 const database = require('./database')
-//POST 1. Insert Advertisement details
+// POST 1. Insert Advertisement details ---
 app.post('/insertAdvertisement/', function (req, res, next) {
   const { data } = req.body;
   database.insertAdvertisement(data, (error, result) => {
@@ -30,10 +34,33 @@ app.post('/insertAdvertisement/', function (req, res, next) {
   });
 });
 
-//GET 2. Retrieve all data
-app.get('/basic/Alldata/', function (req, res, next) {
-  const { companyId, audienceReach, page, pageSize } = req.query;
-  database.getData(companyId, audienceReach, page, pageSize, (error, result) => {
+// POST 2. Retrieve all data ---
+app.post('/basic/Alldata', function (req, res) {
+  console.log(req.body);
+  const { companyId, audienceReach, pageNo, pageSize } = req.body;
+  
+  database.getData(companyId, audienceReach,pageNo, pageSize, (error, result) => {
+    if (error) {
+      return next(error);
+    }
+    console.log(result);
+    res.json(result);
+  })
+});
+// app.get('/basic/Alldata', function (req, res, next) {
+//   const { companyId, audienceReach, page, pageSize } = req.query;
+//   database.getData(companyId, audienceReach, page, pageSize, (error, result) => {
+//     if (error) {
+//       return next(error);
+//     }
+//     res.json(result);
+//   })
+// });
+
+
+// GET 3. Retrieve all number of row data in table: advertisement ---
+app.get('/extra/getRowCount', function (req, res, next) {
+  database.getRowCount((error, result) => {
     if (error) {
       return next(error);
     }
