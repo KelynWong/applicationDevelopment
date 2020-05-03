@@ -6,28 +6,28 @@ Content-Type: application/json
 {
     "data": [
         {
-            "optionId": 1000000009,
+            "optionId": 1000000013,
             "companyId": 1000000001,
             "cost": 1000.00,
             "audienceReach": 4000,
             "adTypeName": "Fixed"
         },
         {
-            "optionId": 1000000010,
+            "optionId": 1000000014,
             "companyId": 1000000001,
             "cost": 800.00,
             "audienceReach": 5000,
             "adTypeName": "Fixed"
         },
         {
-            "optionId": 1000000011,
+            "optionId": 1000000015,
             "companyId": 1000000001,
             "cost": 100.00,
             "audienceReach": 200,
             "adTypeName": "Not Fixed"
         },
         {
-            "optionId": 1000000012,
+            "optionId": 1000000016,
             "companyId": 1000000001,
             "cost": 5000.00,
             "audienceReach": 7000,
@@ -55,4 +55,9 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/basic/Alldata
+Content-Type: application/json
+
+
+###
+GET http://localhost:3000/extra/getRowCount
 Content-Type: application/json
