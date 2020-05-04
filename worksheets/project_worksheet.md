@@ -36,8 +36,8 @@ Link: [Use Case Diagram](https://www.plantuml.com/plantuml/svg/0/RP5D4e8m38NtFKM
 
 The above listed are functional requirements, that is, **WHAT** the system should allow users to do. There are also non-functional requirements that state **HOW** a system should perform.
 
--   Q1. Consider the use case of `Compute basic/advance result`, **HOW** is this functionality made available to both JiBaBoom and Adminstrator _(Hint: They are different)_? `(Answer Here)`
--   Q2. Consider the use case of `Insert basic/advance data`. **HOW** is the data stored? `(Answer Here)`
+-   Q1. Consider the use case of `Compute basic/advance result`, **HOW** is this functionality made available to both JiBaBoom and Adminstrator _(Hint: They are different)_? `(JiBaBoom is able to compute without the use of the front end as they can call the API, while Adminstrator have to use the website to do it)`
+-   Q2. Consider the use case of `Insert basic/advance data`. **HOW** is the data stored? `(The data is stored in the database tables)`
 
 ---
 
@@ -79,7 +79,7 @@ Link: [Component Diagram](https://www.plantuml.com/plantuml/svg/0/JK-x3i8m3Dpz5L
 1. Does the frontend communicate with the mobile? `(No)`
 2. Does the frontend communicate directly with the database? `(No)`
 3. How should the frontend display data from the database? `(In a structured manner like tables and diagrams)`
-4. How does the frontend communicate with backend? `(Through an API)`
+4. How does the frontend communicate with backend? `(Through an API, the frontend calls the API which then the API connects to the database)`
 
 ---
 
@@ -166,7 +166,7 @@ how can frontend/mobile\nget data from backend?
 Think about how you can do it and type your answer below:
 
 ```
-[Answer Here]
+[They have an method of requesting the backend's API e.g. ajax/axios in which the API will connect to the database to retreive whatever data they need]
 ```
 
 ---

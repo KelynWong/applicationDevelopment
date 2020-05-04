@@ -89,6 +89,136 @@ GET /basic/AllData
 }
 ```
 
+## Insert Data ----------------------------------------------------------------------------
+
+| attribute   | value                 |
+| ----------- | --------------------- |
+| HTTP Method | post                  |
+| Endpoint    | /insertAdvertismement |
+
+### Parameters
+
+| parameter      | datatype        | example   |
+| ---------      | --------------- | --------- |
+| optionId       | 10 digit number | 123456789 |
+| companyId      | 10 digit number | 123456789 |
+| audienceReach  | Int             | 500       |
+| cost           | Dec(10, 2)      | 1000.50   |
+| adTypeName     | String          | Fixed     |
+
+
+
+### Response Body
+
+```json
+{
+    "result": [
+        {
+            "Status":String,
+            "Code": number
+        }
+    ]
+}
+```
+
+### Error
+
+```json
+{
+	"error": string,
+	"code": number
+}
+```
+
+### Sample Request
+
+```http
+POST /insertAdvertisement?optionId=1234567890&companyId=1234567890&audienceReach=6000&cost=300&adTypeName=Fixed
+```
+
+### Sample Response
+
+```json
+{
+    "result": [
+        {
+            "Status": OK,
+            "Code": 200
+        }
+    ]
+}
+```
+
+### Sample Error
+
+```json
+{
+	"error": Duplicate Entry,
+	"code": 409
+}
+```
+
+## [Any page] Get Row count ---------------------------------------------------------------
+
+| attribute   | value               |
+| ----------- | ------------------- |
+| HTTP Method | GET                 |
+| Endpoint    | /extra/getRowCount  |
+
+### Parameters
+
+| parameter | datatype        | example    |
+| --------- | --------------- | ---------- |
+
+
+### Response Body
+
+```json
+{
+    "result": [
+        {
+            "rows": int,
+        }
+    ]
+}
+```
+
+### Error
+
+```json
+{
+	"error": string,
+	"code": number
+}
+```
+
+### Sample Request
+
+```http
+GET /extra/getRowCount
+```
+
+### Sample Response
+
+```json
+{
+    "result": [
+        {
+            "rows": 57,
+        }
+    ]
+}
+```
+
+### Sample Error
+
+```json
+{
+	"error": "Server Error",
+	"code": 500
+}
+```
+
 
 ## [Results page] Get Results ---------------------------------------------------------------
 
@@ -131,7 +261,7 @@ GET /basic/AllData
 ### Sample Request
 
 ```http
-GET /basic/Results?optionId=1234567890&cost=10000
+GET /basic/Results?optionId=1234567890,1234567891,1234567892,1234567893&budget=500
 ```
 
 ### Sample Response
@@ -144,6 +274,12 @@ GET /basic/Results?optionId=1234567890&cost=10000
             "companyId": 1234567890,
             "audienceReach": 10000,
             "cost": 300.00
+        },
+        {
+            "optionId": 1234567892,
+            "companyId": 1234567890,
+            "audienceReach": 7000,
+            "cost": 200.00
         }
     ]
 }
@@ -155,73 +291,5 @@ GET /basic/Results?optionId=1234567890&cost=10000
 {
 	"error": "Server Error",
 	"code": 500
-}
-```
-
-## Insert Data ----------------------------------------------------------------------------
-
-| attribute   | value         |
-| ----------- | ------------- |
-| HTTP Method | post          |
-| Endpoint    | /insertAdvertismement |
-
-### Parameters
-
-| parameter      | datatype        | example   |
-| ---------      | --------------- | --------- |
-| optionId       | 10 digit number | 123456789 |
-| companyId      | 10 digit number | 123456789 |
-| audienceReach  | Int             | 500       |
-| cost           | Dec(10, 2)      | 1000.50   |
-
-
-
-### Response Body
-
-```json
-{
-    "result": [
-        {
-            "Status":String,
-            "Code": number
-        }
-    ]
-}
-```
-
-### Error
-
-```json
-{
-	"error": string,
-	"code": number
-}
-```
-
-### Sample Request
-
-```http
-POST /insertAdvertisement/
-```
-
-### Sample Response
-
-```json
-{
-    "result": [
-        {
-            "Status": OK,
-            "Code": 200
-        }
-    ]
-}
-```
-
-### Sample Error
-
-```json
-{
-	"error": Duplicate Entry,
-	"code": 409
 }
 ```

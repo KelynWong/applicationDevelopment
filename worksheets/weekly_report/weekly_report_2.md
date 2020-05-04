@@ -5,26 +5,26 @@ This report is for you to document the progres of your project. You should also 
 ## What have I done last week (kelyn)
 
 -   Done api documentation and database schema
--   Worked on...
--   Changed....
+-   Started on the implementation of data viewer page (Filtering, insert API, get data API)
+-   Basic algo function and started on advanced algo
 
 ## What do I plan to do next week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Did not do justification (push to a later date as wireframes not confirmed)
+-   Continue to work on the implementation of data viewer page
+-   Finish up the project worksheet
 
 ## What have I done last week (kester)
 
--   Done api documentation and database schema
--   Worked on...
--   Changed....
+-   Started on the implementation of data viewer page (Pagination and table, improved and add on to API)
+-   Styling for data viewer page
+-   Partial pagination responsiveness
+-   Made some changes to the wireframe based on the current data viewer page
 
 ## What do I plan to do next week (kester)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Continue to work on the implementation of data viewer page
+-   Fix the pagination issue
 
 ## Additional Thoughts
 
