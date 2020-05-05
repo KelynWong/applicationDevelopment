@@ -43,7 +43,7 @@ Each API should include
             "companyid": int,
             "cost": dec(10, 2),
             "audiencereach": int,
-            "adtypename": String
+            "adtype": String
         }
     ]
 }
@@ -74,7 +74,7 @@ GET /basic/AllData
             "companyid": 1000000001,
             "cost": "1000.00",
             "audiencereach": "4000",
-            "adtypename": "Fixed"
+            "adtype": "Fixed"
         }
     ]
 }
@@ -104,7 +104,7 @@ GET /basic/AllData
 | companyId      | 10 digit number | 123456789 |
 | audienceReach  | Int             | 500       |
 | cost           | Dec(10, 2)      | 1000.50   |
-| adTypeName     | String          | Fixed     |
+| adType         | String          | Fixed     |
 
 
 
@@ -133,7 +133,7 @@ GET /basic/AllData
 ### Sample Request
 
 ```http
-POST /insertAdvertisement?optionId=1234567890&companyId=1234567890&audienceReach=6000&cost=300&adTypeName=Fixed
+POST /insertAdvertisement?optionId=1234567890&companyId=1234567890&audienceReach=6000&cost=300&adType=Fixed
 ```
 
 ### Sample Response

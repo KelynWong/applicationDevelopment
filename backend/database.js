@@ -23,7 +23,7 @@ function resetTable() {
       companyId int DEFAULT NULL,
       cost decimal DEFAULT NULL,
       audienceReach bigint DEFAULT NULL,
-      adTypeName varchar(255) DEFAULT NULL,
+      adType varchar(255) DEFAULT NULL,
       PRIMARY KEY (optionID)
     )
     `;
@@ -41,7 +41,7 @@ function insertAdvertisement(data, callback) {
 
   //Values need to be in a single array.
   const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceReach, data.adTypeName], [])
-  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES ${template};`
+  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
 
   //This part below sends the query over.
   const client = connect();
