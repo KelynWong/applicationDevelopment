@@ -123,9 +123,13 @@
                 .then((response) => {
                     var data = response.data;
                     table.clear();
-                    data.forEach((param) => {
-                        table.row.add(param).draw()
-                    });
+                    if(data == null){
+                        table.clear();
+                    }else{
+                        data.forEach((param) => {
+                            table.row.add(param).draw()
+                        });
+                    }   
                 });
         }
 
@@ -133,11 +137,11 @@
         $(document).ready(function () {
             var table = $('#theTable').DataTable({ //Renamed the table to literally, theTable.
                 "columns": [
-                    { data: 'adtypename' },
                     { data: 'optionid' },
                     { data: 'companyid' },
-                    { data: 'audiencereach' },
                     { data: 'cost' },
+                    { data: 'audiencereach' },
+                    { data: 'adtype' },
                 ],
                 "scrollX": true,
                 "scrollY": "50vh",
@@ -259,15 +263,26 @@
             // Onclick filter button.
             $(document).on('click', '.filterBtn', function () {
                 //filterButtonClicked = true;
-                paginationAlgorithm(table, filterButtonClicked);
-                fillTable(table, filterButtonClicked);
+                var companyIdInput = document.getElementById("companyIdInput").value
+                if(companyIdInput.length == 10){
+                    paginationAlgorithm(table, filterButtonClicked);
+                    fillTable(table, filterButtonClicked);
+                }else{
+                    alert("CompanyId has to be a 10 digit number!");
+                    document.getElementById("companyIdInput").value = "";
+                }
                 //filterButtonClicked = false;
             });
 
             // Onclick clear button.
-            //
-            //
-            //
+            $(document).on('click', '.clearBtn', function () {
+                document.getElementById("companyIdInput").value = "";
+                document.getElementById("audiencereachInput").value = "";
+                //filterButtonClicked = true;
+                paginationAlgorithm(table, filterButtonClicked);
+                fillTable(table, filterButtonClicked);
+                //filterButtonClicked = false;
+            });
         });
     </script>
 
@@ -311,6 +326,7 @@
                         <input type="text" placeholder="Audience reach" class="form-control audiencereachInput"
                             id="audiencereachInput">
                         <button type="button" class="btn btn-success filterBtn">Filter</button>
+                        <button type="button" class="btn btn-warning clearBtn">Clear</button>
                     </div>
                 </div>
                 <!-- Table -->
@@ -325,7 +341,7 @@
                             </th>
                             <th class="th-sm">Audience reach
                             </th>
-                            <th class="th-sm">AdTypeName
+                            <th class="th-sm">AdType
                             </th>
                         </tr>
                     </thead>
