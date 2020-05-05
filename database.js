@@ -93,10 +93,25 @@ function getData(companyId, audienceReach, pageNo, pageSize, callback) {
 }
 
 //3. GET row count of table advertisement ---
-function getRowCount(callback){
-  const query = `SELECT COUNT(*) FROM advertisement;`
+function getRowCount(companyId, audienceReach, callback){
+  let i = 1;
+  const values = [];
+  let whereClause;
+  if (!companyId && !audienceReach) whereClause = "";
+  else {
+    whereClause = 'WHERE ';
+    if (companyId) { //if companyid exists
+      whereClause += `companyId = $${i++}`
+      values.push(parseInt(companyId)); //Array.push companyid
+    }
+    if (audienceReach) { //if audienceReach exists
+      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      values.push(parseInt(audienceReach)); //Array.push audiencereach
+    }
+  }
+  const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
   const client = connect();
-  client.query(query, function (err, { rows }) {
+  client.query(query,values, function (err, { rows }) {
     client.end();
     callback(err, rows);
   })

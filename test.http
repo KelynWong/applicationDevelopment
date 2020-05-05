@@ -32,6 +32,20 @@ Content-Type: application/json
             "cost": 5000.00,
             "audienceReach": 7000,
             "adTypeName": "Fixed"
+        },
+        {
+            "optionId": 1000000017,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceReach": 7000,
+            "adTypeName": "Fixed"
+        },
+        {
+            "optionId": 1000000018,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceReach": 7000,
+            "adTypeName": "Fixed"
         }
     ]
 }
