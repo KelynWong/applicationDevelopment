@@ -159,7 +159,7 @@ a, a:hover, a:focus {
   background: linear-gradient(to bottom, black 0%, #dcdcdc 100%);
 }
 
-.paginate_button {
+.paginate_button, .ellipsis {
   padding: 20px;
   margin: 0;
 }
@@ -172,4 +172,8 @@ a, a:hover, a:focus {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.ellipsis {
+  float:left;
 }
