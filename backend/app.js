@@ -59,8 +59,9 @@ app.post('/basic/Alldata', function (req, res) {
 
 
 // GET 3. Retrieve all number of row data in table: advertisement ---
-app.get('/extra/getRowCount', function (req, res, next) {
-  database.getRowCount((error, result) => {
+app.post('/extra/getRowCount', function (req, res, next) {
+  const { companyId, audienceReach } = req.body;
+  database.getRowCount(companyId, audienceReach,(error, result) => {
     if (error) {
       return next(error);
     }

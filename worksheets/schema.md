@@ -1,6 +1,6 @@
 # Schema
 
-This document will gives user a good idea of how your database's structure looks like.
+This document will give users a good idea of how your database's structure looks like.
 
 You may refer to the following link to learn more about postgresql schema:
 
