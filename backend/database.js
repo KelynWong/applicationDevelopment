@@ -40,7 +40,7 @@ function insertAdvertisement(data, callback) {
   const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
 
   //Values need to be in a single array.
-  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceReach, data.adTypeName], [])
+  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceReach, data.adType], [])
   const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
 
   //This part below sends the query over.
@@ -118,9 +118,33 @@ function getRowCount(companyId, audienceReach, callback){
 
 }
 
+//4. GET results ---
+function computeResults(optionIds, budget, callback) {
+  
+  var optionList = optionIds.split(",")
+  //This part below determines what sql query is produced based on the page state.
+  const values = [];
+  let whereClause = "WHERE optionId IN (";
+  for (let i = 1; i <= optionList.length; i++) {
+    whereClause += `companyId = $${i++}`
+    values.push(parseInt(optionList[i])); //Array.push companyid
+  }
+  whereClause += `);`
+  const query = `SELECT * FROM Advertisement ${whereClause}`
+  console.log(query);
+  //Connect to database
+  const client = connect();
+  client.query(query, values, function (err, { rows }) {
+    client.end();
+    callback(err, rows);
+    console.log(rows)
+  })
+}
+
 module.exports = {
   resetTable,
   insertAdvertisement,
   getData,
-  getRowCount
+  getRowCount,
+  computeResults
 }

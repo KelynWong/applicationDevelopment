@@ -87,6 +87,24 @@
   display: flex;
 }
 
+#tabulationContainer {
+  width: 200px; 
+  height: 500px; 
+  background-color: grey; 
+  top: 150px; 
+  right: 0px; 
+  position: absolute;
+  overflow: hidden;
+}
+
+#tabulationTitle {
+  width: 100%; 
+  height: 50px; 
+  line-height: 50px;
+  background: linear-gradient(0deg, rgba(6,153,147,1) 0%, rgba(12,224,215,1) 100%);; 
+  text-align: center;
+}
+
 /*
 RECHECK - The code below are experimental~
 */

@@ -108,10 +108,8 @@
         function fillTable(table, filterButtonClicked) {
             var pageNo = paginationIndex;
             var pageSize = table.page.info().length;
-            // if (filterButtonClicked == true){
-            var companyInput = document.getElementById("companyIdInput").value;
-            var audienceInput = document.getElementById("audiencereachInput").value;
-            // }
+            var companyInput = document.getElementById("companyIdInput").value
+            var audienceInput = document.getElementById("audiencereachInput").value
             const requestBody = {
                 pageNo: pageNo,
                 pageSize: pageSize,
@@ -121,15 +119,12 @@
             };
             axios.post(`${baseUrl}/basic/Alldata`, requestBody)
                 .then((response) => {
-                    var data = response.data;
-                    table.clear();
-                    if(data == null){
+                    console.log("respponse: " + response)
+                        var data = response.data;
                         table.clear();
-                    }else{
                         data.forEach((param) => {
                             table.row.add(param).draw()
                         });
-                    }   
                 });
         }
 
@@ -162,31 +157,6 @@
                 dom: '<"#tableContainer"<"#tableArea"t><"#paginationArea"l>>',
                 // Only tableArea will have flex, paginationArea won't. Thus the written DOM.
                 "lengthMenu": [[5, 10, 20, 30, 40, 50, -1], [5, 10, 20, 30, 40, 50, "All"]]
-            });
-
-            // Kelyn's filtering. (FIXING REQUIRED)
-            // the datatables "columns" was changed from name: (column name) to data: (column name)
-            $('.dataTables_length').addClass('bs-select');
-            table.column('.companyid:name').every(function () {
-                var that = this;
-                $('.companyidInput:name').on('keyup', function () {
-                    var value = $(this).val();
-                    console.log('this ', value);
-                    if (that.search() !== value) {
-                        that.search(value).draw();
-                    }
-                });
-            });
-
-            table.column('.audiencereach').every(function () {
-                var that = this;
-                $('.audiencereachInput').on('keyup', function () {
-                    var value = $(this).val();
-                    console.log('this ', value);
-                    if (that.search() !== value) {
-                        that.search(value).draw();
-                    }
-                });
             });
 
             //Basically the flow:

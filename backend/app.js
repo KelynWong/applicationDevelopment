@@ -47,16 +47,6 @@ app.post('/basic/Alldata', function (req, res) {
     res.json(result);
   })
 });
-// app.get('/basic/Alldata', function (req, res, next) {
-//   const { companyId, audienceReach, page, pageSize } = req.query;
-//   database.getData(companyId, audienceReach, page, pageSize, (error, result) => {
-//     if (error) {
-//       return next(error);
-//     }
-//     res.json(result);
-//   })
-// });
-
 
 // GET 3. Retrieve all number of row data in table: advertisement ---
 app.post('/extra/getRowCount', function (req, res, next) {
@@ -69,6 +59,19 @@ app.post('/extra/getRowCount', function (req, res, next) {
   })
 });
 
+// POST 4. Get results ---
+app.post('/basic/getResults', function (req, res, next) {
+  console.log(req.body)
+  const { optionIds, budget } = req.body;
+  // console.log("optionids: " + optionIds)
+  // console.log("budget: " + budget)
+  database.computeResults(optionIds, budget,(error, result) => {
+    if (error) {
+      return next(error);
+    }
+    return res.json(result);
+  })
+});
 
 // catch error 404 and forward to error handler
 app.use(function (req, res, next) {
