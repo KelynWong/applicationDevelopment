@@ -49,21 +49,20 @@
     <script>
         var paginationIndex = 0; //0 being the first page
         const baseUrl = "http://localhost:3000";
-        var filterButtonClicked = false;
+        var filterCompanyId = "";
+        var filterAudienceReach = "";
         // Pagination algorithm:
-        function paginationAlgorithm(table, filterButtonClicked) {
+        function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
             var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
             var middleTag = '">'
             var closingTag = '</a>'
             var elipsis = '<a class="ellipsis">…</a>'
             var pageSize = table.page.info().length;
             // if (filterButtonClicked == true){
-            var companyInput = document.getElementById("companyIdInput").value;
-            var audienceInput = document.getElementById("audiencereachInput").value;
             // }
             const requestBody = {
-                companyId: companyInput,
-                audienceReach: audienceInput
+                companyId: filterCompanyId,
+                audienceReach: filterCompanyId
             };
             axios.post(`${baseUrl}/extra/getRowCount`, requestBody)
                 .then((response) => {
@@ -105,26 +104,24 @@
         }
 
         // Table filling algorithm:
-        function fillTable(table, filterButtonClicked) {
+        function fillTable(table, filterCompanyId, filterAudienceReach) {
             var pageNo = paginationIndex;
             var pageSize = table.page.info().length;
-            var companyInput = document.getElementById("companyIdInput").value
-            var audienceInput = document.getElementById("audiencereachInput").value
             const requestBody = {
                 pageNo: pageNo,
                 pageSize: pageSize,
                 //Specifically for filters
-                companyId: companyInput,
-                audienceReach: audienceInput
+                companyId: filterCompanyId,
+                audienceReach: filterAudienceReach
             };
             axios.post(`${baseUrl}/basic/Alldata`, requestBody)
                 .then((response) => {
                     console.log("respponse: " + response)
-                        var data = response.data;
-                        table.clear();
-                        data.forEach((param) => {
-                            table.row.add(param).draw()
-                        });
+                    var data = response.data;
+                    table.clear();
+                    data.forEach((param) => {
+                        table.row.add(param).draw()
+                    });
                 });
         }
 
@@ -176,9 +173,9 @@
 
             // Page's loaded, lets load pagination and the table!
             // Pagination Algorithm
-            paginationAlgorithm(table, filterButtonClicked);
+            paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
             // Retrieve ROW DATA from database based on limit(pageSize) and offset(pageNo * pageSize) values.
-            fillTable(table, filterButtonClicked);
+            fillTable(table, filterCompanyId, filterAudienceReach);
 
 
             // Click stuff:
@@ -187,9 +184,9 @@
                 if (paginationIndex != 0) {
                     paginationIndex -= 1;
                     // Pagination algorithm:
-                    paginationAlgorithm(table, filterButtonClicked);
-                    // Get data from table:
-                    fillTable(table, filterButtonClicked);
+                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
+                    // Get data from table
+                    fillTable(table, filterCompanyId, filterAudienceReach);
                 }
             });
 
@@ -204,18 +201,19 @@
                 if (paginationIndex < lastPage) {
                     paginationIndex += 1;
                     // Pagination algorithm:
-                    paginationAlgorithm(table, filterButtonClicked);
+                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
                     // Get data from table:
-                    fillTable(table, filterButtonClicked);
+                    fillTable(table, filterCompanyId, filterAudienceReach);
                 }
             });
 
             // On change of pageSize - [The show (how many) entries part]
             $("[name='theTable_length'").change(function () {
                 // Pagination algorithm:
-                paginationAlgorithm(table, filterButtonClicked);
+                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
+
                 // Get data from table:
-                fillTable(table, filterButtonClicked);
+                fillTable(table, filterCompanyId, filterAudienceReach);
                 $(".paginate_button[tabindex='" + 0 + "']").click();
                 paginationIndex = 0; //Sets back to page 1.(Highly important)
             });
@@ -225,32 +223,34 @@
                 var pageNumberClicked = ($(this).closest(".paginate_button"));
                 paginationIndex = pageNumberClicked[0].tabIndex;
                 // Pagination algorithm:
-                paginationAlgorithm(table);
+                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
                 // Get data from table:
-                fillTable(table);
+                fillTable(table, filterCompanyId, filterAudienceReach);
             });
 
             // Onclick filter button.
             $(document).on('click', '.filterBtn', function () {
-                //filterButtonClicked = true;
-                var companyIdInput = document.getElementById("companyIdInput").value
-                if(companyIdInput.length == 10){
-                    paginationAlgorithm(table, filterButtonClicked);
-                    fillTable(table, filterButtonClicked);
-                }else{
+
+                filterCompanyId = document.getElementById("companyIdInput").value;
+                filterAudienceReach = document.getElementById("audiencereachInput").value;
+                if (filterCompanyId.length == 10) {
+                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
+                    fillTable(table, filterCompanyId, filterAudienceReach);
+                } else {
                     alert("CompanyId has to be a 10 digit number!");
                     document.getElementById("companyIdInput").value = "";
                 }
-                //filterButtonClicked = false;
             });
 
             // Onclick clear button.
             $(document).on('click', '.clearBtn', function () {
                 document.getElementById("companyIdInput").value = "";
                 document.getElementById("audiencereachInput").value = "";
+                filterCompanyId = "";
+                filterAudienceReach = "";
                 //filterButtonClicked = true;
-                paginationAlgorithm(table, filterButtonClicked);
-                fillTable(table, filterButtonClicked);
+                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
+                fillTable(table, filterCompanyId, filterAudienceReach);
                 //filterButtonClicked = false;
             });
         });

@@ -8,19 +8,19 @@ This document helps you identify the smaller tasks and helps you create a rough 
     1. Frontend
         1. Data Viewer
             1. Wireframe (kelyn, kester)
-            2. Implementation (kelyn)
-            3. Integration (kelyn)
+            2. Implementation (kelyn, kester)
+            3. Integration (kelyn, kester)
         2. Result Viewer
             1. Wireframe (kelyn, kester)
-            2. Implementation (kester)
-            3. Integration (kester)
+            2. Implementation (kelyn, kester)
+            3. Integration (kelyn, kester)
     2. Mobile
         1. Data Viewer
-            1. Wireframe
+            1. Wireframe (kelyn, kester)
             2. Implementation
             3. Integration
         2. Result Viewer
-            1. Wireframe
+            1. Wireframe (kelyn, kester)
             2. Implementation
             3. Integration
     3. Backend
@@ -44,7 +44,12 @@ This document helps you identify the smaller tasks and helps you create a rough 
 | 1    | Basic | Frontend  | Result Viewer | Wireframe      |
 | 1    | Basic | Backend   | Insert API    | Database Setup |
 | 2    | Basic | Frontend  | Data Viewer   | Implementation |
+| 3    | Basic | Frontend  | Data Viewer   | Filtering      |
+| 3    | Basic | Backend   | Filter API    | Filtering API  |
+| 3    | Basic | Frontend  | Data Viewer   | Implementation |
 | 3    | Basic | Frontend  | Data Viewer   | Integration    |
+| 3    | Basic | Frontend  | Data Viewer   | Wireframe      |
+| 3    | Basic | Frontend  | Result Viewer | Wireframe      |
 | 4    | Basic | Backend   | Data Viewer   | Implementation |
 
 ### Member 2 - <Kester>
@@ -53,8 +58,14 @@ This document helps you identify the smaller tasks and helps you create a rough 
 | ---- | ----- | --------- | ------------- | -------------- |
 | 1    | Basic | Frontend  | Data Viewer   | Wireframe      |
 | 1    | Basic | Frontend  | Result Viewer | Wireframe      |
-| 2    | Basic | Frontend  | Result Viewer | Implementation |
-| 3    | Basic | Frontend  | Result Viewer | Integration    |
+| 2    | Basic | Backend   | Data Viewer   | Result API     |
+| 2    | Basic | Backend   | Data Viewer   | RowCount API   |
+| 2    | Basic | Frontend  | Data Viewer   | Pagination     |
+| 2    | Basic | Frontend  | Data Viewer   | Implementation |
+| 3    | Basic | Frontend  | Data Viewer   | Pagination     |
+| 3    | Basic | Frontend  | Data Viewer   | Integration    |
+| 3    | Basic | Frontend  | Data Viewer   | Wireframe      |
+| 3    | Basic | Frontend  | Result Viewer | Wireframe      |
 | 4    | Basic | Backend   | Result API    | Implementation |
 
 > This is just a template, you just need to state **WHO** will do **WHAT** and **WHEN**.
