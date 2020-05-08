@@ -61,15 +61,14 @@ app.post('/extra/getRowCount', function (req, res, next) {
 
 // POST 4. Get results ---
 app.post('/basic/getResults', function (req, res, next) {
-  console.log(req.body)
   const { optionIds, budget } = req.body;
-  // console.log("optionids: " + optionIds)
-  // console.log("budget: " + budget)
-  database.computeResults(optionIds, budget,(error, result) => {
+  console.log("optionids: " + optionIds)
+  console.log("budget: " + budget)
+  database.getOptionsForComputation(optionIds,(error, result) => {
     if (error) {
       return next(error);
     }
-    return res.json(result);
+    backend.compute(result, budget);
   })
 });
 
