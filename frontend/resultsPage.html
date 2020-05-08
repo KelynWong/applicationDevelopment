@@ -32,26 +32,30 @@
 
 <body>
     <script type="text/javascript">
-
+    const baseUrl = "http://localhost:3000";
     $(document).ready(function () {
-        $(document).on('click', '#computeBtn', function () {
+        $(document).on('click', '.computeBtn', function () {
             var optionIdsInput = document.getElementById("optionIdsInput").value
             var budgetInput = document.getElementById("budgetInput").value
-            console.log("optionIds: " + optionIdsInput);
+            console.log("optionIdsInput: " + optionIdsInput);
             console.log("budgetInput: " + budgetInput);
-            // axios.post(`${baseUrl}/basic/getResults`, requestBody)
-            //     .then((response) => {
-            //         console.log("response: " + response)
-            //         if(response.data != null){
-            //             var data = response.data;
-            //             table.clear();
-            //             data.forEach((param) => {
-            //                 table.row.add(param).draw()
-            //             });
-            //         }else{
-            //             table.clear();
-            //         }
-            //     });
+            const requestBody = {
+                optionIds: optionIdsInput,
+                budget: budgetInput,
+            };
+            axios.post(`${baseUrl}/basic/getResults`, requestBody)
+                .then((response) => {
+                    console.log("response: " + response)
+                    if(response.data != null){
+                        var data = response.data;
+                        table.clear();
+                        data.forEach((param) => {
+                            table.row.add(param).draw()
+                        });
+                    }else{
+                        table.clear();
+                    }
+                });
             });
         
 
@@ -121,11 +125,11 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
                         </div>
-                        <input type="text" placeholder="OptionIds e.g. 1000000001,1000000002,..." class="form-control optionIdsInput">
+                        <input type="text" placeholder="OptionIds e.g. 1000000001,1000000002,..." class="form-control" id="optionIdsInput">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-dollar"></i>
                         </div>
-                        <input type="text" placeholder="Budget" class="form-control budgetInput">
+                        <input type="text" placeholder="Budget" class="form-control" id="budgetInput">
                         <button type="button" class="btn btn-success computeBtn">Compute</button>
                     </div>
                 </div>

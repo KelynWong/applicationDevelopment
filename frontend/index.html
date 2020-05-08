@@ -234,12 +234,21 @@
             $(document).on('click', '.filterBtn', function () {
                 //filterButtonClicked = true;
                 var companyIdInput = document.getElementById("companyIdInput").value
-                if(companyIdInput.length == 10){
-                    paginationAlgorithm(table, filterButtonClicked);
-                    fillTable(table, filterButtonClicked);
+                var audiencereachInput = document.getElementById("audiencereachInput").value
+                if(!companyIdInput && !audiencereachInput){
+                    alert("Please enter companyId or audience reach or both!");
                 }else{
-                    alert("CompanyId has to be a 10 digit number!");
-                    document.getElementById("companyIdInput").value = "";
+                    if(companyIdInput.length == 10 || companyIdInput == ''){
+                        if(audiencereachInput === parseInt(audiencereachInput, 10)){
+                            paginationAlgorithm(table, filterButtonClicked);
+                            fillTable(table, filterButtonClicked);
+                        }else{
+                            alert("Audience reach has to be a integer!");
+                        }
+                    }else{
+                        alert("CompanyId has to be a 10 digit number!");
+                    }
+                    
                 }
                 //filterButtonClicked = false;
             });
@@ -288,12 +297,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-building"></i></span>
                         </div>
-                        <input type="text" placeholder="CompanyId" class="form-control companyidInput"
+                        <input type="text" placeholder="CompanyId" class="form-control"
                             id="companyIdInput">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user"></i>
                         </div>
-                        <input type="text" placeholder="Audience reach" class="form-control audiencereachInput"
+                        <input type="text" placeholder="Audience reach" class="form-control"
                             id="audiencereachInput">
                         <button type="button" class="btn btn-success filterBtn">Filter</button>
                         <button type="button" class="btn btn-warning clearBtn">Clear</button>

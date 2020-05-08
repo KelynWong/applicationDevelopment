@@ -119,18 +119,21 @@ function getRowCount(companyId, audienceReach, callback){
 }
 
 //4. GET results ---
-function computeResults(optionIds, budget, callback) {
+function getOptionsForComputation(optionIds, callback) {
   
-  var optionList = optionIds.split(",")
+  var optionList = optionIds.split(',');
+  console.log("optionList.length: " + optionList.length)
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
-    whereClause += `companyId = $${i++}`
+    whereClause += `optionId = $${i++}`
+    if(i != optionList.length) whereClause += `, `
     values.push(parseInt(optionList[i])); //Array.push companyid
   }
   whereClause += `);`
   const query = `SELECT * FROM Advertisement ${whereClause}`
+  console.log(values)
   console.log(query);
   //Connect to database
   const client = connect();
@@ -146,5 +149,5 @@ module.exports = {
   insertAdvertisement,
   getData,
   getRowCount,
-  computeResults
+  getOptionsForComputation
 }
