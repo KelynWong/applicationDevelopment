@@ -6,7 +6,8 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/sample-wireframe-result-viewer-frontend.png)
+![Wireframe](assets/Result Viewer.png)
+![Wireframe](If data overflows scenario.png)
 
 ## Justifications
 

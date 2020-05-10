@@ -237,11 +237,11 @@
                     alert("Please enter companyId or audience reach or both!");
                 }else{
                     if(filterCompanyId.length == 10 || filterCompanyId == ''){
-                        if(filterAudienceReach === parseInt(filterAudienceReach, 10)){
+                        if(isNaN(filterAudienceReach)){
+                            alert("Audience reach has to be a number!");
+                        }else{
                             paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
                             fillTable(table, filterCompanyId, filterAudienceReach);
-                        }else{
-                            alert("Audience reach has to be a integer!");
                         }
                     }else{
                         alert("CompanyId has to be a 10 digit number!");
