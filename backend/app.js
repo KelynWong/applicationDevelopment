@@ -1,3 +1,8 @@
+// App.js Script
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
+
 //Start server via "npm start"
 //This database uses ElephantSQL that uses PostgreSQL as a service.
 
@@ -38,8 +43,8 @@ app.post('/insertAdvertisement/', function (req, res, next) {
 app.post('/basic/Alldata', function (req, res) {
   console.log(req.body);
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
-  
-  database.getData(companyId, audienceReach,pageNo, pageSize, (error, result) => {
+
+  database.getData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
     if (error) {
       return next(error);
     }
@@ -51,7 +56,7 @@ app.post('/basic/Alldata', function (req, res) {
 // GET 3. Retrieve all number of row data in table: advertisement ---
 app.post('/extra/getRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.body;
-  database.getRowCount(companyId, audienceReach,(error, result) => {
+  database.getRowCount(companyId, audienceReach, (error, result) => {
     if (error) {
       return next(error);
     }
@@ -64,7 +69,7 @@ app.post('/basic/getResults', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
-  database.getOptionsForComputation(optionIds,(error, result) => {
+  database.getOptionsForComputation(optionIds, (error, result) => {
     if (error) {
       return next(error);
     }

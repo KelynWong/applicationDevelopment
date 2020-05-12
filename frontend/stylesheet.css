@@ -1,8 +1,17 @@
+/* Data Viewer CSS Stylesheet
+   Name: Wong En Ting Kelyn
+   Name: Teh Huan Xi Kester
+   Class: DIT/FT/2B/01 */
+
 #rows {
   min-height: 100vh;
 }
+/* @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"; */
+body {
+  /* font-family: 'Poppins', sans-serif; */
+}
 
-/* Row 1 stuff */
+/* Row 1 CSS */
 
 #row1 {
   margin: 0;
@@ -13,113 +22,7 @@
   min-width: 200px;
 }
 
-#titleBox {
-  height: 50px;
-  flex: 1;
-  min-height: 50px;
-  max-height: 50px;
-  margin: 0;
-  padding: 0;
-  color: white;
-  background: rgb(6,153,147);
-  background: linear-gradient(0deg, rgba(6,153,147,1) 0%, rgba(12,224,215,1) 100%);
-}
-
-/* Row 2 stuff */
-
-#row2 {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  overflow-x: hidden;
-  flex: 10;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-#filterArea {
-  min-height: 100px;
-  background: rgb(200,200,200);
-  background: linear-gradient(0deg, rgba(200,200,200,1) 0%, rgba(255,255,255,1) 100%);
-}
-
-#tableArea {
-  /* min-height: 300px; */
-  flex: 1;
-}
-
-#paginationArea {
-  bottom: 0;
-  /* height: 100px;
-  min-height: 80px; */
-}
-
-/* Table CSS(Modifies the default placements) */
-
-#tableContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-#theTable_info {
-  /* background-color: green; */
-  padding-left: 10px;
-  float: none;
-}
-
-#theTable_paginate {
-  /* background-color: blue; */
-  float: left;
-}
-
-#theTable_length {
-  /* background-color: red; */
-  float: right;
-}
-
-#theTable_wrapper {
-  flex: auto;
-}
-
-#pagination{
-  flex: 0.25;
-  display: flex;
-}
-
-#tabulationContainer {
-  width: 200px; 
-  height: 500px; 
-  background-color: grey; 
-  top: 150px; 
-  right: 0px; 
-  position: absolute;
-  overflow: hidden;
-}
-
-#tabulationTitle {
-  width: 100%; 
-  height: 50px; 
-  line-height: 50px;
-  background: linear-gradient(0deg, rgba(6,153,147,1) 0%, rgba(12,224,215,1) 100%);; 
-  text-align: center;
-}
-
-/*
-RECHECK - The code below are experimental~
-*/
-
-@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #fafafa;
-}
-
-a, a:hover, a:focus {
-  color: inherit;
-  text-decoration: none;
-  transition: all 0.3s;
-}
+/* Sidebar CSS  */
 
 #sidebar {
   color: #fff;
@@ -151,6 +54,93 @@ a, a:hover, a:focus {
   background: #069993;
 }
 
+/* Sidebar responsiveness */
+
+a, a:hover, a:focus {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+/* Row 2 CSS */
+
+#row2 {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  overflow-x: hidden;
+  flex: 10;
+  flex-direction: column;
+  min-height: 100vh;
+}
+h1,h5 {
+  display: inline;
+}
+#titleBox {
+  height: 50px;
+  flex: 1;
+  min-height: 50px;
+  max-height: 50px;
+  margin: 0;
+  padding: 0;
+  color: white;
+  background: rgb(6, 153, 147);
+  background: linear-gradient(0deg, rgba(6, 153, 147, 1) 0%, rgba(12, 224, 215, 1) 100%);
+}
+
+#filterArea {
+  min-height: 100px;
+  background: rgb(200, 200, 200);
+  background: linear-gradient(0deg, rgba(200, 200, 200, 1) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+/* Table CSS(Modifies the default placements) */
+#tableArea {
+  flex: 1;
+}
+
+#tableContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#theTable_info {
+  padding-left: 10px;
+  float: none;
+}
+
+#theTable_paginate {
+  float: left;
+}
+
+#theTable_length {
+  float: right;
+}
+
+#theTable_wrapper {
+  flex: auto;
+}
+
+#tableControls {
+  bottom: 0;
+}
+
+/* Entries Area CSS */
+
+#entriesArea {
+  padding-left: 20px;
+  float: none;
+}
+
+/* Pagination CSS */
+
+#pagination {
+  flex: none;
+  display: flex;
+  bottom: 0;
+}
+
 #theTable_next:hover, #theTable_previous:hover {
   color: #333 !important;
   border: 1px solid #979797;
@@ -162,9 +152,12 @@ a, a:hover, a:focus {
   background: -o-linear-gradient(top, #fff 0%, #dcdcdc 100%);
   background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
 }
-.paginate_button.current{
+
+.paginate_button.current {
   border: 2px solid black;
+  padding: 20px;
 }
+
 .paginate_button:hover {
   color: white !important;
   border: 2px solid #979797;
@@ -173,7 +166,7 @@ a, a:hover, a:focus {
   background: -webkit-linear-gradient(top, black 0%, #dcdcdc 100%);
   background: -moz-linear-gradient(top, black 0%, #dcdcdc 100%);
   background: -ms-linear-gradient(top, black 0%, #dcdcdc 100%);
-  background: -o-linear-gradient(top, black  0%, #dcdcdc 100%);
+  background: -o-linear-gradient(top, black 0%, #dcdcdc 100%);
   background: linear-gradient(to bottom, black 0%, #dcdcdc 100%);
 }
 
@@ -181,17 +174,34 @@ a, a:hover, a:focus {
   padding: 20px;
   margin: 0;
 }
-/* #generatedButton{
-  padding: 20px;
-  
-} */
 
-.pageNumbers,.paginate_button {
+.pageNumbers, .finalPageNumber, .paginate_button {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .ellipsis {
-  float:left;
+  float: left;
+}
+
+/* Data Results  */
+
+#tabulationContainer {
+  width: 200px;
+  height: 500px;
+  background-color: grey;
+  top: 150px;
+  right: 0px;
+  position: absolute;
+  overflow: hidden;
+}
+
+#tabulationTitle {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  background: linear-gradient(0deg, rgba(6, 153, 147, 1) 0%, rgba(12, 224, 215, 1) 100%);
+  ;
+  text-align: center;
 }

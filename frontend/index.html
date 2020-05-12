@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Data Viewer html webpage
+Name: Wong En Ting Kelyn
+Name: Teh Huan Xi Kester
+Class: DIT/FT/2B/01 -->
 <!-- 
     Changes:
-    1. Responsive Pagination is now working. But requires filter controls to be done.
-    2. Added both API calls into functions, its easier to navigate the script and make a faster global change to the API.
-    
-    Awaiting:
-    1. Add a clear button to filters.
-    2. Validation for filters.
-    3. Responsive Pagination for filters.
+    1. Moved script into the js file, "dataViewerScript.js"
+    2. one div's id was changed, minor.
 -->
 
 <head>
@@ -17,6 +16,8 @@
     <title>Data Viewer</title>
     <!--JQuery -> For Javascript implementation! -->
     <script src="https://code.jquery.com/jquery-3.5.0.min.js" type="text/javascript"></script>
+    <!-- Javascript script -->
+    <script src="dataViewerScript.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -46,223 +47,6 @@
 </head>
 
 <body>
-    <script>
-        var paginationIndex = 0; //0 being the first page
-        const baseUrl = "http://localhost:3000";
-        var filterCompanyId = "";
-        var filterAudienceReach = "";
-        // Pagination algorithm:
-        function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
-            var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
-            var middleTag = '">'
-            var closingTag = '</a>'
-            var elipsis = '<a class="ellipsis">…</a>'
-            var pageSize = table.page.info().length;
-            // if (filterButtonClicked == true){
-            // }
-            const requestBody = {
-                companyId: filterCompanyId,
-                audienceReach: filterCompanyId
-            };
-            axios.post(`${baseUrl}/extra/getRowCount`, requestBody)
-                .then((response) => {
-                    var parse = response.data[0].count;
-                    var final = Math.ceil(parse / pageSize -1 ); //This gets the max page (in index form)
-                    $(".pageNumbers").empty(); //Empties the class so it can append and work its magic
-                    $(".finalPageNumber").empty();
-                    console.log(parse);
-                    if (final <= 4 && final != 0) { //If total pages is lesser than 5. (No need for ellipsis)
-                        for (i = 0; i <= final; i++) {
-                            $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
-                        }
-                    }
-                    else if (final == 0) { //If total pages is just 1.
-                        $(".pageNumbers").append(openingTag + (0) + middleTag + (1) + closingTag);
-                    }
-                    // Pagination responsiveness (Here comes the ellipsis!)
-                    else if (paginationIndex < 3) { // If page index is smaller than index 3(page4)
-                        for (i = 0; i <= 4; i++) {
-                            $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
-                        }
-                        $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
-                    }
-                    else if (paginationIndex < final - 2) { //If page index is smaller than the (last page - 2) - This results in the selected page to be inbetween 2 numbers.
-                        for (i = paginationIndex - 2; i <= paginationIndex + 2; i++) {
-                            $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
-                        }
-                        $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
-                    } else { // When the page index is nearing its final destination.
-                        for (i = final - 5; i <= final - 1; i++) {
-                            $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
-                        }
-                        $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
-                    }
-                    // Can't forget the visual representation!
-                    $(".paginate_button[tabindex='" + paginationIndex + "']").attr('class', 'paginate_button current');
-                    $(".paginate_button[tabindex='" + (paginationIndex + 1) + "']").attr('class', 'paginate_button');
-                });
-        }
-
-        // Table filling algorithm:
-        function fillTable(table, filterCompanyId, filterAudienceReach) {
-            var pageNo = paginationIndex;
-            var pageSize = table.page.info().length;
-            const requestBody = {
-                pageNo: pageNo,
-                pageSize: pageSize,
-                //Specifically for filters
-                companyId: filterCompanyId,
-                audienceReach: filterAudienceReach
-            };
-            axios.post(`${baseUrl}/basic/Alldata`, requestBody)
-                .then((response) => {
-                    console.log("respponse: " + response)
-                    var data = response.data;
-                    table.clear();
-                    data.forEach((param) => {
-                        table.row.add(param).draw()
-                    });
-                });
-        }
-
-        //Every single script will only run once the DOM is ready!
-        $(document).ready(function () {
-            var table = $('#theTable').DataTable({ //Renamed the table to literally, theTable.
-                "columns": [
-                    { data: 'optionid' },
-                    { data: 'companyid' },
-                    { data: 'cost' },
-                    { data: 'audiencereach' },
-                    { data: 'adtype' },
-                ],
-                "scrollX": true,
-                "scrollY": "50vh",
-                "scrollCollapse": true,
-                responsive: true,
-                // The DOM model for the table are only modeled at t,l.
-                // Legend~
-                // l - length
-                // f -filter
-                // t - table 
-                // i - information 
-                // p - pagination 
-                // r - processing 
-                // <> - div elements   
-                // <"#id" > -div with an id 
-                // <"class" > div with a class
-                // <"#id.class" div with an id and class
-                dom: '<"#tableContainer"<"#tableArea"t><"#paginationArea"l>>',
-                // Only tableArea will have flex, paginationArea won't. Thus the written DOM.
-                "lengthMenu": [[5, 10, 20, 30, 40, 50, -1], [5, 10, 20, 30, 40, 50, "All"]]
-            });
-
-            //Basically the flow:
-            // 1. GET the number of rows from the table and set up pagination based off Page Size(Default 5)
-            // 2. Retrieve data from table based off Page Size(Default 5) and Page Number(Default 1). 
-            // - Since its the first page, no offset is needed, thus the algorithm makes the offset 0.
-            // 3. After that, it comes down to user interaction.
-            // 4. If the next, previous buttons are pressed:
-            // - 1) Increment/Decrease the paginationIndex based on what was clicked.
-            // - 2) Modify the class name of buttons so that the button represented by the paginationIndex("tabindex is checked!")
-            //      will be modified css wise.
-            // - 3) "Change the page" by deleting table data and POST to get data from table(This uses the same exact algorithm as step 2 in flow.)
-            //      - Utilises offset and limit to get the data needed for the respective page!
-            // 5. If the number buttons are pressed:
-            // - Vice versa as to 4, but paginationIndex is changed to the button's respective index.
-            // That should be all!
-
-            // Page's loaded, lets load pagination and the table!
-            // Pagination Algorithm
-            paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-            // Retrieve ROW DATA from database based on limit(pageSize) and offset(pageNo * pageSize) values.
-            fillTable(table, filterCompanyId, filterAudienceReach);
-
-
-            // Click stuff:
-            // Onclick PREVIOUS button
-            $(document).on('click', '#theTable_previous', function () {
-                if (paginationIndex != 0) {
-                    paginationIndex -= 1;
-                    // Pagination algorithm:
-                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                    // Get data from table
-                    fillTable(table, filterCompanyId, filterAudienceReach);
-                }
-            });
-
-            // Onclick NEXT button
-            $(document).on('click', '#theTable_next', function () {
-                var array = []; //the TabIndex of paginate_buttons generated are taken in to get the highest index
-                var lastPage;
-                $(".paginate_button").each(function () {
-                    array.push(parseInt($(this).attr('tabIndex')))
-                })
-                lastPage = Math.max(...array);
-                if (paginationIndex < lastPage) {
-                    paginationIndex += 1;
-                    // Pagination algorithm:
-                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                    // Get data from table:
-                    fillTable(table, filterCompanyId, filterAudienceReach);
-                }
-            });
-
-            // On change of pageSize - [The show (how many) entries part]
-            $("[name='theTable_length'").change(function () {
-                // Pagination algorithm:
-                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-
-                // Get data from table:
-                fillTable(table, filterCompanyId, filterAudienceReach);
-                $(".paginate_button[tabindex='" + 0 + "']").click();
-                paginationIndex = 0; //Sets back to page 1.(Highly important)
-            });
-
-            // Onclick pagination number.
-            $(document).on('click', '#generatedButton', function () {
-                var pageNumberClicked = ($(this).closest(".paginate_button"));
-                paginationIndex = pageNumberClicked[0].tabIndex;
-                // Pagination algorithm:
-                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                // Get data from table:
-                fillTable(table, filterCompanyId, filterAudienceReach);
-            });
-
-            // Onclick filter button.
-            $(document).on('click', '.filterBtn', function () {
-                //filterButtonClicked = true;
-                var filterCompanyId = document.getElementById("companyIdInput").value
-                var filterAudienceReach = document.getElementById("audiencereachInput").value
-                if(!filterCompanyId && !filterAudienceReach){
-                    alert("Please enter companyId or audience reach or both!");
-                }else{
-                    if(filterCompanyId.length == 10 || filterCompanyId == ''){
-                        if(isNaN(filterAudienceReach)){
-                            alert("Audience reach has to be a number!");
-                        }else{
-                            paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                            fillTable(table, filterCompanyId, filterAudienceReach);
-                        }
-                    }else{
-                        alert("CompanyId has to be a 10 digit number!");
-                    }
-                }
-            });
-
-            // Onclick clear button.
-            $(document).on('click', '.clearBtn', function () {
-                document.getElementById("companyIdInput").value = "";
-                document.getElementById("audiencereachInput").value = "";
-                filterCompanyId = "";
-                filterAudienceReach = "";
-                //filterButtonClicked = true;
-                paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                fillTable(table, filterCompanyId, filterAudienceReach);
-                //filterButtonClicked = false;
-            });
-        });
-    </script>
-
     <div class="container-fluid">
         <div class="row" id="rows">
             <!-- Row 1 -->
@@ -288,6 +72,7 @@
             <div class="bg-white" id="row2">
                 <div class="titleBox" id="titleBox">
                     <h1>Data Viewer</h1>
+                    <h5>- view data!</h5>
                 </div>
                 <div class="filterArea" id="filterArea">
                     <h2>Filter by:</h2>
@@ -295,13 +80,11 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-building"></i></span>
                         </div>
-                        <input type="text" placeholder="CompanyId" class="form-control"
-                            id="companyIdInput">
+                        <input type="text" placeholder="CompanyId" class="form-control" id="companyIdInput">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-user"></i>
                         </div>
-                        <input type="text" placeholder="Audience reach" class="form-control"
-                            id="audiencereachInput">
+                        <input type="text" placeholder="Audience reach" class="form-control" id="audiencereachInput">
                         <button type="button" class="btn btn-success filterBtn">Filter</button>
                         <button type="button" class="btn btn-warning clearBtn">Clear</button>
                     </div>
