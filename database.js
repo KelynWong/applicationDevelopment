@@ -1,3 +1,7 @@
+// database.js Script
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 //This file handles database connections.
 
 //Connection URI
