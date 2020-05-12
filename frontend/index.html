@@ -67,12 +67,12 @@
             axios.post(`${baseUrl}/extra/getRowCount`, requestBody)
                 .then((response) => {
                     var parse = response.data[0].count;
-                    var final = Math.ceil(parse / pageSize); //This gets the max page (in index form)
+                    var final = Math.ceil(parse / pageSize -1 ); //This gets the max page (in index form)
                     $(".pageNumbers").empty(); //Empties the class so it can append and work its magic
                     $(".finalPageNumber").empty();
-
+                    console.log(parse);
                     if (final <= 4 && final != 0) { //If total pages is lesser than 5. (No need for ellipsis)
-                        for (i = 0; i < final; i++) {
+                        for (i = 0; i <= final; i++) {
                             $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                         }
                     }
@@ -80,7 +80,7 @@
                         $(".pageNumbers").append(openingTag + (0) + middleTag + (1) + closingTag);
                     }
                     // Pagination responsiveness (Here comes the ellipsis!)
-                    else if (paginationIndex < 3) { // If page index is smaller than 3.
+                    else if (paginationIndex < 3) { // If page index is smaller than index 3(page4)
                         for (i = 0; i <= 4; i++) {
                             $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                         }

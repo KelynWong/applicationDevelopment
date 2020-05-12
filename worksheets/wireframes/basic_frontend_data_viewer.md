@@ -4,33 +4,56 @@ This document should help you explain how your user interfaces are designed. You
 
 ## Wireframe
 
-> This is just an example, please find your own wireframe.
+![Wireframe](/assets/wireframe/Data Viewer.png) 
 
-![Wireframe](/assets/Data Viewer.png) 
+## ------------ Justifications ----------------
 
-## Justifications
+### Justification 1 (Filtering)
 
-### Justification 1
-
-> This is just an example, please find your own justifications.
-
-![Justificaiton1](https://www.jquery-az.com/wp-content/uploads/2016/05/39.0_1-Bootstrap-data-table.png)
+![Justificaiton1](/assets/justification/Filtering.jpg)
+Images from:
+[screenshot]
 
 #### Good Points
 
-1. Attributes shown at top and bottom can be useful for big table.
-2. Showing total number of entries can be useful for some instance.
-3. Pagination tool meets requirement
+1. Allows the user to filter out what they are finding instead of going through the whole table of data
+2. Clear placeholders which lets the user know what to key in for each input box
 
 #### Bad Points
 
-1. May need more than 1 search bar as we need to search by multiple attributes
-2. Data with many column may be bad.
+1. Users are only limited to three filtering attributes.
+2. All of the input boxes have to be filled then able to filter.
 
-### Justification 2
+### Justification 2 (Entries per page)
 
-> Find more existing work for reference.
+![Justificaiton2](/assets/justification/Entries per page.jpg)
+Image from:
+https://www.pinterest.co.uk/jinghanshi/admindashboards/
 
-### Justification 3
+#### Good Points
 
-> Find more existing work for reference.
+1. Allows user to limit the amount of data they want to see at once
+2. Easy to understand and use
+3. Enables faster loading time as not retrieving all data at once
+
+#### Bad Points
+
+1. The options are pre-set and users only able to use those options(e.g. 5, 10, 20 entries per page options)
+2. User's might not want to be limited to a certain amount of entries
+
+### Justification 3 (Pagination)
+
+![Justificaiton3](/assets/justification/Pagination.jpg)
+Image from:
+https://balsamiq.com/learn/resources/ui-control-guidelines/data-tables/
+
+#### Good Points
+
+1. Allows user's to go on to the next or previous page if data overflows due to entries per page and too much data
+2. It enables the user to click to whatever page they desire(some pagination only have next and previous)
+3. Pagination at the bottom of the page which is common and hence they would be familiar to it and use it easily
+
+#### Bad Points
+
+1. The buttons are a bit too small
+2. A table in a table is very messy and confusing
