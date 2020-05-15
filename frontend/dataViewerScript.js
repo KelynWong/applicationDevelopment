@@ -28,7 +28,7 @@ var filterCompanyId = "";
 var filterAudienceReach = "";
 // Pagination algorithm:
 function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
-    var openingTag = '<a class="paginate_button" id="generatedButton" tabindex="';
+    var openingTag = '<a class="paginateButton" id="generatedButton" tabIndex="';
     var middleTag = '">'
     var closingTag = '</a>'
     var elipsis = '<a class="ellipsis">…</a>'
@@ -71,8 +71,8 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
                 $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
             }
             // Can't forget the visual representation!
-            $(".paginate_button[tabindex='" + paginationIndex + "']").attr('class', 'paginate_button current');
-            $(".paginate_button[tabindex='" + (paginationIndex + 1) + "']").attr('class', 'paginate_button');
+            $(".paginateButton[tabIndex='" + paginationIndex + "']").attr('class', 'paginateButton current');
+            $(".paginateButton[tabIndex='" + (paginationIndex + 1) + "']").attr('class', 'paginateButton');
 
             // Entries per page algo.
             $(".entriesArea").remove();
@@ -102,7 +102,7 @@ function fillTable(table, filterCompanyId, filterAudienceReach) {
         companyId: filterCompanyId,
         audienceReach: filterAudienceReach
     };
-    axios.post(`${baseUrl}/basic/Alldata`, requestBody)
+    axios.post(`${baseUrl}/basic/allData`, requestBody)
         .then((response) => {
             console.log("response: " + response)
             var data = response.data;
@@ -147,7 +147,7 @@ $(document).ready(function () {
 
     // Click stuff:
     // Onclick PREVIOUS button
-    $(document).on('click', '#theTable_previous', function () {
+    $(document).on('click', '#theTablePrevious', function () {
         if (paginationIndex != 0) {
             paginationIndex -= 1;
             // Pagination algorithm:
@@ -158,10 +158,10 @@ $(document).ready(function () {
     });
 
     // Onclick NEXT button
-    $(document).on('click', '#theTable_next', function () {
+    $(document).on('click', '#theTableNext', function () {
         var array = []; //the TabIndex of paginate_buttons generated are taken in to get the highest index
         var lastPage;
-        $(".paginate_button").each(function () {
+        $(".paginateButton").each(function () {
             array.push(parseInt($(this).attr('tabIndex')))
         })
         lastPage = Math.max(...array);
@@ -174,7 +174,7 @@ $(document).ready(function () {
 
     // Onclick pagination number.
     $(document).on('click', '#generatedButton', function () {
-        var pageNumberClicked = ($(this).closest(".paginate_button"));
+        var pageNumberClicked = ($(this).closest(".paginateButton"));
         paginationIndex = pageNumberClicked[0].tabIndex;
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
         fillTable(table, filterCompanyId, filterAudienceReach);
@@ -183,7 +183,7 @@ $(document).ready(function () {
     // Onclick filter button.
     $(document).on('click', '.filterBtn', function () {
         filterCompanyId = document.getElementById("companyIdInput").value
-        filterAudienceReach = document.getElementById("audiencereachInput").value
+        filterAudienceReach = document.getElementById("audienceReachInput").value
         if (!filterCompanyId && !filterAudienceReach) {
             alert("Please enter companyId or audience reach or both!");
         } else {
@@ -203,20 +203,20 @@ $(document).ready(function () {
     // Onclick clear button.
     $(document).on('click', '.clearBtn', function () {
         document.getElementById("companyIdInput").value = "";
-        document.getElementById("audiencereachInput").value = "";
+        document.getElementById("audienceReachInput").value = "";
         filterCompanyId = "";
         filterAudienceReach = "";
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
         fillTable(table, filterCompanyId, filterAudienceReach);
-        $(".paginate_button[tabindex='" + 0 + "']").click();
+        $(".paginateButton[tabIndex='" + 0 + "']").click();
         paginationIndex = 0;
     });
 
     // On change of pageSize - [The show (how many) entries part]
-    $("[name='theTable_length'").change(function () {
+    $("[name='theTableLength'").change(function () {
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
         fillTable(table, filterCompanyId, filterAudienceReach);
-        $(".paginate_button[tabindex='" + 0 + "']").click();
+        $(".paginateButton[tabIndex='" + 0 + "']").click();
         paginationIndex = 0; //Sets back to page 1.(Highly important)
     });
 });

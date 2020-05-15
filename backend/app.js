@@ -26,6 +26,7 @@ app.use(cors());
 app.options('*', cors());
 
 const database = require('./database')
+const algo = require('./algo')
 // POST 1. Insert Advertisement details ---
 app.post('/insertAdvertisement/', function (req, res, next) {
   const { data } = req.body;
@@ -40,7 +41,7 @@ app.post('/insertAdvertisement/', function (req, res, next) {
 });
 
 // POST 2. Retrieve all data ---
-app.post('/basic/Alldata', function (req, res) {
+app.post('/basic/allData', function (req, res) {
   console.log(req.body);
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
 
@@ -64,7 +65,21 @@ app.post('/extra/getRowCount', function (req, res, next) {
   })
 });
 
-// POST 4. Get results ---
+// POST 4. Retrieve data for results ---
+app.post('/basic/allDataForResults', function (req, res) {
+  console.log(req.body);
+  const { optionIds } = req.body;
+
+  database.getData(optionIds, (error, result) => {
+    if (error) {
+      return next(error);
+    }
+    console.log(result);
+    res.json(result);
+  })
+});
+
+// POST 5. Get results ---
 app.post('/basic/getResults', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
@@ -73,7 +88,28 @@ app.post('/basic/getResults', function (req, res, next) {
     if (error) {
       return next(error);
     }
-    backend.compute(result, budget);
+    var audience = [];
+    var cost = [];
+    var optionType = []
+    for (let i = 0; i < result.length; i++) {
+      audience.push(result[i].audiencereach)
+      cost.push(result[i].cost)
+      optionType.push(result[i].adtype)
+    }
+    console.log("audience array: "+audience)
+    console.log("cost array: "+cost)
+    console.log("adType: "+optionType)
+    for (let j = 1; j <= optionType.length; j++) {
+      if(optionType[j] != optionType[j-1]){
+        return error
+      }else if(optionType[0] == "Not Fixed"){
+        console.log("RESULTS OF ALGO: "+ algo.fractionalKnapsack(audience, cost, budget))
+        res.json(result)
+      }else{
+        // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget))
+      }
+    }
+    
   })
 });
 

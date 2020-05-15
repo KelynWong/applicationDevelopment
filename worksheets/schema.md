@@ -14,7 +14,7 @@ CREATE TABLE Advertisement (
   companyId int DEFAULT NULL,
   cost decimal(19, 2) DEFAULT NULL,
   audienceReach bigint DEFAULT NULL,
-  adTypeName varchar(255) DEFAULT NULL,
+  adType varchar(255) DEFAULT NULL,
   PRIMARY KEY (optionID),
 )
 ```

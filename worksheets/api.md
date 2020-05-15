@@ -21,7 +21,7 @@ Each API should include
 
 | attribute   | value          |
 | ----------- | -------------- |
-| HTTP Method | GET            |
+| HTTP Method | POST           |
 | Endpoint    | /basic/allData |
 
 ### Parameters
@@ -61,7 +61,7 @@ Each API should include
 ### Sample Request
 
 ```http
-GET /basic/AllData
+POST /basic/AllData
 ```
 
 ### Sample Response
@@ -93,7 +93,7 @@ GET /basic/AllData
 
 | attribute   | value                 |
 | ----------- | --------------------- |
-| HTTP Method | post                  |
+| HTTP Method | POST                  |
 | Endpoint    | /insertAdvertismement |
 
 ### Parameters
@@ -133,7 +133,7 @@ GET /basic/AllData
 ### Sample Request
 
 ```http
-POST /insertAdvertisement?optionId=1234567890&companyId=1234567890&audienceReach=6000&cost=300&adType=Fixed
+POST /insertAdvertisement
 ```
 
 ### Sample Response
@@ -160,9 +160,9 @@ POST /insertAdvertisement?optionId=1234567890&companyId=1234567890&audienceReach
 
 ## [Any page] Get Row count ---------------------------------------------------------------
 
-| attribute   | value               |
+| attribute   | value               | 
 | ----------- | ------------------- |
-| HTTP Method | GET                 |
+| HTTP Method | POST                |
 | Endpoint    | /extra/getRowCount  |
 
 ### Parameters
@@ -222,10 +222,10 @@ GET /extra/getRowCount
 
 ## [Results page] Get Results ---------------------------------------------------------------
 
-| attribute   | value           |
-| ----------- | --------------- |
-| HTTP Method | GET             |
-| Endpoint    | /basic/results  |
+| attribute   | value             |
+| ----------- | ----------------- |
+| HTTP Method | POST              |
+| Endpoint    | /basic/getResults |
 
 ### Parameters
 
@@ -261,7 +261,7 @@ GET /extra/getRowCount
 ### Sample Request
 
 ```http
-GET /basic/Results?optionId=1234567890,1234567891,1234567892,1234567893&budget=500
+POST /basic/getResults
 ```
 
 ### Sample Response
