@@ -122,23 +122,47 @@ function getRowCount(companyId, audienceReach, callback){
 
 }
 
-//4. GET results ---
+//4. GET Retrieve data for results ---
+// function getOptionsForComputation(optionIds, callback) {
+  
+//   var optionList = optionIds.split(',');
+//   //This part below determines what sql query is produced based on the page state.
+//   const values = [];
+//   let whereClause = "WHERE optionId IN (";
+//   for (let i = 1; i <= optionList.length; i++) {
+//     whereClause += `$${i}`
+//     if(i != optionList.length) whereClause += `, `
+//     values.push(parseInt(optionList[i-1])); //Array.push companyid
+//   }
+//   whereClause += `);`
+//   const query = `SELECT * FROM Advertisement ${whereClause}`
+//   console.log("values: " +values)
+//   console.log("query: "+query);
+//   //Connect to database
+//   const client = connect();
+//   client.query(query, values, function (err, { rows }) {
+//     client.end();
+//     callback(err, rows);
+//     console.log(rows)
+//   })
+// }
+
+//5. GET audience and cost for computation ---
 function getOptionsForComputation(optionIds, callback) {
   
   var optionList = optionIds.split(',');
-  console.log("optionList.length: " + optionList.length)
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
-    whereClause += `optionId = $${i++}`
+    whereClause += `$${i}`
     if(i != optionList.length) whereClause += `, `
-    values.push(parseInt(optionList[i])); //Array.push companyid
+    values.push(parseInt(optionList[i-1])); //Array.push companyid
   }
   whereClause += `);`
   const query = `SELECT * FROM Advertisement ${whereClause}`
-  console.log(values)
-  console.log(query);
+  console.log("values: " +values)
+  console.log("query: "+query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {

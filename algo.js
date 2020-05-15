@@ -39,32 +39,37 @@ function fractionalKnapsack(audience, cost, budget){
     return paid; //paid is an array which returns how much money is put into each option (options are in order of what user keyed in)
 }
 //e.g paid[0] would be the amount of money paid to the first option that user keyed in
-console.log(fractionalKnapsack([1,2,3,4],[3,1,4,2], 4))
+// console.log(fractionalKnapsack([4000,5000],[1000,800], 1000))
 
 //------------------- ADVANCED -----------------------
-function FullKnapsack(audience, cost, budget, n){
-    var result= [];
-    console.log("n: " + n);
-    console.log("audience: " + audience);
-    console.log("cost: " + cost);
-    console.log("budget: " + budget);
-    console.log("result: " + result)
-    if(n==0 || budget==0){
-        result[n]=0;
-    }else if(cost[n] > budget){
-        result = FullKnapsack(audience, cost, budget, n-1);
-    }else{
-        var dontPut = FullKnapsack(audience, cost, budget, n-1);
-        var put = audience[n] + FullKnapsack(audience, cost, budget - cost[n], n-1);
-        console.log("put: " + put)
-        console.log("dontPut: " + dontPut)
-        if(dontPut < put){
-            result[n] = "put";
-        }else{
-            result[n] = "dontPut";
-        }
-    }
-    return result;
-}
+// function FullKnapsack(audience, cost, budget, n){
+//     var result= [];
+//     console.log("n: " + n);
+//     console.log("audience: " + audience);
+//     console.log("cost: " + cost);
+//     console.log("budget: " + budget);
+//     console.log("result: " + result)
+//     if(n==0 || budget==0){
+//         result[n]=0;
+//     }else if(cost[n] > budget){
+//         result = FullKnapsack(audience, cost, budget, n-1);
+//     }else{
+//         var dontPut = FullKnapsack(audience, cost, budget, n-1);
+//         var put = audience[n] + FullKnapsack(audience, cost, budget - cost[n], n-1);
+//         console.log("put: " + put)
+//         console.log("dontPut: " + dontPut)
+//         if(dontPut < put){
+//             result[n] = "put";
+//         }else{
+//             result[n] = "dontPut";
+//         }
+//     }
+//     return result;
+// }
 
-console.log(FullKnapsack([1,1,1,1],[1,2,3,4], 4, 3))
+// console.log(FullKnapsack([1,1,1,1],[1,2,3,4], 4, 3))
+
+module.exports = {
+    fractionalKnapsack,
+    // FullKnapsack
+  }
