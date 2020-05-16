@@ -6,13 +6,13 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/Wireframes/default/Result Page.png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/default/Result Page.png)
 
 ## Justifications
 
 ### Justification 1 (Nav Bar)
 
-![Justificaiton1](/assets/Justifications/BasicFrontendResult1.jpg)
+![Justification1](/worksheets/wireframes/assets/Justifications/BasicFrontendResult1.jpg)
 Image from:
 https://www.uihere.com/free-graphics/table-ui-kit-sketch-file-sketch-file-207968
 
@@ -29,7 +29,7 @@ https://www.uihere.com/free-graphics/table-ui-kit-sketch-file-sketch-file-207968
 
 ### Justification 2 (Bar chart)
 
-![Justificaiton2](/assets/Justifications/BasicFrontendResult2.jpg)
+![Justification2](/worksheets/wireframes/assets/Justifications/BasicFrontendResult2.jpg)
 Image from:
 https://blog.judge.me/blog/spocket-how-an-entrepreneurs-frustration-made-the-world-of-dropshipping-so-much-easier
 
@@ -46,7 +46,7 @@ https://blog.judge.me/blog/spocket-how-an-entrepreneurs-frustration-made-the-wor
 
 ### Justification 3 (Input boxes)
 
-![Justificaiton3](/assets/Justifications/BasicFrontendResult3.png)
+![Justification3](/worksheets/wireframes/assets/Justifications/BasicFrontendResult3.png)
 Image from:
 http://www.sengpielaudio.com/calculator-ohm.htm
 

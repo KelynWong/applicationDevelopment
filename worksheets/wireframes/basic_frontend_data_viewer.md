@@ -4,14 +4,14 @@ This document should help you explain how your user interfaces are designed. You
 
 ## Wireframe
 
-![Wireframe](assets/Wireframes/default/Data Viewer.png)
-![Wireframe](assets/Wireframes/default/If data overflows scenario.png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/default/Data Viewer.png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/default/If data overflows scenario.png)
 
 ## ------------ Justifications ----------------
 
 ### Justification 1 (Filtering)
 
-![Justificaiton1](/assets/Justifications/BasicFrontendData1.jpg)
+![Justification1](/worksheets/wireframes/assets/Justifications/BasicFrontendData1.jpg)
 Images from:
 https://dribbble.com/shots/2224901-Material-UI-Data-Filter/attachments/413515
 
@@ -27,7 +27,7 @@ https://dribbble.com/shots/2224901-Material-UI-Data-Filter/attachments/413515
 
 ### Justification 2 (Entries per page)
 
-![Justificaiton2](/assets/Justifications/BasicFrontendData2.png)
+![Justification2](/worksheets/wireframes/assets/Justifications/BasicFrontendData2.png)
 Image from:
 https://www.pinterest.co.uk/jinghanshi/admindashboards/
 
@@ -44,7 +44,7 @@ https://www.pinterest.co.uk/jinghanshi/admindashboards/
 
 ### Justification 3 (Pagination)
 
-![Justificaiton3](/assets/Justifications/BasicFrontendData3.png)
+![Justification3](/worksheets/wireframes/assets/Justifications/BasicFrontendData3.png)
 Image from:
 https://balsamiq.com/learn/resources/ui-control-guidelines/data-tables/
 

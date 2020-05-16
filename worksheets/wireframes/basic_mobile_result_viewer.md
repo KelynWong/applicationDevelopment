@@ -6,15 +6,15 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/Wireframes/mobile/Result Viewer (mobile).png)
-![Wireframe](assets/Wireframes/mobile/Result Viewer (mobile) – tabulation.png) 
-![Wireframe](assets/Wireframes/mobile/Navbar (mobile).png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Result Viewer (mobile).png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Result Viewer (mobile) – tabulation.png) 
+![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Navbar (mobile).png)
 
 ## Justifications
 
 ### Justification 1 (Hamburger menu)
 
-![Justificaiton1](/assets/Justifications/BasicMobileResult1.gif)
+![Justification1](/worksheets/wireframes/assets/Justifications/BasicMobileResult1.gif)
 Image from:
 https://invisioncommunity.com/forums/topic/451084-%F0%9F%92%A1varieties-mobiledesktop-navigation-menu-design/
 
@@ -31,7 +31,7 @@ https://invisioncommunity.com/forums/topic/451084-%F0%9F%92%A1varieties-mobilede
 
 ### Justification 2 (Data graph)
 
-![Justificaiton2](/assets/Justifications/BasicMobileResult2.png)
+![Justification2](/worksheets/wireframes/assets/Justifications/BasicMobileResult2.png)
 Image from:
 https://www.uxfree.com/crypto-portfolio-sketch-freebie/
 
@@ -47,7 +47,7 @@ https://www.uxfree.com/crypto-portfolio-sketch-freebie/
 
 ### Justification 3 (Input boxes)
 
-![Justificaiton3](/assets/Justifications/BasicMobileResult3.png)
+![Justification3](/worksheets/wireframes/assets/Justifications/BasicMobileResult3.png)
 Image from:
 https://codeontime.com/blog?min-date=2014-01-01T00:00:00&max-date=2014-01-31T23:59:59
 

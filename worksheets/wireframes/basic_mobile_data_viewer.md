@@ -6,14 +6,14 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/Wireframes/mobile/Data Viewer (mobile).png) 
-![Wireframe](assets/Wireframes/mobile/Data Viewer expanded (mobile).png)
+![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Data Viewer (mobile).png) 
+![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Data Viewer expanded (mobile).png)
 
 ## Justifications
 
 ### Justification 1 (Filtering)
 
-![Justificaiton1](/assets/Justifications/BasicMobileData1.jpg)
+![Justification1](/worksheets/wireframes/assets/Justifications/BasicMobileData1.jpg)
 Image from:
 https://hamrahpc.com/%d8%a7%d8%b3%da%a9%d8%b1%d9%88%d9%84-%da%af%d9%88%d8%b4%db%8c-%da%86%db%8c%d8%b3%d8%aa%d8%9f/
 
@@ -30,7 +30,7 @@ https://hamrahpc.com/%d8%a7%d8%b3%da%a9%d8%b1%d9%88%d9%84-%da%af%d9%88%d8%b4%db%
 
 ### Justification 2 (Data table)
 
-![Justificaiton2](/assets/Justifications/BasicMobileData2.jpg)
+![Justification2](/worksheets/wireframes/assets/Justifications/BasicMobileData2.jpg)
 Image from:
 https://dribbble.com/shots/4846265-Mobile-Dashboard-Data-Table
 
@@ -47,7 +47,7 @@ https://dribbble.com/shots/4846265-Mobile-Dashboard-Data-Table
 
 ### Justification 3 (Pagination)
 
-![Justificaiton3](/assets/Justifications/BasicMobileData3.png)
+![Justification3](/worksheets/wireframes/assets/Justifications/BasicMobileData3.png)
 Image from:
 https://www.uxmatters.com/mt/archives/2018/11/paging-scrolling-and-infinite-scroll.php
 
