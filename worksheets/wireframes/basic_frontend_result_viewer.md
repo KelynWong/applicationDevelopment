@@ -6,22 +6,21 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/wireframe/Result Viewer.png)
-![Wireframe](assets/wireframe/If data overflows scenario.png)
+![Wireframe](assets/Wireframes/default/Result Page.png)
 
 ## Justifications
 
 ### Justification 1 (Nav Bar)
 
-![Justificaiton1](/assets/justification/Side nav bar.jpg)
+![Justificaiton1](/assets/Justifications/BasicFrontendResult1.jpg)
 Image from:
 https://www.uihere.com/free-graphics/table-ui-kit-sketch-file-sketch-file-207968
 
 #### Good Points
 
-1. Easy and convenient to navigate around
-2. Simple layout for user's to understand
-3. Clearly shows what page user is currently on and what other tabs are there
+1. Easy and convenient to navigate around.
+2. Simple layout for user's to understand.
+3. Clearly shows what page user is currently on and what other tabs are there.
 
 #### Bad Points
 
@@ -30,24 +29,24 @@ https://www.uihere.com/free-graphics/table-ui-kit-sketch-file-sketch-file-207968
 
 ### Justification 2 (Bar chart)
 
-![Justificaiton2](/assets/justification/bar chart.jpg)
+![Justificaiton2](/assets/Justifications/BasicFrontendResult2.jpg)
 Image from:
 https://blog.judge.me/blog/spocket-how-an-entrepreneurs-frustration-made-the-world-of-dropshipping-so-much-easier
 
 #### Good Points
 
-1. Layout of the components are neat
-2. Users are able to see an overview of all the types of data there are
-3. All alot of different data can be placed within the page
+1. Layout of the components are neat.
+2. Users are able to see an overview of all the types of data there are.
+3. All alot of different data can be placed within the page.
 
 #### Bad Points
 
-1. Too much components and unable to see data as it's too small
-2. Users might just want to focus on one component
+1. Too much components and unable to see data as it's too small.
+2. Users might just want to focus on one component.
 
 ### Justification 3 (Input boxes)
 
-![Justificaiton3](/assets/justification/compute input boxes.png)
+![Justificaiton3](/assets/Justifications/BasicFrontendResult3.png)
 Image from:
 http://www.sengpielaudio.com/calculator-ohm.htm
 
@@ -59,5 +58,5 @@ http://www.sengpielaudio.com/calculator-ohm.htm
 
 #### Bad Points
 
-1. Aesthetics can be improved
-2. The words above the wheel is cramped together which confuses user
+1. Aesthetics can be improved.
+2. The words above the wheel is cramped together which confuses user.

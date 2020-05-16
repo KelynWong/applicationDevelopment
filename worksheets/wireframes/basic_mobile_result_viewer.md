@@ -6,39 +6,40 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](assets/wireframe/Data Viewer expanded (mobile).png) 
-![Wireframe](assets/wireframe/Nav bar.png) 
+![Wireframe](assets/Wireframes/mobile/Result Viewer (mobile).png)
+![Wireframe](assets/Wireframes/mobile/Result Viewer (mobile) – tabulation.png) 
+![Wireframe](assets/Wireframes/mobile/Navbar (mobile).png)
 
 ## Justifications
 
 ### Justification 1 (Hamburger menu)
 
-![Justificaiton1](/assets/justification/hamburger menu(mobile).gif)
+![Justificaiton1](/assets/Justifications/BasicMobileResult1.gif)
 Image from:
 https://invisioncommunity.com/forums/topic/451084-%F0%9F%92%A1varieties-mobiledesktop-navigation-menu-design/
 
 #### Good Points
 
-1. It saves space
-2. Only when the user needs the menu then it will overlay the page
-3. There is a search bar to find what page you want to go to
+1. It saves space.
+2. Only when the user needs the menu then it will overlay the page.
+3. There is a search bar to find what page you want to go to.
 
 #### Bad Points
 
-1. The button to activate the menu to pop up is at the top left corner, hard for user to reach
-2. Users might not know how to exit the hamburger menu when they decide not to nagivate to another page
+1. The button to activate the menu to pop up is at the top left corner, hard for user to reach.
+2. Users might not know how to exit the hamburger menu when they decide not to nagivate to another page.
 
 ### Justification 2 (Data graph)
 
-![Justificaiton2](/assets/justification/graph(mobile).png)
+![Justificaiton2](/assets/Justifications/BasicMobileResult2.png)
 Image from:
 https://www.uxfree.com/crypto-portfolio-sketch-freebie/
 
 #### Good Points
 
-1. Pinpoints the turning points of the graph
-2. Graph is big enough for users to see
-3. The layout is simple and easy to use
+1. Pinpoints the turning points of the graph.
+2. Graph is big enough for users to see.
+3. The layout is simple and easy to use.
 
 #### Bad Points
 
@@ -46,16 +47,16 @@ https://www.uxfree.com/crypto-portfolio-sketch-freebie/
 
 ### Justification 3 (Input boxes)
 
-![Justificaiton3](/assets/justification/input Boxes(mobile).png)
+![Justificaiton3](/assets/Justifications/BasicMobileResult3.png)
 Image from:
-[screenshot]
+https://codeontime.com/blog?min-date=2014-01-01T00:00:00&max-date=2014-01-31T23:59:59
 
 #### Good Points
 
-1. There is a button to clear whatever text is entered
-2. Button to click to pick the category
-3. Input boxes are clearly labeled
+1. There is a button to clear whatever text is entered.
+2. Button to click to pick the category.
+3. Input boxes are clearly labeled.
 
 #### Bad Points
 
-1. Maybe the $ sign can be put there in place so user does not have to enter it
+1. Maybe the $ sign can be pre-put there in place so user does not have to enter it.

@@ -11,7 +11,7 @@ The following are examples of how you can create a table, replace the examples w
 ```sql
 CREATE TABLE Advertisement (
   optionId int NOT NULL,
-  companyId int DEFAULT NULL,
+  companyId bigint DEFAULT NULL,
   cost decimal(19, 2) DEFAULT NULL,
   audienceReach bigint DEFAULT NULL,
   adType varchar(255) DEFAULT NULL,

@@ -29,9 +29,9 @@ Each API should include
 |   parameter   | datatype        | example    |
 | ------------- | --------------- | ---------- |
 | companyId     | 10 digit number | 1000000001 |
-| audienceReach |       int       |    4000    |
-| page          |       int       |    1       |
-| pageSize      |       int       |    1       |
+| audienceReach |       int       |   4000     |
+| page          |       int       |     1      |
+| pageSize      |       int       |     1      |
 
 ### Response Body
 
@@ -100,8 +100,8 @@ POST /basic/AllData
 
 | parameter      | datatype        | example   |
 | ---------      | --------------- | --------- |
-| optionId       | 10 digit number | 123456789 |
-| companyId      | 10 digit number | 123456789 |
+| optionId       | 10 digit number | 1234567890|
+| companyId      | 10 digit number | 1234567890|
 | audienceReach  | Int             | 500       |
 | cost           | Dec(10, 2)      | 1000.50   |
 | adType         | String          | Fixed     |
@@ -168,7 +168,8 @@ POST /insertAdvertisement
 ### Parameters
 
 | parameter | datatype        | example    |
-| --------- | --------------- | ---------- |
+| companyId      | 10 digit number | 1234567890|
+| audienceReach  | Int             | 500       |
 
 
 ### Response Body
@@ -220,7 +221,7 @@ GET /extra/getRowCount
 ```
 
 
-## [Results page] Get Results ---------------------------------------------------------------
+<!-- ## [Results page] Get Results ---------------------------------------------------------------
 
 | attribute   | value             |
 | ----------- | ----------------- |
@@ -292,4 +293,4 @@ POST /basic/getResults
 	"error": "Server Error",
 	"code": 500
 }
-```
+``` -->

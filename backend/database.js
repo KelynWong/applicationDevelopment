@@ -24,7 +24,7 @@ function resetTable() {
     DROP TABLE IF EXISTS Advertisement;
     CREATE TABLE Advertisement (
       optionId int NOT NULL,
-      companyId int DEFAULT NULL,
+      companyId bigint DEFAULT NULL,
       cost decimal DEFAULT NULL,
       audienceReach bigint DEFAULT NULL,
       adType varchar(255) DEFAULT NULL,
@@ -59,7 +59,7 @@ function insertAdvertisement(data, callback) {
 
 // GET 2. Retrieve all data ---
 function getData(companyId, audienceReach, pageNo, pageSize, callback) {
-  
+
   //This part below determines what sql query is produced based on the page state.
   let i = 1;
   const values = [];
@@ -97,7 +97,7 @@ function getData(companyId, audienceReach, pageNo, pageSize, callback) {
 }
 
 //3. GET row count of table advertisement ---
-function getRowCount(companyId, audienceReach, callback){
+function getRowCount(companyId, audienceReach, callback) {
   let i = 1;
   const values = [];
   let whereClause;
@@ -115,7 +115,7 @@ function getRowCount(companyId, audienceReach, callback){
   }
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
   const client = connect();
-  client.query(query,values, function (err, { rows }) {
+  client.query(query, values, function (err, { rows }) {
     client.end();
     callback(err, rows);
   })
@@ -124,7 +124,7 @@ function getRowCount(companyId, audienceReach, callback){
 
 //4. GET Retrieve data for results ---
 // function getOptionsForComputation(optionIds, callback) {
-  
+
 //   var optionList = optionIds.split(',');
 //   //This part below determines what sql query is produced based on the page state.
 //   const values = [];
@@ -149,20 +149,20 @@ function getRowCount(companyId, audienceReach, callback){
 
 //5. GET audience and cost for computation ---
 function getOptionsForComputation(optionIds, callback) {
-  
+
   var optionList = optionIds.split(',');
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
-    if(i != optionList.length) whereClause += `, `
-    values.push(parseInt(optionList[i-1])); //Array.push companyid
+    if (i != optionList.length) whereClause += `, `
+    values.push(parseInt(optionList[i - 1])); //Array.push companyid
   }
   whereClause += `);`
   const query = `SELECT * FROM Advertisement ${whereClause}`
-  console.log("values: " +values)
-  console.log("query: "+query);
+  console.log("values: " + values)
+  console.log("query: " + query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {

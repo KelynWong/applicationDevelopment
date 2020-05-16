@@ -28,10 +28,10 @@ var filterCompanyId = "";
 var filterAudienceReach = "";
 // Pagination algorithm:
 function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
-    var openingTag = '<a class="paginateButton" id="generatedButton" tabIndex="';
-    var middleTag = '">'
-    var closingTag = '</a>'
-    var elipsis = '<a class="ellipsis">…</a>'
+    var openingTag = '<a class="paginateButton" id="generatedButton" tabindex="';
+    var middleTag = '">';
+    var closingTag = '</a>';
+    var elipsis = '<a class="ellipsis">…</a>';
     var pageSize = table.page.info().length;
     const requestBody = {
         companyId: filterCompanyId,
@@ -71,8 +71,8 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
                 $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
             }
             // Can't forget the visual representation!
-            $(".paginateButton[tabIndex='" + paginationIndex + "']").attr('class', 'paginateButton current');
-            $(".paginateButton[tabIndex='" + (paginationIndex + 1) + "']").attr('class', 'paginateButton');
+            $(".paginateButton[tabindex='" + paginationIndex + "']").attr('class', 'paginateButton current');
+            $(".paginateButton[tabindex='" + (paginationIndex + 1) + "']").attr('class', 'paginateButton');
 
             // Entries per page algo.
             $(".entriesArea").remove();
@@ -86,7 +86,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
                 }
                 endingNumber += startingNumber;
             }
-            $("#tableControls").prepend(`<div class="entriesArea" id="entriesArea" role="status" aria-live="polite">Showing ${startingNumber} to ${endingNumber} of ${parse} entries</div>`)
+            $("#tableControls").prepend(`<div class="entriesArea" id="entriesArea" role="status" aria-live="polite">Showing ${startingNumber} to ${endingNumber} of ${parse} entries</div>`);
             endingNumber = 0;
         });
 }
@@ -102,13 +102,13 @@ function fillTable(table, filterCompanyId, filterAudienceReach) {
         companyId: filterCompanyId,
         audienceReach: filterAudienceReach
     };
-    axios.post(`${baseUrl}/basic/allData`, requestBody)
+    axios.post(`${baseUrl}/basic/Alldata`, requestBody)
         .then((response) => {
-            console.log("response: " + response)
+            console.log("response: " + response);
             var data = response.data;
-            table.clear();
+            table.clear().draw();
             data.forEach((param) => {
-                table.row.add(param).draw()
+                table.row.add(param).draw();
             });
         });
 }
@@ -159,11 +159,11 @@ $(document).ready(function () {
 
     // Onclick NEXT button
     $(document).on('click', '#theTableNext', function () {
-        var array = []; //the TabIndex of paginate_buttons generated are taken in to get the highest index
+        var array = []; //the TabIndex of paginateButtons generated are taken in to get the highest index
         var lastPage;
         $(".paginateButton").each(function () {
-            array.push(parseInt($(this).attr('tabIndex')))
-        })
+            array.push(parseInt($(this).attr('tabIndex')));
+        });
         lastPage = Math.max(...array);
         if (paginationIndex < lastPage) {
             paginationIndex += 1;
@@ -182,20 +182,45 @@ $(document).ready(function () {
 
     // Onclick filter button.
     $(document).on('click', '.filterBtn', function () {
-        filterCompanyId = document.getElementById("companyIdInput").value
-        filterAudienceReach = document.getElementById("audienceReachInput").value
+        filterCompanyId = document.getElementById("companyIdInput").value;
+        filterAudienceReach = document.getElementById("audienceReachInput").value;
         if (!filterCompanyId && !filterAudienceReach) {
-            alert("Please enter companyId or audience reach or both!");
+            alert("Please enter company Id or Audience reach or both!");
         } else {
-            if (filterCompanyId.length == 10 || filterCompanyId == '') {
-                if (isNaN(filterAudienceReach)) {
-                    alert("Audience reach has to be a number!");
-                } else {
+
+            if (isNaN(filterCompanyId) == false && isNaN(filterAudienceReach) == false || isNaN(filterCompanyId) == false && filterAudienceReach == '') {
+
+                if (filterCompanyId % 1 != 0) {
+                    filterCompanyId = '';
+                    alert("Company Id has to be a 10 digit number! Not a decimal!");
+                }
+                if (filterAudienceReach % 1 != 0) {
+                    filterAudienceReach = '';
+                    alert("Audience reach has to be a 10 digit number! Not a decimal!");
+                }
+                else if (filterCompanyId.length == 10 || filterCompanyId == '') {
+                    filterCompanyId = Math.abs(filterCompanyId);
+                    filterAudienceReach = Math.abs(filterAudienceReach);
                     paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
                     fillTable(table, filterCompanyId, filterAudienceReach);
                 }
+                else {
+                    filterCompanyId = '';
+                    alert("Company Id has to be a 10 digit number!");
+                }
             } else {
-                alert("CompanyId has to be a 10 digit number!");
+                if (isNaN(filterCompanyId)) {
+                    filterCompanyId = '';
+                    alert("Company Id has to be a number!");
+                }
+                else if (filterCompanyId.length != 10) {
+                    filterCompanyId = '';
+                    alert("Company Id has to be a 10 digit number!");
+                }
+                if (isNaN(filterAudienceReach)) {
+                    filterAudienceReach = '';
+                    alert("Audience reach has to be a number!");
+                }
             }
         }
     });
@@ -208,15 +233,15 @@ $(document).ready(function () {
         filterAudienceReach = "";
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
         fillTable(table, filterCompanyId, filterAudienceReach);
-        $(".paginateButton[tabIndex='" + 0 + "']").click();
+        $(".paginateButton[tabindex='" + 0 + "']").click();
         paginationIndex = 0;
     });
 
     // On change of pageSize - [The show (how many) entries part]
-    $("[name='theTableLength'").change(function () {
+    $("[name='theTable_length'").change(function () {
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
         fillTable(table, filterCompanyId, filterAudienceReach);
-        $(".paginateButton[tabIndex='" + 0 + "']").click();
         paginationIndex = 0; //Sets back to page 1.(Highly important)
+        $(".paginateButton[tabindex='" + 0 + "']").click();
     });
 });

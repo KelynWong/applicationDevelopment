@@ -6,10 +6,6 @@
 #rows {
   min-height: 100vh;
 }
-/* @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"; */
-body {
-  /* font-family: 'Poppins', sans-serif; */
-}
 
 /* Row 1 CSS */
 
@@ -73,9 +69,11 @@ a, a:hover, a:focus {
   flex-direction: column;
   min-height: 100vh;
 }
-h1,h5 {
+
+h1 {
   display: inline;
 }
+
 #titleBox {
   height: 50px;
   flex: 1;
@@ -95,6 +93,7 @@ h1,h5 {
 }
 
 /* Table CSS(Modifies the default placements) */
+
 #tableArea {
   flex: 1;
 }
@@ -141,7 +140,7 @@ h1,h5 {
   bottom: 0;
 }
 
-#theTable_next:hover, #theTable_previous:hover {
+#theTableNext:hover, #theTablePrevious:hover {
   color: #333 !important;
   border: 1px solid #979797;
   background-color: white;
@@ -153,12 +152,12 @@ h1,h5 {
   background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
 }
 
-.paginate_button.current {
+.paginateButton.current {
   border: 2px solid black;
   padding: 20px;
 }
 
-.paginate_button:hover {
+.paginateButton:hover {
   color: white !important;
   border: 2px solid #979797;
   background-color: black;
@@ -170,12 +169,12 @@ h1,h5 {
   background: linear-gradient(to bottom, black 0%, #dcdcdc 100%);
 }
 
-.paginate_button, .ellipsis {
+.paginateButton, .ellipsis {
   padding: 20px;
   margin: 0;
 }
 
-.pageNumbers, .finalPageNumber, .paginate_button {
+.pageNumbers, .finalPageNumber, .paginateButton {
   display: flex;
   justify-content: center;
   align-items: center;

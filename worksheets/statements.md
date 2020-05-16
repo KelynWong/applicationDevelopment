@@ -4,10 +4,25 @@ For this worksheet you will need to provide an example of your own SQL statement
 
 
 ### Data Viewer page
+
+## DROP and CREATE table
+Example:
+```sql
+DROP TABLE IF EXISTS Advertisement;
+CREATE TABLE Advertisement (
+      optionId int NOT NULL,
+      companyId bigint DEFAULT NULL,
+      cost decimal DEFAULT NULL,
+      audienceReach bigint DEFAULT NULL,
+      adType varchar(255) DEFAULT NULL,
+      PRIMARY KEY (optionID)
+    )
+```
+
 ## INSERT into table
 Example:
 ```sql
-INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adTypeName) VALUES (1000000001, 1000000001, 1000, 4000, "Fixed");
+INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES (1000000001, 1000000001, 1000, 4000, "Fixed");
 ```
 
 ## SELECT with Filtering and Pagination
@@ -22,13 +37,13 @@ Example:
 SELECT * FROM Advertisement LIMIT 10 OFFSET 20;
 ```
 
-## SELECT count table
+## SELECT table row count
 Example:
 ```sql
 SELECT COUNT(*) FROM advertisement;
 ```
 
-## SELECT count table with filtering
+## SELECT table row count with Filtering
 Example:
 ```sql
 SELECT COUNT(*) FROM advertisement WHERE companyId == 1000000001 AND audienceReach = 4000;
