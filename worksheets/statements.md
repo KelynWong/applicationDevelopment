@@ -3,8 +3,7 @@
 For this worksheet you will need to provide an example of your own SQL statement. The two given are examples.
 
 
-### Data Viewer page
-
+### --------- Data Viewer page ---------
 ## DROP and CREATE table
 Example:
 ```sql
@@ -49,7 +48,7 @@ Example:
 SELECT COUNT(*) FROM advertisement WHERE companyId == 1000000001 AND audienceReach = 4000;
 ```
 
-### Result Viewer page
+### --------- Result Viewer page ---------
 ## SELECT with filtering only
 Example:
 ```sql
