@@ -137,7 +137,7 @@ $(document).ready(function () {
         // <"#id.class" div with an id and class
         dom: '<"#tableContainer"<"#tableArea"t><"#tableControls"l>>',
         // Only tableArea will have flex, tableControls won't. Thus the written DOM.
-        "lengthMenu": [[5, 10, 20, 30, 40, 50, -1], [5, 10, 20, 30, 40, 50, "All"]]
+        "lengthMenu": [[5, 10, 20, 30, 40, 50], [5, 10, 20, 30, 40, 50]]
     });
 
     // Pagination Algorithm that handles pagination and the entries shown.
