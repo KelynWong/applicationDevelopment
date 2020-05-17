@@ -4,8 +4,8 @@ This document should help you explain how your user interfaces are designed. You
 
 ## Wireframe
 
-![Wireframe](/worksheets/wireframes/assets/Wireframes/default/Data Viewer.png)
-![Wireframe](/worksheets/wireframes/assets/Wireframes/default/If data overflows scenario.png)
+![Wireframe1](/worksheets/wireframes/assets/Wireframes/default/DataViewer.png)
+![Wireframe2](/worksheets/wireframes/assets/Wireframes/default/Overflow.png)
 
 ## ------------ Justifications ----------------
 

@@ -6,8 +6,8 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Data Viewer (mobile).png) 
-![Wireframe](/worksheets/wireframes/assets/Wireframes/mobile/Data Viewer expanded (mobile).png)
+![Wireframe1](/worksheets/wireframes/assets/Wireframes/mobile/DataViewer(mobile).png) 
+![Wireframe2](/worksheets/wireframes/assets/Wireframes/mobile/DataViewerExpanded(mobile).png)
 
 ## Justifications
 
