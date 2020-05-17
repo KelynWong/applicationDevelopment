@@ -4,59 +4,6 @@
 Name: Wong En Ting Kelyn
 Name: Teh Huan Xi Kester
 Class: DIT/FT/2B/01 -->
-
-<!-- Last Check before submission, COMMIT ON YOUR SIDE WHEN DONE CHECKING WITHOUT THIS COMMENT -->
-<!-- 
-    Changes:
-    [BIGGEST CHANGE] 
-    1. companyid is now a bigint instead of int. Max number for int = 2,147,483,647, 
-       so if I key in 9999999999 inside param, it crashes the server. Thus the change.
-       Check whether documents schema.md, statements.md and database.js and other files that have it
-       has the update.
-
-    2. Filtering has been enhanced, one thing missing from yours was that if both parameters were filled up 
-       with params that are not numbers, only the alert for companyid appears.
-       Things added:
-       - Decimal detection, and alerts.
-       - Turns negative numbers to positive now.
-       - Alerts on illegal params.
-
-
-    3. A server crashing bug has been fixed in regards to filtering. When the filter button is clicked, 
-       the variable, even if not number, is being saved and can be illegally parsed via pagination change.
-       This has been fixed by making variables = '' if not number/not 10 digits that works together with
-       the new filtering system.
-
-    4. Wireframe and Justification now have upscaled images and are ALL LINKED :D!!!
-
-    5. camelCase complete, most of the stuff was already done by you :)
-    -> No need to edit theTable_(content) esp. in the css, its what datatables produces and theres no way to change the name.
-
-    6. Checked through the frontend and backend, all is working.
-
-    7. Edited the challenge worksheet, advanced question 1:
-    Previously:
-    | Options    | Amount |
-    | ---------- | ------ |
-    | 1000000001 | 1      |
-    | 1000000002 | 0      |
-    | 1000000003 | 3      |
-    | 1000000004 | 0      | Total cost: 4
-    Now:
-    | Options    | Amount |
-    | ---------- | ------ |
-    | 1000000001 | 1      |
-    | 1000000002 | 2      |
-    | 1000000003 | 0      |
-    | 1000000004 | 0      | Total cost: 3 (More efficient)
-
-    8. Weekly report for Week 4 updated.
-
-    9. All other planning worksheets are good to go.
-    
-    Its been cool working with ya so far, lets keep it up!! :)
- -->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
