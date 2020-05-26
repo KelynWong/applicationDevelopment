@@ -28,7 +28,7 @@ app.options('*', cors());
 const database = require('./database')
 const algo = require('./algo')
 // POST 1. Insert Advertisement details ---
-app.post('/insertAdvertisement/', function (req, res, next) {
+app.post('/basic/insert/', function (req, res, next) {
   const { data } = req.body;
   database.insertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
@@ -65,12 +65,12 @@ app.post('/extra/getRowCount', function (req, res, next) {
   })
 });
 
-// POST 4. Retrieve data for results ---
-app.post('/basic/allDataForResults', function (req, res) {
+// POST 4. Retrieve data for chart ---
+app.post('/basic/allChartData', function (req, res) {
   console.log(req.body);
   const { optionIds } = req.body;
 
-  database.getData(optionIds, (error, result) => {
+  database.getDataForChart(optionIds, (error, result) => {
     if (error) {
       return next(error);
     }
@@ -79,37 +79,54 @@ app.post('/basic/allDataForResults', function (req, res) {
   })
 });
 
-// POST 5. Get results ---
-app.post('/basic/getResults', function (req, res, next) {
+// POST 5. Get tabulation results ---
+app.post('/basic/getTabulation', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
   database.getOptionsForComputation(optionIds, (error, result) => {
     if (error) {
       return next(error);
-    }
-    var audience = [];
-    var cost = [];
-    var optionType = []
-    for (let i = 0; i < result.length; i++) {
-      audience.push(result[i].audiencereach)
-      cost.push(result[i].cost)
-      optionType.push(result[i].adtype)
-    }
-    console.log("audience array: "+audience)
-    console.log("cost array: "+cost)
-    console.log("adType: "+optionType)
-    for (let j = 1; j <= optionType.length; j++) {
-      if(optionType[j] != optionType[j-1]){
-        return error
-      }else if(optionType[0] == "Not Fixed"){
-        console.log("RESULTS OF ALGO: "+ algo.fractionalKnapsack(audience, cost, budget))
-        res.json(result)
-      }else{
+    }else{
+      var audience = [];
+      var cost = [];
+      var optionType = []
+      for (let i = 0; i < result.length; i++) {
+        audience.push(result[i].audiencereach)
+        cost.push(Number(result[i].cost))
+        optionType.push(result[i].adtype)
+      }
+      var same= ''
+      for (let j = 1; j <= optionType.length; j++) {
+        if(optionType[j] != optionType[j-1]){
+          same = 'true'
+      }
+      var updatedCost= []
+      var payment = []
+      if(optionType[0]=="Not Fixed" && same=="true"){
+        updatedCost = algo.fractionalKnapsack(audience, cost, budget)
+        for (let k = 0; k < result.length; k++) {
+          console.log("Number(result[k].cost): " +Number(result[k].cost))
+          if(parseInt(result[k].cost) == parseInt(updatedCost[k])){
+            payment.push('Full')
+          }else if(parseInt(updatedCost[k]) == 0){
+            payment.push('No')
+            result[k].audiencereach = 0
+          }else{
+            payment.push('Partial')
+            var factor = result[k].cost/updatedCost[k]
+            var updatedAudience = result[k].audiencereach/factor
+            result[k].audiencereach = updatedAudience
+          }
+          result[k].cost = updatedCost[k]
+          result[k]['payment']=payment[k]
+        }
+      }else if(optionType[0]=="Fixed" && same=="true"){
         // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget))
       }
     }
-    
+  }
+  res.json(result)
   })
 });
 

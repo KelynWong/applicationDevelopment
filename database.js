@@ -23,11 +23,11 @@ function resetTable() {
   const query = `
     DROP TABLE IF EXISTS Advertisement;
     CREATE TABLE Advertisement (
-      optionId int NOT NULL,
-      companyId bigint DEFAULT NULL,
-      cost decimal DEFAULT NULL,
-      audienceReach bigint DEFAULT NULL,
-      adType varchar(255) DEFAULT NULL,
+      optionId bigint NOT NULL,
+      companyId bigint NOT NULL,
+      cost decimal NOT NULL,
+      audienceReach bigint NOT NULL,
+      adType varchar(255) NOT NULL,
       PRIMARY KEY (optionID)
     )
     `;
@@ -39,22 +39,25 @@ function resetTable() {
 
 // POST 1. Insert Advertisement details ---
 function insertAdvertisement(data, callback) {
-  let i = 1;
-  //$ sign infront of value.
-  const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
+  if(data.length == 0){ 
+    return callback(null, []) 
+  }
+    let i = 1;
+    //$ sign infront of value.
+    const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++},$${i++})`).join(',');
 
-  //Values need to be in a single array.
-  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceReach, data.adType], [])
-  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
+    //Values need to be in a single array.
+    const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceCount, data.adType], [])
+    const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
 
-  //This part below sends the query over.
-  const client = connect();
-  client.query(query, values, (err, result) => { //Dependent on above values.
-    callback(err, result);
-    console.log("query: " + query);
-    console.log("values: " + values);
-    client.end();
-  });
+    //This part below sends the query over.
+    const client = connect();
+    client.query(query, values, (err, result) => { //Dependent on above values.
+      callback(err, result);
+      console.log("query: " + query);
+      console.log("values: " + values);
+      client.end();
+    });
 }
 
 // GET 2. Retrieve all data ---
@@ -123,29 +126,29 @@ function getRowCount(companyId, audienceReach, callback) {
 }
 
 //4. GET Retrieve data for results ---
-// function getOptionsForComputation(optionIds, callback) {
+function getDataForChart(optionIds, callback) {
 
-//   var optionList = optionIds.split(',');
-//   //This part below determines what sql query is produced based on the page state.
-//   const values = [];
-//   let whereClause = "WHERE optionId IN (";
-//   for (let i = 1; i <= optionList.length; i++) {
-//     whereClause += `$${i}`
-//     if(i != optionList.length) whereClause += `, `
-//     values.push(parseInt(optionList[i-1])); //Array.push companyid
-//   }
-//   whereClause += `);`
-//   const query = `SELECT * FROM Advertisement ${whereClause}`
-//   console.log("values: " +values)
-//   console.log("query: "+query);
-//   //Connect to database
-//   const client = connect();
-//   client.query(query, values, function (err, { rows }) {
-//     client.end();
-//     callback(err, rows);
-//     console.log(rows)
-//   })
-// }
+  var optionList = optionIds.split(',');
+  //This part below determines what sql query is produced based on the page state.
+  const values = [];
+  let whereClause = "WHERE optionId IN (";
+  for (let i = 1; i <= optionList.length; i++) {
+    whereClause += `$${i}`
+    if(i != optionList.length) whereClause += `, `
+    values.push(parseInt(optionList[i-1])); //Array.push companyid
+  }
+  whereClause += `);`
+  const query = `SELECT optionid, cost, audiencereach FROM Advertisement ${whereClause}`
+  console.log("values: " +values)
+  console.log("query: "+query);
+  //Connect to database
+  const client = connect();
+  client.query(query, values, function (err, { rows }) {
+    client.end();
+    callback(err, rows);
+    console.log(rows)
+  })
+}
 
 //5. GET audience and cost for computation ---
 function getOptionsForComputation(optionIds, callback) {
@@ -177,5 +180,6 @@ module.exports = {
   insertAdvertisement,
   getData,
   getRowCount,
-  getOptionsForComputation
+  getOptionsForComputation,
+  getDataForChart
 }
