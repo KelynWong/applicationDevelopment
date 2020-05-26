@@ -193,7 +193,7 @@ h1 {
   top: 150px;
   right: 0px;
   position: absolute;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 #tabulationTitle {
