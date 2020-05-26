@@ -52,6 +52,7 @@ This document helps you identify the smaller tasks and helps you create a rough 
 | 3    | Basic | Frontend  | Result Viewer | Wireframe      |
 | 4    | Basic | Backend   | Data Viewer   | Implementation |
 | 5    | Basic | Backend   | Result Viewer | Implementation |
+| 6    | Basic | Backend   | Result Viewer | Implementation |
 
 ### Member 2 - <Kester>
 
@@ -69,6 +70,7 @@ This document helps you identify the smaller tasks and helps you create a rough 
 | 3    | Basic | Frontend  | Result Viewer | Wireframe      |
 | 4    | Basic | Backend   | Result API    | Implementation |
 | 5    | Basic | Backend   | Result Viewer | Implementation |
+| 6    | Basic | Backend   | Result Viewer | Implementation |
 
 
 > This is just a template, you just need to state **WHO** will do **WHAT** and **WHEN**.
