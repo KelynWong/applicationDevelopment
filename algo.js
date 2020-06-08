@@ -44,11 +44,13 @@ function fractionalKnapsack(audience, cost, budget){
 //------------------- ADVANCED -----------------------
 // function FullKnapsack(audience, cost, budget, n){
 //     var result= [];
+//     console.log("========================");
 //     console.log("n: " + n);
 //     console.log("audience: " + audience);
 //     console.log("cost: " + cost);
 //     console.log("budget: " + budget);
-//     console.log("result: " + result)
+//     console.log("result: " + result);
+//     console.log("cost[n]: " + cost[n]);
 //     if(n==0 || budget==0){
 //         result[n]=0;
 //     }else if(cost[n] > budget){
@@ -68,6 +70,32 @@ function fractionalKnapsack(audience, cost, budget){
 // }
 
 // console.log(FullKnapsack([1,1,1,1],[1,2,3,4], 4, 3))
+
+// function FullKnapsack(audience, cost, budget){
+//     let cache = [];
+//      for (g = 0; g < audience.length+1; g++){
+//           cache[g] = [];
+//           for (h = 0; h < budget+1; h++) {
+//                cache[g][h] = 0;
+//           }
+//      }
+//      for (let i = 0; i < audience.length+1; i++) {
+//           for (let j = 0; j < budget+1; j++) {
+//                if (i === 0 || j === 0)
+//                     cache[i][j] = 0;
+//                else if (cost[i-1] <= j) {
+//                     let included = audience[i-1] + cache[i-1][j-cost[i-1]];
+//                     let excluded = cache[i-1][j];
+//                     cache[i][j] = Math.max(included, excluded);
+//                }
+//                else
+//                     cache[i][j] = cache[i-1][j]
+//           }
+//      }
+//      return cache[audience.length][budget];
+// }
+
+// console.log(FullKnapsack([4,3,2,1],[1,2,3,4], 4))
 
 module.exports = {
     fractionalKnapsack,

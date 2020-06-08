@@ -125,10 +125,12 @@ function getRowCount(companyId, audienceReach, callback) {
 
 }
 
-//4. GET Retrieve data for results ---
+//4. GET Retrieve data for making of chart ---
 function getDataForChart(optionIds, callback) {
-
-  var optionList = optionIds.split(',');
+  if(optionIds.length == 0){ 
+    return callback(null, []) 
+  }
+  var optionList = optionIds.toString().split(',');
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";
@@ -138,7 +140,7 @@ function getDataForChart(optionIds, callback) {
     values.push(parseInt(optionList[i-1])); //Array.push companyid
   }
   whereClause += `);`
-  const query = `SELECT optionid, cost, audiencereach FROM Advertisement ${whereClause}`
+  const query = `SELECT optionid, cost, audiencereach, adtype FROM Advertisement ${whereClause}`
   console.log("values: " +values)
   console.log("query: "+query);
   //Connect to database
@@ -152,8 +154,10 @@ function getDataForChart(optionIds, callback) {
 
 //5. GET audience and cost for computation ---
 function getOptionsForComputation(optionIds, callback) {
-
-  var optionList = optionIds.split(',');
+  if(optionIds.length == 0){ 
+    return callback(null, []) 
+  }
+  var optionList = optionIds.toString().split(',');
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";

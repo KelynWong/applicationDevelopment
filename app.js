@@ -33,10 +33,11 @@ app.post('/basic/insert/', function (req, res, next) {
   database.insertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
-      return next(error);
+      res.json({"error": error.detail, "code": error.code});
+      // return next(error);
     }
     console.log(result)
-    res.json(data);
+    res.json({"result": "success"});
   });
 });
 
@@ -46,8 +47,11 @@ app.post('/basic/allData', function (req, res) {
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
 
   database.getData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
-    if (error) {
-      return next(error);
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
     }
     console.log(result);
     res.json(result);
@@ -58,8 +62,11 @@ app.post('/basic/allData', function (req, res) {
 app.post('/extra/getRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.body;
   database.getRowCount(companyId, audienceReach, (error, result) => {
-    if (error) {
-      return next(error);
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
     }
     return res.json(result);
   })
@@ -71,23 +78,45 @@ app.post('/basic/allChartData', function (req, res) {
   const { optionIds } = req.body;
 
   database.getDataForChart(optionIds, (error, result) => {
-    if (error) {
-      return next(error);
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
     }
-    console.log(result);
-    res.json(result);
+      var optionType = []
+      for (let i = 0; i < result.length; i++) {
+        optionType.push(result[i].adtype)
+      }
+      var same = ''
+      for (var j = 1; j < optionType.length; j++) {
+        if(optionType[0] == optionType[j]){
+          same = 'true'
+        }else{
+          same = 'false'
+        }
+      }
+      if(same == 'false'){
+        return res.json({"error": "Different ad type", "code": "404"});
+      }else if(same == 'true'){
+        console.log(result);
+        res.json(result);
+      }
   })
 });
 
 // POST 5. Get tabulation results ---
-app.post('/basic/getTabulation', function (req, res, next) {
+app.post('/basic/result', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
   database.getOptionsForComputation(optionIds, (error, result) => {
-    if (error) {
-      return next(error);
-    }else{
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
+    }
       var audience = [];
       var cost = [];
       var optionType = []
@@ -96,37 +125,43 @@ app.post('/basic/getTabulation', function (req, res, next) {
         cost.push(Number(result[i].cost))
         optionType.push(result[i].adtype)
       }
-      var same= ''
-      for (let j = 1; j <= optionType.length; j++) {
-        if(optionType[j] != optionType[j-1]){
+      var same = ''
+      for (var j = 1; j < optionType.length; j++) {
+        if(optionType[0] == optionType[j]){
           same = 'true'
-      }
-      var updatedCost= []
-      var payment = []
-      if(optionType[0]=="Not Fixed" && same=="true"){
-        updatedCost = algo.fractionalKnapsack(audience, cost, budget)
-        for (let k = 0; k < result.length; k++) {
-          console.log("Number(result[k].cost): " +Number(result[k].cost))
-          if(parseInt(result[k].cost) == parseInt(updatedCost[k])){
-            payment.push('Full')
-          }else if(parseInt(updatedCost[k]) == 0){
-            payment.push('No')
-            result[k].audiencereach = 0
-          }else{
-            payment.push('Partial')
-            var factor = result[k].cost/updatedCost[k]
-            var updatedAudience = result[k].audiencereach/factor
-            result[k].audiencereach = updatedAudience
-          }
-          result[k].cost = updatedCost[k]
-          result[k]['payment']=payment[k]
+        }else{
+          same = 'false'
         }
-      }else if(optionType[0]=="Fixed" && same=="true"){
-        // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget))
       }
-    }
-  }
-  res.json(result)
+      if(same == 'false'){
+        return res.json({"error": "Different ad type", "code": "404"});
+      }else{
+        var updatedCost= []
+        var payment = []
+        if(optionType[0]=="Not Fixed" && same=="true"){
+          updatedCost = algo.fractionalKnapsack(audience, cost, budget)
+          for (let k = 0; k < result.length; k++) {
+            console.log("Number(result[k].cost): " +Number(result[k].cost))
+            if(parseInt(result[k].cost) == parseInt(updatedCost[k])){
+              payment.push('Full')
+            }else if(parseInt(updatedCost[k]) == 0){
+              payment.push('No')
+              result[k].audiencereach = 0
+            }else{
+              payment.push('Partial')
+              var factor = result[k].cost/updatedCost[k]
+              var updatedAudience = result[k].audiencereach/factor
+              result[k].audiencereach = updatedAudience
+            }
+            result[k].cost = updatedCost[k]
+            result[k]['payment']=payment[k]
+          }
+        }else if(optionType[0]=="Fixed" && same=="true"){
+          var n = result.length
+          // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget, n))
+        }
+        res.json(result)
+        }
   })
 });
 
