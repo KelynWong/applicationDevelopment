@@ -46,6 +46,7 @@
             axios.post(`${baseUrl}/basic/allChartData`, requestBody)
                 .then((response) => {
                     console.log(response)
+                    console.log("response.data.error: " + response.data.error)
                     google.charts.load('current', {'packages':['bar']});
                     google.charts.setOnLoadCallback(drawStuff);
             
@@ -91,10 +92,11 @@
                     };
                 });
 
-                axios.post(`${baseUrl}/basic/getTabulation`, requestBody)
+                axios.post(`${baseUrl}/basic/result`, requestBody)
                 .then((response) => {
                     console.log("response.data: " + response)
                     const tabulations = response.data;
+                    $("#tabulation").empty()
                     tabulations.forEach((tabulation) => {
                         const postHtml = `
                             <div style="width: 180px" class="card" style="margin-top: 2rem;">
@@ -144,11 +146,11 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
                         </div>
-                        <input type="text" placeholder="OptionIds e.g. 1000000001,1000000002,..." class="form-control" id="optionIdsInput">
+                        <input type="text" placeholder="OptionIds e.g. 1000000001,1000000002,..." class="form-control" id="optionIdsInput" required>
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-dollar"></i>
                         </div>
-                        <input type="text" placeholder="Budget" class="form-control" id="budgetInput">
+                        <input type="text" placeholder="Budget" class="form-control" id="budgetInput" required>
                         <button type="button" class="btn btn-success computeBtn">Compute</button>
                     </div>
                 </div>
