@@ -125,18 +125,20 @@ function getRowCount(companyId, audienceReach, callback) {
 
 }
 
+
+// Result Viewer API
 //4. GET Retrieve data for making of chart ---
 function getDataForChart(optionIds, callback) {
   if(optionIds.length == 0){ 
-    return callback(null, []) 
+    return callback(null, []); // Return empty dataset.
   }
-  var optionList = optionIds.toString().split(',');
+  var optionList = optionIds.toString().split(','); //optionList array
   //This part below determines what sql query is produced based on the page state.
   const values = [];
   let whereClause = "WHERE optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
-    if(i != optionList.length) whereClause += `, `
+    if(i != optionList.length) whereClause += `, `;
     values.push(parseInt(optionList[i-1])); //Array.push companyid
   }
   whereClause += `);`

@@ -72,19 +72,22 @@ app.post('/extra/getRowCount', function (req, res, next) {
   })
 });
 
+
+// Result Viewer API
 // POST 4. Retrieve data for chart ---
 app.post('/basic/allChartData', function (req, res) {
   console.log(req.body);
-  const { optionIds } = req.body;
+  const { optionIds } = req.body; 
 
-  database.getDataForChart(optionIds, (error, result) => {
+  database.getDataForChart(optionIds, (error, result) => { 
     if(result.length == 0){
-      return res.json({"error": "Not found", "code": "404"});
+      return res.json({"error": "Not found", "code": "404"}); //No optionId
     }else if (error) {
-      return res.json({"error": error.detail, "code": error.code});
+      return res.json({"error": error.detail, "code": error.code}); //Other errors
       // return next(error);
     }
-      var optionType = []
+      // Ques 1: Why no use boolean?
+      var optionType = [];
       for (let i = 0; i < result.length; i++) {
         optionType.push(result[i].adtype)
       }
