@@ -34,15 +34,16 @@
     <script type="text/javascript">
     const baseUrl = "http://localhost:3000";
     $(document).ready(function () {
-        $(document).on('click', '.computeBtn', function () {
-            var optionIdsInput = document.getElementById("optionIdsInput").value
-            var budgetInput = document.getElementById("budgetInput").value
+        $(document).on('click', '.computeBtn', function () { // On click compute button
+            var optionIdsInput = document.getElementById("optionIdsInput").value //Get option id input
+            var budgetInput = document.getElementById("budgetInput").value //Get budget input
             console.log("optionIdsInput: " + optionIdsInput);
             console.log("budgetInput: " + budgetInput);
             const requestBody = {
                 optionIds: optionIdsInput,
                 budget: budgetInput,
             }
+
             axios.post(`${baseUrl}/basic/allChartData`, requestBody)
                 .then((response) => {
                     console.log(response)
@@ -87,10 +88,11 @@
                             }
                         };
                 
-                        var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
+                        var chart = new google.charts.Bar(document.getElementById('dual_x_div')); // Is this the one editing the chart into the html?
                         chart.draw(data, options);
                     };
                 });
+
 
                 axios.post(`${baseUrl}/basic/result`, requestBody)
                 .then((response) => {
@@ -125,10 +127,10 @@
                             <h3>Logo Space</h3>
                         </div>
                         <ul class="list-unstyled components">
-                            <li class="active nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link" href="index.html"><i class="fa fa-table"></i> Data Viewer</a>
                             </li>
-                            <li class= "nav-item">
+                            <li class= "active nav-item">
                                 <a class="nav-link" href="resultsPage.html"><i class="fa fa-bar-chart"></i> Results</a>
                             </li>
                         </ul>
@@ -156,7 +158,7 @@
                 </div>
                 
                 <div class="container">
-                    <div id="dual_x_div" style="width: 800px; height: 500px;" class="col-8"></div>
+                    <div id="dual_x_div" style="width: 800px; height: 500px;" class="col-8"></div> <!--Google Chart area-->
                         <div id="tabulationContainer">
                             <div class="tabulationTitle">Tabulation</div>
                             <div id="tabulation"></div>
