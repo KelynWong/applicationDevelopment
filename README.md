@@ -1,8 +1,8 @@
-# JiBaBoom
+# JiBaBoom - shodfjmsef
 
 ## Names:
 
-1. `Wong En Ting Kelyn`
+1. `Wong En Ting Kelyn` 
 2. `Teh Huan Xi Kester`
 
 ## Setup
