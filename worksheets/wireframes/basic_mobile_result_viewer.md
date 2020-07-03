@@ -6,9 +6,9 @@ This document should help you explain how your user interfaces are designed. You
 
 > This is just an example, please find your own wireframe.
 
-![Wireframe1](/worksheets/wireframes/assets/Wireframes/mobile/ResultViewer(mobile).png)
-![Wireframe2](/worksheets/wireframes/assets/Wireframes/mobile/ResultViewer(mobile)_Tabulation.png) 
-![Wireframe3](/worksheets/wireframes/assets/Wireframes/mobile/Navbar(mobile).png)
+![Wireframe1](/worksheets/wireframes/assets/Wireframes/mobile/BasicResultViewer(mobile).png)
+![Wireframe2](/worksheets/wireframes/assets/Wireframes/mobile/BasicResultViewer(mobile)Tubulation.png) 
+![Wireframe3](/worksheets/wireframes/assets/Wireframes/mobile/BasicNavBar.png)
 
 ## Justifications
 
