@@ -37,7 +37,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
         companyId: filterCompanyId,
         audienceReach: filterAudienceReach
     };
-    axios.post(`${baseUrl}/extra/getRowCount`, requestBody)
+    axios.post(`${baseUrl}/extra/advGetRowCount`, requestBody)
         .then((response) => {
             var parse = response.data[0].count;
             var final = Math.ceil(parse / pageSize - 1); //This gets the max page (in index form)
@@ -102,7 +102,7 @@ function fillTable(table, filterCompanyId, filterAudienceReach) {
         companyId: filterCompanyId,
         audienceReach: filterAudienceReach
     };
-    axios.post(`${baseUrl}/basic/Alldata`, requestBody)
+    axios.post(`${baseUrl}/advanced/Alldata`, requestBody)
         .then((response) => {
             console.log("response: " + response);
             var data = response.data;
