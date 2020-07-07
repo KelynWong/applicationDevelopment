@@ -60,22 +60,21 @@ function insertAdvertisement(data, callback) {
     });
 }
 
-// GET 2. Retrieve all data ---
+// GET 2. Retrieve basic(adType = Not Fixed) data ---
 function getData(companyId, audienceReach, pageNo, pageSize, callback) {
 
   //This part below determines what sql query is produced based on the page state.
   let i = 1;
   const values = [];
-  let whereClause;
+  let whereClause = `WHERE adType='Not Fixed'`;
   if (!companyId && !audienceReach) whereClause = "";
   else {
-    whereClause = 'WHERE ';
     if (companyId) { //if companyid exists
-      whereClause += `companyId = $${i++}`
+      whereClause += ` AND companyId = $${i++}`
       values.push(parseInt(companyId)); //Array.push companyid
     }
     if (audienceReach) { //if audienceReach exists
-      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      whereClause += ` AND audienceReach = $${i++}`
       values.push(parseInt(audienceReach)); //Array.push audiencereach
     }
   }
