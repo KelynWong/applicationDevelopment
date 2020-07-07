@@ -102,7 +102,7 @@ function fillTable(table, filterCompanyId, filterAudienceReach) {
         companyId: filterCompanyId,
         audienceReach: filterAudienceReach
     };
-    axios.post(`${baseUrl}/basic/Alldata`, requestBody)
+    axios.post(`${baseUrl}/basic/allData`, requestBody)
         .then((response) => {
             console.log("response: " + response);
             var data = response.data;
