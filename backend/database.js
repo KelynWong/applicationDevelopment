@@ -60,18 +60,18 @@ function insertAdvertisement(data, callback) {
     });
 }
 
-// GET 2. Retrieve all data ---
-function getData(companyId, audienceReach, pageNo, pageSize, callback) {
+// GET 2. BASIC: Retrieve all data ---
+function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
 
   //This part below determines what sql query is produced based on the page state.
   let i = 1;
   const values = [];
   let whereClause;
-  if (!companyId && !audienceReach) whereClause = "";
+  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Not Fixed'";
   else {
-    whereClause = 'WHERE ';
+    whereClause = `WHERE adType = 'Not Fixed'`;
     if (companyId) { //if companyid exists
-      whereClause += `companyId = $${i++}`
+      whereClause += `AND companyId = $${i++}`
       values.push(parseInt(companyId)); //Array.push companyid
     }
     if (audienceReach) { //if audienceReach exists
@@ -99,16 +99,56 @@ function getData(companyId, audienceReach, pageNo, pageSize, callback) {
   })
 }
 
-//3. GET row count of table advertisement ---
-function getRowCount(companyId, audienceReach, callback) {
+
+// GET 2. BASIC: Retrieve all data ---
+function advGetData(companyId, audienceReach, pageNo, pageSize, callback) {
+
+  //This part below determines what sql query is produced based on the page state.
   let i = 1;
   const values = [];
   let whereClause;
-  if (!companyId && !audienceReach) whereClause = "";
+  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Fixed'";
   else {
-    whereClause = 'WHERE ';
+    whereClause = `WHERE adType = 'Fixed'`;
     if (companyId) { //if companyid exists
-      whereClause += `companyId = $${i++}`
+      whereClause += `AND companyId = $${i++}`
+      values.push(parseInt(companyId)); //Array.push companyid
+    }
+    if (audienceReach) { //if audienceReach exists
+      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      values.push(parseInt(audienceReach)); //Array.push audiencereach
+    }
+  }
+  // This part below determines the amount of data being sent to a page.
+  let limitOffsetClause;
+  if (!pageNo && !pageSize) limitOffsetClause = "";
+  else {
+    limitOffsetClause = `LIMIT $${i++} OFFSET $${i++}`
+    values.push(parseInt(pageSize)); //Limit = page size 10 - Amount of data taken.
+    values.push(parseInt(pageNo) * parseInt(pageSize)); //Offset = (pageNo -index) * pagesize - Amount of data skipped before.
+  }
+
+  const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause}`
+  console.log(query);
+  //Connect to database
+  const client = connect();
+  client.query(query, values, function (err, { rows }) {
+    client.end();
+    callback(err, rows);
+    console.log(rows)
+  })
+}
+
+//3. GET BASIC: row count of table advertisement ---
+function basicGetRowCount(companyId, audienceReach, callback) {
+  let i = 1;
+  const values = [];
+  let whereClause;
+  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Not Fixed'";
+  else {
+    whereClause = `WHERE adType = 'Not Fixed'`;
+    if (companyId) { //if companyid exists
+      whereClause += `AND companyId = $${i++}`
       values.push(parseInt(companyId)); //Array.push companyid
     }
     if (audienceReach) { //if audienceReach exists
@@ -122,20 +162,45 @@ function getRowCount(companyId, audienceReach, callback) {
     client.end();
     callback(err, rows);
   })
+}
 
+//3. GET ADVANCED: row count of table advertisement ---
+function advGetRowCount(companyId, audienceReach, callback) {
+  let i = 1;
+  const values = [];
+  let whereClause;
+  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Fixed'";
+  else {
+    whereClause = `WHERE adType = 'Fixed'`;
+    if (companyId) { //if companyid exists
+      whereClause += `AND companyId = $${i++}`
+      values.push(parseInt(companyId)); //Array.push companyid
+    }
+    if (audienceReach) { //if audienceReach exists
+      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      values.push(parseInt(audienceReach)); //Array.push audiencereach
+    }
+  }
+  const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
+  const client = connect();
+  client.query(query, values, function (err, { rows }) {
+    client.end();
+    callback(err, rows);
+  })
 }
 
 
 // Result Viewer API
 //4. GET Retrieve data for making of chart ---
-function getDataForChart(optionIds, callback) {
+function basicGetDataForChart(optionIds, callback) {
   if(optionIds.length == 0){ 
     return callback(null, []); // Return empty dataset.
   }
+  // Note: Improve on validation.
   var optionList = optionIds.toString().split(','); //optionList array
   //This part below determines what sql query is produced based on the page state.
   const values = [];
-  let whereClause = "WHERE optionId IN (";
+  let whereClause = "WHERE adType = 'Not Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
     if(i != optionList.length) whereClause += `, `;
@@ -155,14 +220,14 @@ function getDataForChart(optionIds, callback) {
 }
 
 //5. GET audience and cost for computation ---
-function getOptionsForComputation(optionIds, callback) {
+function basicGetOptionsForComputation(optionIds, callback) {
   if(optionIds.length == 0){ 
     return callback(null, []) 
   }
   var optionList = optionIds.toString().split(',');
   //This part below determines what sql query is produced based on the page state.
   const values = [];
-  let whereClause = "WHERE optionId IN (";
+  let whereClause = "WHERE adType = 'Not Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
     if (i != optionList.length) whereClause += `, `
@@ -184,8 +249,10 @@ function getOptionsForComputation(optionIds, callback) {
 module.exports = {
   resetTable,
   insertAdvertisement,
-  getData,
-  getRowCount,
-  getOptionsForComputation,
-  getDataForChart
+  basicGetData,
+  advGetData,
+  basicGetRowCount,
+  advGetRowCount,
+  basicGetOptionsForComputation,
+  basicGetDataForChart
 }

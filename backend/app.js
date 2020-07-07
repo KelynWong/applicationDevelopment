@@ -41,12 +41,12 @@ app.post('/basic/insert/', function (req, res, next) {
   });
 });
 
-// POST 2. Retrieve all data ---
+// POST 2. BASIC Retrieve all data ---
 app.post('/basic/allData', function (req, res) {
   console.log(req.body);
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
 
-  database.getData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
+  database.basicGetData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
     if(result.length == 0){
       return res.json({"error": "Not found", "code": "404"});
     }else if (error) {
@@ -58,10 +58,41 @@ app.post('/basic/allData', function (req, res) {
   })
 });
 
-// GET 3. Retrieve all number of row data in table: advertisement ---
-app.post('/extra/getRowCount', function (req, res, next) {
+// POST 2. ADVANCED Retrieve all data ---
+app.post('/advanced/allData', function (req, res) {
+  console.log(req.body);
+  const { companyId, audienceReach, pageNo, pageSize } = req.body;
+
+  database.advGetData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
+    }
+    console.log(result);
+    res.json(result);
+  })
+});
+
+// GET 3. BASIC: Retrieve all number of row data in table: advertisement ---
+app.post('/extra/basicGetRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.body;
-  database.getRowCount(companyId, audienceReach, (error, result) => {
+  database.basicGetRowCount(companyId, audienceReach, (error, result) => {
+    if(result.length == 0){
+      return res.json({"error": "Not found", "code": "404"});
+    }else if (error) {
+      return res.json({"error": error.detail, "code": error.code});
+      // return next(error);
+    }
+    return res.json(result);
+  })
+});
+
+// GET 3. ADVANCED: Retrieve all number of row data in table: advertisement ---
+app.post('/extra/advGetRowCount', function (req, res, next) {
+  const { companyId, audienceReach } = req.body;
+  database.advGetRowCount(companyId, audienceReach, (error, result) => {
     if(result.length == 0){
       return res.json({"error": "Not found", "code": "404"});
     }else if (error) {
@@ -74,46 +105,54 @@ app.post('/extra/getRowCount', function (req, res, next) {
 
 
 // Result Viewer API
-// POST 4. Retrieve data for chart ---
-app.post('/basic/allChartData', function (req, res) {
+// POST 4. Retrieve Basic data for chart ---
+app.post('/basic/allChartData', function (req, res) { 
   console.log(req.body);
   const { optionIds } = req.body; 
 
-  database.getDataForChart(optionIds, (error, result) => { 
+  database.basicGetDataForChart(optionIds, (error, result) => {  // links to database.js
     if(result.length == 0){
       return res.json({"error": "Not found", "code": "404"}); //No optionId
     }else if (error) {
       return res.json({"error": error.detail, "code": error.code}); //Other errors
       // return next(error);
     }
-      // Ques 1: Why no use boolean?
+      // Adding boolean
       var optionType = [];
       for (let i = 0; i < result.length; i++) {
         optionType.push(result[i].adtype)
       }
-      var same = ''
-      for (var j = 1; j < optionType.length; j++) {
-        if(optionType[0] == optionType[j]){
-          same = 'true'
-        }else{
-          same = 'false'
-        }
-      }
-      if(same == 'false'){
+      //The check
+      var same = true;
+      // for (var j = 1; j < optionType.length; j++) {
+      //   if(optionType[0] == optionType[j]){
+      //     same = true;
+      //   }else{
+      //     same = false;
+      //   }
+      // }
+
+      //The for loop eventually returns true or false but theres 2 issues:
+      // 1. Lets say theres 5 ids inputted, and no. 4 is the different adType.
+      // The var same will still = true at the end :/
+      // 2. Lets say we fix no.1, the final result is false yes, but it does not specify 
+      // which option was the outlier.
+      // So we gotta fix no. 1 and also make the error able to identify what id is causing it.
+      if(same == false){
         return res.json({"error": "Different ad type", "code": "404"});
-      }else if(same == 'true'){
+      }else if(same == true){
         console.log(result);
         res.json(result);
       }
   })
 });
 
-// POST 5. Get tabulation results ---
+// POST 5. Get BASIC tabulation results ---
 app.post('/basic/result', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
-  database.getOptionsForComputation(optionIds, (error, result) => {
+  database.basicGetOptionsForComputation(optionIds, (error, result) => { // links to database.js
     if(result.length == 0){
       return res.json({"error": "Not found", "code": "404"});
     }else if (error) {
@@ -128,21 +167,21 @@ app.post('/basic/result', function (req, res, next) {
         cost.push(Number(result[i].cost))
         optionType.push(result[i].adtype)
       }
-      var same = ''
-      for (var j = 1; j < optionType.length; j++) {
-        if(optionType[0] == optionType[j]){
-          same = 'true'
-        }else{
-          same = 'false'
-        }
-      }
-      if(same == 'false'){
-        return res.json({"error": "Different ad type", "code": "404"});
-      }else{
+      var same = true;
+      // for (var j = 1; j < optionType.length; j++) {
+      //   if(optionType[0] == optionType[j]){
+      //     same = true
+      //   }else{
+      //     same = false
+      //   }
+      // }
+      // if(same == false){
+      //   return res.json({"error": "Different ad type", "code": "404"});
+      // }else{
         var updatedCost= []
         var payment = []
-        if(optionType[0]=="Not Fixed" && same=="true"){
-          updatedCost = algo.fractionalKnapsack(audience, cost, budget)
+        // if(optionType[0]=="Not Fixed" && same== true){
+          updatedCost = algo.fractionalKnapsack(audience, cost, budget);
           for (let k = 0; k < result.length; k++) {
             console.log("Number(result[k].cost): " +Number(result[k].cost))
             if(parseInt(result[k].cost) == parseInt(updatedCost[k])){
@@ -159,12 +198,13 @@ app.post('/basic/result', function (req, res, next) {
             result[k].cost = updatedCost[k]
             result[k]['payment']=payment[k]
           }
-        }else if(optionType[0]=="Fixed" && same=="true"){
-          var n = result.length
-          // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget, n))
-        }
+        // }
+        // else if(optionType[0]=="Fixed" && same== true){
+        //   var n = result.length
+        //   // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget, n))
+        // }
         res.json(result)
-        }
+        //}
   })
 });
 
