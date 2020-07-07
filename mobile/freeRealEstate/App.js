@@ -10,7 +10,7 @@ import * as React from 'react';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import dataViewerScreen from './testDataViewerScreen'
+import dataViewerScreen from './dataViewerScreen'
 import resultViewerScreen from './resultViewerScreen'
 
 import 'react-native-gesture-handler';
@@ -63,7 +63,7 @@ const ResultViewerStackScreen= ({navigation}) => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='DataViewer'>
+      <Drawer.Navigator initialRouteName='ResultViewer'>
         <Drawer.Screen name='DataViewer' component={DataViewerStackScreen}/>
         <Drawer.Screen name='ResultViewer' component={ResultViewerStackScreen}/>
       </Drawer.Navigator>
