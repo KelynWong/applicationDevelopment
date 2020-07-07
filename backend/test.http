@@ -11,46 +11,184 @@ Content-Type: application/json
 {
     "data": [
         {
-            "optionId": 1000000007,
-            "companyId": 1000000003,
+            "optionId": 1000000001,
+            "companyId": 1000000001,
             "cost": 1000.00,
-            "audienceCount": 4000,
-            "adType": "Fixed"
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000002,
+            "companyId": 1000000001,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000003,
+            "companyId": 1000000001,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000004,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000005,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000006,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000007,
+            "companyId": 1000000001,
+            "cost": 1000.00,
+            "audienceCount": 4000
         },
         {
             "optionId": 1000000008,
-            "companyId": 1000000004,
+            "companyId": 1000000001,
             "cost": 800.00,
-            "audienceCount": 5000,
-            "adType": "Fixed"
+            "audienceCount": 5000
         },
         {
             "optionId": 1000000009,
-            "companyId": 1000000005,
+            "companyId": 1000000001,
             "cost": 100.00,
-            "audienceCount": 200,
-            "adType": "Not Fixed"
+            "audienceCount": 200
         },
         {
             "optionId": 1000000010,
-            "companyId": 1000000006,
+            "companyId": 1000000001,
             "cost": 5000.00,
-            "audienceCount": 7000,
-            "adType": "Not Fixed"
+            "audienceCount": 7000
         },
         {
             "optionId": 1000000011,
-            "companyId": 1000000007,
+            "companyId": 1000000002,
             "cost": 5000.00,
-            "audienceCount": 700,
-            "adType": "Not Fixed"
+            "audienceCount": 700
         },
         {
             "optionId": 1000000012,
-            "companyId": 1000000008,
+            "companyId": 1000000002,
             "cost": 5000.00,
-            "audienceCount": 3000,
-            "adType": "Not Fixed"
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000013,
+            "companyId": 1000000002,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000014,
+            "companyId": 1000000002,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000015,
+            "companyId": 1000000002,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000016,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000017,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000018,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000019,
+            "companyId": 1000000002,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000020,
+            "companyId": 1000000002,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000021,
+            "companyId": 1000000003,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000022,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000023,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000024,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000025,
+            "companyId": 1000000003,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000026,
+            "companyId": 1000000003,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000027,
+            "companyId": 1000000003,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000028,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000029,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000030,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 3000
         }
     ]
 }
@@ -58,6 +196,205 @@ Content-Type: application/json
 ###
 
 POST http://localhost:3000/basic/insert/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "data": []
+}
+
+###
+
+POST http://localhost:3000/advance/insert/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "data": [
+        {
+            "optionId": 1000000001,
+            "companyId": 1000000001,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000002,
+            "companyId": 1000000001,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000003,
+            "companyId": 1000000001,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000004,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000005,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000006,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000007,
+            "companyId": 1000000001,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000008,
+            "companyId": 1000000001,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000009,
+            "companyId": 1000000001,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000010,
+            "companyId": 1000000001,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000011,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000012,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000013,
+            "companyId": 1000000002,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000014,
+            "companyId": 1000000002,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000015,
+            "companyId": 1000000002,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000016,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000017,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000018,
+            "companyId": 1000000002,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000019,
+            "companyId": 1000000002,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000020,
+            "companyId": 1000000002,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000021,
+            "companyId": 1000000003,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000022,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000023,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000024,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        },
+        {
+            "optionId": 1000000025,
+            "companyId": 1000000003,
+            "cost": 1000.00,
+            "audienceCount": 4000
+        },
+        {
+            "optionId": 1000000026,
+            "companyId": 1000000003,
+            "cost": 800.00,
+            "audienceCount": 5000
+        },
+        {
+            "optionId": 1000000027,
+            "companyId": 1000000003,
+            "cost": 100.00,
+            "audienceCount": 200
+        },
+        {
+            "optionId": 1000000028,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 7000
+        },
+        {
+            "optionId": 1000000029,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 700
+        },
+        {
+            "optionId": 1000000030,
+            "companyId": 1000000003,
+            "cost": 5000.00,
+            "audienceCount": 3000
+        }
+    ]
+}
+
+###
+
+POST http://localhost:3000/advance/insert/ HTTP/1.1
 Content-Type: application/json
 
 {
