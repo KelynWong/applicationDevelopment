@@ -27,6 +27,20 @@ app.options('*', cors());
 
 const database = require('./database')
 const algo = require('./algo')
+
+app.get('/reset/', function (req, res, next) {
+  database.resetTable((error, result) => {
+    if (error) { //Return error if error.
+      // res.json({ "error": error.detail, "code": error.code });
+      // return next(error);
+      res.send(error);
+    }
+    console.log(result)
+    // res.json({ "result": "success" });
+    res.send(result);
+  });
+});
+
 // POST 1. BASIC Insert Advertisement details ---
 app.post('/basic/insert/', function (req, res, next) {
   const { data } = req.body;
