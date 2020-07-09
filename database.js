@@ -18,7 +18,7 @@ function connect() {
 }
 
 // 0. Reset table script
-function resetTable() {
+function resetTable(callback) {
   const client = connect();
   const query = `
     DROP TABLE IF EXISTS Advertisement;
@@ -34,6 +34,7 @@ function resetTable() {
   client.query(query, (err, res) => {
     console.log(err, res)
     client.end()
+    callback()
   });
 }
 
