@@ -36,8 +36,8 @@ app.get('/reset/', function (req, res, next) {
       res.send(error);
     }
     console.log(result)
-    // res.json({ "result": "success" });
-    res.send(result);
+    res.json({ "result": "success" });
+    // res.send(result);
   });
 });
 
