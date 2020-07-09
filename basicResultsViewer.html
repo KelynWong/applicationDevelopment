@@ -94,7 +94,7 @@
                     });
 
 
-                axios.post(`${baseUrl}/basic/result`, requestBody) // Links to app.js
+                axios.get(`${baseUrl}/basic/result`, requestBody) // Links to app.js
                     .then((response) => {
                         console.log("response.data: " + response);
                         var people = 0;
