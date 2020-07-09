@@ -216,6 +216,7 @@ h1 {
   width: 100%;
   min-height: 50px;
   max-height: 50px;
+  align-content: center;
 }
 
 #dual_x_div {
@@ -265,7 +266,6 @@ h1 {
   flex-direction: column;
 
 }
-
 
 #row22 {
   margin: 0;
