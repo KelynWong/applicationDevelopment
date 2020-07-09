@@ -166,8 +166,8 @@ app.post('/advanced/allChartData', function (req, res) {
 });
 
 // POST 9. Get BASIC tabulation results ---
-app.post('/basic/result', function (req, res, next) {
-  const { optionIds, budget } = req.body;
+app.get('/basic/result', function (req, res, next) {
+  const { optionIds, budget } = req.query;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
   database.basicGetOptionsForComputation(optionIds, (error, result) => { // links to database.js
