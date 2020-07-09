@@ -10,19 +10,23 @@ import * as React from 'react';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import dataViewerScreen from './dataViewerScreen'
-import resultViewerScreen from './resultViewerScreen'
+import basicDataViewerScreen from './Screens/basicDataViewer'
+import basicResultViewerScreen from './Screens/basicResultViewer'
+import advanceDataViewerScreen from './Screens/advDataViewer'
+import advanceResultViewerScreen from './Screens/advResultViewer'
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const DataViewerStack = createStackNavigator();
-const ResultViewerStack = createStackNavigator();
+const basicDataViewerStack = createStackNavigator();
+const basicResultViewerStack = createStackNavigator();
+const advanceDataViewerStack = createStackNavigator();
+const advanceResultViewerStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const DataViewerStackScreen= ({navigation}) => (
+const basicDataViewerStackScreen= ({navigation}) => (
       <DataViewerStack.Navigator screenOptions={{
             headerStyle: {
                 backgroundColor: '#009387',
@@ -32,8 +36,8 @@ const DataViewerStackScreen= ({navigation}) => (
                 fontWeight: 'bold'
             }
         }}>
-            <DataViewerStack.Screen name="DataViewer" component={dataViewerScreen} options={{
-                title: 'Data Viewer',
+            <basicDataViewerStack.Screen name="basicDataViewer" component={basicDataViewerScreen} options={{
+                title: 'Data Viewer (basic)',
                 headerLeft: () => (
                   <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
                 )
@@ -41,7 +45,7 @@ const DataViewerStackScreen= ({navigation}) => (
         </DataViewerStack.Navigator>
 )
 
-const ResultViewerStackScreen= ({navigation}) => (
+const basicResultViewerStackScreen= ({navigation}) => (
   <ResultViewerStack.Navigator screenOptions={{
         headerStyle: {
             backgroundColor: '#009387',
@@ -51,8 +55,8 @@ const ResultViewerStackScreen= ({navigation}) => (
             fontWeight: 'bold'
         }
     }}>
-        <ResultViewerStack.Screen name="ResultViewer" component={resultViewerScreen} options={{
-            title: 'Result Viewer',
+        <basicResultViewerStack.Screen name="basicResultViewer" component={basicResultViewerScreen} options={{
+            title: 'Result Viewer (basic)',
             headerLeft: () => (
               <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
             )
@@ -60,12 +64,52 @@ const ResultViewerStackScreen= ({navigation}) => (
     </ResultViewerStack.Navigator>
 )
 
+const advanceDataViewerStackScreen= ({navigation}) => (
+  <DataViewerStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: '#009387',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold'
+        }
+    }}>
+        <advanceDataViewerStack.Screen name="advanceDataViewer" component={advanceDataViewerScreen} options={{
+            title: 'Data Viewer (advance)',
+            headerLeft: () => (
+              <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
+            )
+        }}/>
+    </DataViewerStack.Navigator>
+)
+
+const advanceResultViewerStackScreen= ({navigation}) => (
+<ResultViewerStack.Navigator screenOptions={{
+    headerStyle: {
+        backgroundColor: '#009387',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+        fontWeight: 'bold'
+    }
+}}>
+    <advanceResultViewerStack.Screen name="advanceResultViewer" component={advanceResultViewerScreen} options={{
+        title: 'Result Viewer (advance)',
+        headerLeft: () => (
+          <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
+        )
+    }}/>
+</ResultViewerStack.Navigator>
+)
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='ResultViewer'>
-        <Drawer.Screen name='DataViewer' component={DataViewerStackScreen}/>
-        <Drawer.Screen name='ResultViewer' component={ResultViewerStackScreen}/>
+      <Drawer.Navigator initialRouteName='basicDataViewer'>
+        <Drawer.Screen name='basicDataViewer' component={basicDataViewerStackScreen}/>
+        <Drawer.Screen name='basicResultViewer' component={basicResultViewerStackScreen}/>
+        <Drawer.Screen name='advanceDataViewer' component={advanceDataViewerStackScreen}/>
+        <Drawer.Screen name='advanceResultViewer' component={advanceResultViewerStackScreen}/>
       </Drawer.Navigator>
     </NavigationContainer>
   );

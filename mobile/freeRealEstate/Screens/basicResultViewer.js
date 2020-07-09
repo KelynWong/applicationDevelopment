@@ -3,7 +3,7 @@ import { useState }from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions } from 'react-native';
 import { DataTable, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Card from './card';
+import Card from '../myComponents/card';
 import {BarChart} from "react-native-chart-kit";
 
 // const itemsPerPage = 2;

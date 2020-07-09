@@ -38,7 +38,7 @@ export default class dataViewerScreen extends React.Component{
             rowCount: null,
             pageNo: 0,
             pageSize: 3, //default 3 rows in one page
-            page: 0,
+            page: 1,
         }
         this.getData = this.getData.bind(this);
     }
@@ -99,7 +99,7 @@ export default class dataViewerScreen extends React.Component{
       console.log('this.state.companyId: ' + this.state.companyId)
       console.log('this.state.audienceReach: ' + this.state.audienceReach)
       this.setState({loaded:false, error: null});
-      let url = this.baseURL + '/extra/getRowCount';
+      let url = this.baseURL + '/extra/basicGetRowCount';
       
       let req = new Request(url, {
           method: 'POST',
@@ -130,8 +130,16 @@ export default class dataViewerScreen extends React.Component{
       this.setState({companyId:''})
       this.setState({audienceReach:''})
     }
-    incrementPage(){
-      
+    setPage(page){
+      var temp = 0;
+      this.setState({ page: page })
+      console.log("this.state.page: " + this.state.page)
+      console.log("this.state.pageSize: " + this.state.pageSize)
+      temp = this.state.page * this.state.pageSize
+      console.log("temp: " + temp)
+      this.setState({ pageNo: temp})
+      console.log("this.state.pageNo: " + this.state.pageNo)
+      // this.getData();
     }
     
     render() {
@@ -221,11 +229,11 @@ export default class dataViewerScreen extends React.Component{
               <DataTable.Header>
                 <DataTable.Title numeric
                 sortDirection='ascending'
-                numberOfLines= {2}
+                numberOfLines= {4}
                 >OptionId</DataTable.Title>
                 <DataTable.Title numeric
                 sortDirection='ascending'
-                numberOfLines= {2}
+                numberOfLines= {4}
                 >CompanyId</DataTable.Title>
                 <DataTable.Title numeric
                 sortDirection='ascending'
@@ -237,7 +245,7 @@ export default class dataViewerScreen extends React.Component{
                 >Audience Reach</DataTable.Title>
                 <DataTable.Title
                 sortDirection='ascending'
-                numberOfLines= {2}
+                numberOfLines= {3}
                 >Ad Type</DataTable.Title>
               </DataTable.Header>
 
@@ -259,30 +267,18 @@ export default class dataViewerScreen extends React.Component{
               </DataTable.Row>
               )))}
 
-          {/* <DataTable.Pagination
-                  page={page}
-                  numberOfPages={Math.floor(items.length / itemsPerPage)}
-                  onPageChange={page => setPage(page)}
-                  label={`${from + 1}-${to} of ${items.length}`}
-                /> */}
-
-
               { this.state.rowCount && (
                 <DataTable.Pagination
                   page={this.state.page}
                   numberOfPages={Math.floor(this.state.rowCount[0].count / this.state.pageSize)}
                   onPageChange={pagee => {
                     console.log('change', pagee)
-                    this.setState({ page: pagee })
-                    // this.setState((prevState) => {
-                    //   this.setState({ page: prevState.page + 1 })
-                    //   console.log('this.state.page: ' + this.state.page)
-                    // })
-                    this.setState({ pageNo: (this.state.page + 1) * this.state.pageSize})
-                    this.getData();
-                    // this.incrementPage();
+                    this.setPage(pagee)
+                    // this.setState({ page: pagee })
+                    // this.setState({ pageNo: this.state.page * this.state.pageSize})
+                    // this.getData();
                   }}
-                  label={`${(this.state.page * this.state.pageSize) + 1}-${((this.state.page + 1) * this.state.pageSize)} of ${this.state.rowCount[0].count}`}
+                  label={`${((this.state.page - 1) * this.state.pageSize) + 1}-${((this.state.page + 1) * this.state.pageSize)} of ${this.state.rowCount[0].count}`}
                 /> 
               )}
           </DataTable>
