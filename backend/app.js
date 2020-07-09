@@ -28,6 +28,7 @@ app.options('*', cors());
 const database = require('./database')
 const algo = require('./algo')
 
+
 app.get('/reset/', function (req, res, next) {
   database.resetTable((error, result) => {
     if (error) { //Return error if error.
@@ -41,17 +42,18 @@ app.get('/reset/', function (req, res, next) {
   });
 });
 
+// -------------------INSERT---------------------
 // POST 1. BASIC Insert Advertisement details ---
 app.post('/basic/insert/', function (req, res, next) {
   const { data } = req.body;
   database.basicInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
-      res.json({ "error": error.detail, "code": error.code });
+      res.json({ "error": error.detail, "code": error.code }); // OK
       // return next(error);
     }
     console.log(result)
-    res.json({ "result": "success" });
+    res.json({ "result": "success" }); // Checked
   });
 });
 
@@ -61,17 +63,17 @@ app.post('/advance/insert/', function (req, res, next) {
   database.advInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
-      res.json({ "error": error.detail, "code": error.code });
+      res.json({ "error": error.detail, "code": error.code }); //OK
       // return next(error);
     }
     console.log(result)
-    res.json({ "result": "success" });
+    res.json({ "result": "success" }); // Checked
   });
 });
 
-// POST 3. BASIC Retrieve all data ---
-app.post('/basic/allData', function (req, res) {
-  console.log(req.body);
+// ----------------DATA VIEWER TABLE---------------------
+// GET 3. BASIC Retrieve all data for table---
+app.get('/basic/allData', function (req, res) {
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
 
   database.basicGetData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
@@ -79,15 +81,13 @@ app.post('/basic/allData', function (req, res) {
       return res.json({ "error": "Not found", "code": "404" });
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
-      // return next(error);
     }
-    console.log(result);
     res.json(result);
   })
 });
 
-// POST 4. ADVANCED Retrieve all data ---
-app.post('/advanced/allData', function (req, res) {
+// GET 4. ADVANCED Retrieve all data for table---
+app.get('/advanced/allData', function (req, res) {
   console.log(req.body);
   const { companyId, audienceReach, pageNo, pageSize } = req.body;
 
@@ -104,7 +104,7 @@ app.post('/advanced/allData', function (req, res) {
 });
 
 // GET 5. BASIC: Retrieve all number of row data in table: advertisement ---
-app.post('/extra/basicGetRowCount', function (req, res, next) {
+app.get('/extra/basicGetRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.body;
   database.basicGetRowCount(companyId, audienceReach, (error, result) => {
     if (result.length == 0) {
@@ -118,7 +118,7 @@ app.post('/extra/basicGetRowCount', function (req, res, next) {
 });
 
 // GET 6. ADVANCED: Retrieve all number of row data in table: advertisement ---
-app.post('/extra/advGetRowCount', function (req, res, next) {
+app.get('/extra/advGetRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.body;
   database.advGetRowCount(companyId, audienceReach, (error, result) => {
     if (result.length == 0) {
@@ -132,10 +132,9 @@ app.post('/extra/advGetRowCount', function (req, res, next) {
 });
 
 
-// Result Viewer API
-// POST 7. Retrieve BASIC data for chart ---
+// ----------------RESULT VIEWER CHART---------------------
+// GET 7. Retrieve BASIC data for chart --- (GET doesn't work hmm.)
 app.post('/basic/allChartData', function (req, res) {
-  console.log(req.body);
   const { optionIds } = req.body;
 
   database.basicGetDataForChart(optionIds, (error, result) => {  // links to database.js
@@ -144,8 +143,8 @@ app.post('/basic/allChartData', function (req, res) {
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code }); //Other errors
     }
-      console.log(result);
-      res.json(result);
+    console.log(result);
+    res.json(result);
   })
 });
 
@@ -160,60 +159,75 @@ app.post('/advanced/allChartData', function (req, res) {
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code }); //Other errors
     }
-      console.log(result);
-      res.json(result);
+    console.log(result);
+    res.json(result);
   })
 });
 
-// POST 9. Get BASIC tabulation results ---
+// ----------------RESULT VIEWER TABULATION---------------------
+// GET 9. Get BASIC tabulation results ---
 app.get('/basic/result', function (req, res, next) {
   const { optionIds, budget } = req.query;
-  console.log("optionids: " + optionIds)
-  console.log("budget: " + budget)
-  database.basicGetOptionsForComputation(optionIds, (error, result) => { // links to database.js
-    if (result.length == 0) {
-      return res.json({ "error": "Not found", "code": "404" });
+  console.log("optionids: " + optionIds);
+  console.log("budget: " + budget);
+  database.basicGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
+    if (databaseResult.length == 0) {
+      return result.json({ "error": "Not found", "code": "404" });
     } else if (error) {
-      return res.json({ "error": error.detail, "code": error.code });
+      return result.json({ "error": error.detail, "code": error.code });
       // return next(error);
     }
     var audience = [];
     var cost = [];
     var optionType = []
-    for (let i = 0; i < result.length; i++) {
-      audience.push(result[i].audiencereach)
-      cost.push(Number(result[i].cost))
-      optionType.push(result[i].adtype)
+    for (let i = 0; i < databaseResult.length; i++) {
+      audience.push(databaseResult[i].audiencereach)
+      cost.push(Number(databaseResult[i].cost))
+      optionType.push(databaseResult[i].adtype)
     }
     var updatedCost = []
     var payment = []
     updatedCost = algo.fractionalKnapsack(audience, cost, budget);
-    for (let k = 0; k < result.length; k++) {
-      console.log("Number(result[k].cost): " + Number(result[k].cost))
-      if (parseInt(result[k].cost) == parseInt(updatedCost[k])) {
+    for (let k = 0; k < databaseResult.length; k++) {
+      console.log("Number(databaseResult[k].amount): " + Number(databaseResult[k].cost));
+      console.log("Number(databaseResult[k].audienceReach): " + Number(databaseResult[k].audiencereach))
+
+      if (parseInt(databaseResult[k].cost) == parseInt(updatedCost[k])) {
         payment.push('Full');
-        result[k].cost = updatedCost[k];
+        databaseResult[k].cost = updatedCost[k];
       } else if (parseInt(updatedCost[k]) == 0) {
         payment.push('No');
-        result[k].cost = updatedCost[k];
-        result[k].audiencereach = 0
+        databaseResult[k].cost = updatedCost[k];
+        databaseResult[k].audiencereach = 0
       } else {
         payment.push('Partial');
-        var factor = result[k].cost / updatedCost[k];
+        var factor = databaseResult[k].cost / updatedCost[k];
         // To prevent people being cut up into pieces, we have to round down and get the price for the maximum amt of people.
-        var updatedAudience = Math.floor(result[k].audiencereach / factor);
-        result[k].cost = updatedAudience * (result[k].cost/result[k].audiencereach);
-        console.log(result[k].cost);
-        result[k].audiencereach = updatedAudience;
+        var updatedAudience = Math.floor(databaseResult[k].audiencereach / factor);
+        databaseResult[k].cost = updatedAudience * (databaseResult[k].cost / databaseResult[k].audiencereach);
+        databaseResult[k].audiencereach = updatedAudience;
       }
-      result[k]['payment'] = payment[k]; //Adds json object attribute
+      databaseResult[k]['payment'] = payment[k]; //Adds json object attribute
     }
-    res.json(result);
+    // Convert to required Schema.
+    const result = [];
+    for (let i = 0; i < databaseResult.length; i++) {
+      result.push({
+        optionId: parseInt(databaseResult[i].optionid),
+        companyId: parseInt(databaseResult[i].companyid),
+        amount: parseFloat(databaseResult[i].cost),
+        audienceReached: parseInt(databaseResult[i].audiencereach),
+        adType: databaseResult[i].adtype,
+        payment: databaseResult[i].payment
+      });
+    }
+    res.json({ result });
   })
 });
 
+
 // POST 10. Get ADVANCE tabulation results ---
-app.post('/advance/result', function (req, res, next) {
+app.get('/advance/result', function (req, res, next) {
   const { optionIds, budget } = req.body;
   console.log("optionids: " + optionIds)
   console.log("budget: " + budget)
@@ -233,15 +247,7 @@ app.post('/advance/result', function (req, res, next) {
       optionType.push(result[i].adtype)
     }
     var same = true;
-    // for (var j = 1; j < optionType.length; j++) {
-    //   if(optionType[0] == optionType[j]){
-    //     same = true
-    //   }else{
-    //     same = false
-    //   }
-    // }
-    // if(same == false){
-    //   return res.json({"error": "Different ad type", "code": "404"});
+
     // }else{
     var updatedCost = []
     var payment = []

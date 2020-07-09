@@ -33,58 +33,59 @@ function resetTable(callback) {
     `;
   client.query(query, (err, res) => {
     console.log(err, res)
-    client.end()
-    callback()
+    client.end();
+    callback();
   });
 }
-
+// --------------- INSERT -----------------------
 // POST 1. BASIC Insert Advertisement details ---
 function basicInsertAdvertisement(data, callback) {
-  if(data.length == 0){ 
-    return callback(null, []) 
+  if (data.length == 0) {
+    return callback(null, [])
   }
-    let i = 1;
-    //$ sign infront of value.
-    const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++}, 'Not Fixed')`).join(',');
+  let i = 1;
+  //$ sign infront of value.
+  const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++}, 'Not Fixed')`).join(',');
 
-    //Values need to be in a single array.
-    const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceCount], [])
-    const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
+  //Values need to be in a single array.
+  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceCount], []) //Checked
+  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
 
-    //This part below sends the query over.
-    const client = connect();
-    client.query(query, values, (err, result) => { //Dependent on above values.
-      callback(err, result);
-      console.log("query: " + query);
-      console.log("values: " + values);
-      client.end();
-    });
+  //This part below sends the query over.
+  const client = connect();
+  client.query(query, values, (err, result) => { //Dependent on above values.
+    callback(err, result);
+    console.log("query: " + query);
+    console.log("values: " + values);
+    client.end();
+  });
 }
 
 // POST 2. ADVANCE Insert Advertisement details ---
 function advInsertAdvertisement(data, callback) {
-  if(data.length == 0){ 
-    return callback(null, []) 
+  if (data.length == 0) {
+    return callback(null, [])
   }
-    let i = 1;
-    //$ sign infront of value.
-    const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++}, 'Fixed')`).join(',');
+  let i = 1;
+  //$ sign infront of value.
+  const template = data.map((singleData) => `($${i++},$${i++},$${i++},$${i++}, 'Fixed')`).join(',');
 
-    //Values need to be in a single array.
-    const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceCount], [])
-    const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
+  //Values need to be in a single array.
+  const values = data.reduce((reduced, data) => [...reduced, data.optionId, data.companyId, data.cost, data.audienceCount], []) //checked
+  const query = `INSERT INTO Advertisement (optionId, companyId, cost, audienceReach, adType) VALUES ${template};`
 
-    //This part below sends the query over.
-    const client = connect();
-    client.query(query, values, (err, result) => { //Dependent on above values.
-      callback(err, result);
-      console.log("query: " + query);
-      console.log("values: " + values);
-      client.end();
-    });
+  //This part below sends the query over.
+  const client = connect();
+  client.query(query, values, (err, result) => { //Dependent on above values.
+    callback(err, result);
+    console.log("query: " + query);
+    console.log("values: " + values);
+    client.end();
+  });
 }
 
-// GET 3. Retrieve BASIC(adType = Not Fixed) data ---
+// ----------------DATA VIEWER TABLE---------------------
+// GET 3. GET BASIC(adType = Not Fixed) data for table---
 function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
 
   //This part below determines what sql query is produced based on the page state.
@@ -213,10 +214,10 @@ function advGetRowCount(companyId, audienceReach, callback) {
 }
 
 
-// Result Viewer API
-// 7. GET Retrieve data for making of chart ---
+// ----------------RESULT VIEWER CHART---------------------
+// 7. GET data for making of chart [BASIC]---
 function basicGetDataForChart(optionIds, callback) {
-  if(optionIds.length == 0){ 
+  if (optionIds.length == 0) {
     return callback(null, []); // Return empty dataset.
   }
   // Note: Improve on validation.
@@ -226,13 +227,13 @@ function basicGetDataForChart(optionIds, callback) {
   let whereClause = "WHERE adType = 'Not Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
-    if(i != optionList.length) whereClause += `, `;
-    values.push(parseInt(optionList[i-1])); //Array.push companyid
+    if (i != optionList.length) whereClause += `, `;
+    values.push(parseInt(optionList[i - 1])); //Array.push companyid
   }
   whereClause += `);`
   const query = `SELECT optionid, cost, audiencereach, adtype FROM Advertisement ${whereClause}`
-  console.log("values: " +values)
-  console.log("query: "+query);
+  console.log("values: " + values)
+  console.log("query: " + query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {
@@ -242,9 +243,9 @@ function basicGetDataForChart(optionIds, callback) {
   })
 }
 
-// 8. GET Retrieve data for making of chart ---
+// 8. GET data for making of chart ---
 function advGetDataForChart(optionIds, callback) {
-  if(optionIds.length == 0){ 
+  if (optionIds.length == 0) {
     return callback(null, []); // Return empty dataset.
   }
   // Note: Improve on validation.
@@ -254,13 +255,13 @@ function advGetDataForChart(optionIds, callback) {
   let whereClause = "WHERE adType = 'Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
     whereClause += `$${i}`
-    if(i != optionList.length) whereClause += `, `;
-    values.push(parseInt(optionList[i-1])); //Array.push companyid
+    if (i != optionList.length) whereClause += `, `;
+    values.push(parseInt(optionList[i - 1])); //Array.push companyid
   }
   whereClause += `);`
   const query = `SELECT optionid, cost, audiencereach, adtype FROM Advertisement ${whereClause}`
-  console.log("values: " +values)
-  console.log("query: "+query);
+  console.log("values: " + values)
+  console.log("query: " + query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {
@@ -272,8 +273,8 @@ function advGetDataForChart(optionIds, callback) {
 
 // 9. GET audience and cost for computation ---
 function basicGetOptionsForComputation(optionIds, callback) {
-  if(optionIds.length == 0){ 
-    return callback(null, []) 
+  if (optionIds.length == 0) {
+    return callback(null, [])
   }
   var optionList = optionIds.toString().split(',');
   //This part below determines what sql query is produced based on the page state.
@@ -299,8 +300,8 @@ function basicGetOptionsForComputation(optionIds, callback) {
 
 // 10. GET audience and cost for computation ---
 function advGetOptionsForComputation(optionIds, callback) {
-  if(optionIds.length == 0){ 
-    return callback(null, []) 
+  if (optionIds.length == 0) {
+    return callback(null, [])
   }
   var optionList = optionIds.toString().split(',');
   //This part below determines what sql query is produced based on the page state.
