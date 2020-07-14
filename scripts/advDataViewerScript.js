@@ -43,7 +43,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
         }
     };
 
-    axios.get(`${baseUrl}/extra/basicGetRowCount`, requestBody)
+    axios.get(`${baseUrl}/extra/advGetRowCount`, requestBody)
         .then((response) => {
             console.log("Current Index:" + paginationIndex);
             var parse = response.data[0].count;
@@ -95,7 +95,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
             }
             $("#tableControls").prepend(`<div class="entriesArea" id="entriesArea" role="status" aria-live="polite">Showing ${startingNumber} to ${endingNumber} of ${parse} entries</div>`);
             endingNumber = 0;
-            callback(table, filterCompanyId, filterAudienceReach); //Initiates fillTable()
+            callback(table, filterCompanyId, filterAudienceReach, filterCost); //Initiates fillTable()
         });
 }
 
@@ -116,8 +116,9 @@ function fillTable(table, filterCompanyId, filterAudienceReach, filterCost) {
             cost: filterCost
         }
     };
-
-    axios.get(`${baseUrl}/basic/allData`, requestBody)
+    //Clear and redraw first in the case of error 404.(If sql returns no result.)
+    table.clear().draw();
+    axios.get(`${baseUrl}/advanced/allData`, requestBody)
         .then((response) => {
             var data = response.data;
             table.clear().draw();
@@ -131,7 +132,7 @@ function fillTable(table, filterCompanyId, filterAudienceReach, filterCost) {
 // Validation functions:
 function checkCompanyId() {
     console.log("Running check 1");
-    if (filterCompanyId) { // If filterCompanyId exists
+    if (filterCompanyId) {
         if (isNaN(filterCompanyId) == true) {
             filterCompanyId = '';
             document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
@@ -144,7 +145,8 @@ function checkCompanyId() {
             filterCompanyId = '';
             document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Company Id has to be a 10 digit number!");
-        } else {
+        }
+        else {
             filterCompanyId = Math.abs(filterCompanyId);
         }
     }
@@ -152,32 +154,37 @@ function checkCompanyId() {
 
 function checkAudienceReach() {
     console.log("Running check 2");
-
-    // If filterAudienceReach exists
-    if (isNaN(filterAudienceReach) == true) {
-        filterAudienceReach = '';
-        document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        alert("Audience reach has to be a numeric number!");
-    } else if (filterAudienceReach % 1 != 0) {
-        filterAudienceReach = '';
-        document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        alert("Audience reach has to be a numeric number! Not a decimal!");
-    } else {
-        filterAudienceReach = Math.abs(filterAudienceReach);
-        // paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
+    if (filterAudienceReach) {
+        // If filterAudienceReach exists
+        if (isNaN(filterAudienceReach) == true) {
+            filterAudienceReach = '';
+            document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Audience reach has to be a numeric number!");
+        } else if (filterAudienceReach % 1 != 0) {
+            filterAudienceReach = '';
+            document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Audience reach has to be a numeric number! Not a decimal!");
+        } else {
+            filterAudienceReach = Math.abs(filterAudienceReach);
+            // paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
+        }
     }
 }
 
 function checkCost() {
     console.log("Running check 3");
-
     // If filterAudienceReach exists
-    if (isNaN(filterCost) == true) {
-        filterCost = '';
-        document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        alert("Cost has to be a numeric number!");
-    }  else {
-        filterCost = Math.abs(filterCost);
+    if (filterCost) {
+        if (isNaN(filterCost) == true) {
+            filterCost = '';
+            document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Cost has to be a numeric number!");
+        } else if (filterCost == '') {
+            filterCost = '';
+
+        } else {
+            filterCost = Math.abs(filterCost);
+        }
     }
 }
 
@@ -249,69 +256,38 @@ $(document).ready(function () {
     // Onclick filter button.
     $(document).on('click', '.filterBtn', function () {
         paginationIndex = 0; //Sets back to page 1.(Highly important)
+        document.getElementById('companyIdInput').style.backgroundColor = null; // Set background back to normal
+        document.getElementById('audienceReachInput').style.backgroundColor = null; // Set background back to normal
+        document.getElementById('costInput').style.backgroundColor = null; // Set background back to normal
         filterCompanyId = document.getElementById("companyIdInput").value;
         filterAudienceReach = document.getElementById("audienceReachInput").value;
         filterCost = document.getElementById("costInput").value;
 
 
         // Validation:
+        // First check if the params are actually empty, then do respective validation.
+        // If the param checks out(Basically not empty), parse in the filter param.
+        if (!filterCompanyId && !filterAudienceReach && !filterCost) {
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
 
-
-
-
-
-
-
-
-
-
-
-
-        // Validation: (Clearer)
-        // if (filterCompanyId) { // If filterCompanyId exists
-        //     checkCompanyId();
-        //     console.log("company id" + filterCompanyId);
-        //     if (filterAudienceReach) { // After checks are complete and filterAudienceReach exists
-        //         checkAudienceReach();
-        //         if (filterCompanyId != '' && filterAudienceReach != ''){
-        //             console.log("audience reach" + filterAudienceReach);
-        //             document.getElementById('companyIdInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //             document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //             paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
-        //         }
-        //     } else if (filterCompanyId != '') {
-        //         document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //         paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
-        //     }
-        // } 
-        //  if (filterAudienceReach) {
-        //     checkAudienceReach();
-        //     console.log("audience reach" + filterAudienceReach);
-        //     if (filterAudienceReach != '' && filterCost != ''){
-        //         console.log("audience reach" + filterCost);
-        //         document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //         document.getElementById('costInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //         paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
-        //     }
-
-        //     else if (filterAudienceReach != '') {
-        //         document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //         paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
-        //     }
-        // }
-        // else if (filterCost) {
-        //     checkCost();
-        //     console.log("cost" + filterCost);
-        //     if (filterCost != '') {
-        //         document.getElementById('costInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-        //         paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
-        //     }
-        // }
-        // else {
-        //     document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        //     document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        //     alert("Please enter company Id or Audience reach or both!");
-        // }
+            alert("Fill in at least one of the parameters!(CompanyId, Audience reach, or cost)")
+        } else {
+            checkCompanyId();
+            checkAudienceReach();
+            checkCost();
+            paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
+            if (filterCompanyId != '') {
+                document.getElementById('companyIdInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+            }
+            if (filterAudienceReach != '') {
+                document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+            }
+            if (filterCost != '') {
+                document.getElementById('costInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+            }
+        }
 
     });
 
@@ -328,6 +304,8 @@ $(document).ready(function () {
         paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
         document.getElementById('companyIdInput').style.backgroundColor = null; // Set background back to normal
         document.getElementById('audienceReachInput').style.backgroundColor = null; // Set background back to normal
+        document.getElementById('costInput').style.backgroundColor = null; // Set background back to normal
+
         $(".paginateButton[tabindex='" + 0 + "']").click();
     });
 
@@ -339,13 +317,13 @@ $(document).ready(function () {
     });
 
     // On input change, return backgroundColor back to normal.
-    $('#companyIdInput').on('input',function(e){
+    $('#companyIdInput').on('input', function (e) {
         document.getElementById('companyIdInput').style.backgroundColor = null; // Set background back to normal
     });
-    $('#audienceReachInput').on('input',function(e){
+    $('#audienceReachInput').on('input', function (e) {
         document.getElementById('audienceReachInput').style.backgroundColor = null; // Set background back to normal
     });
-    $('#costInput').on('input',function(e){
+    $('#costInput').on('input', function (e) {
         document.getElementById('costInput').style.backgroundColor = null; // Set background back to normal
     });
 });
