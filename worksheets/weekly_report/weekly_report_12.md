@@ -4,27 +4,26 @@ This report is for you to document the progres of your project. You should also 
 
 ## What have I done last week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+- Finally displayed data using datatables on the mobile side.
+- Managed to add scrollview to both data viewer and result viewer on mobile.
+- Added a dropdown for user to pick the pageSize.
 
 ## What do I plan to do next week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+- Fix the error of tabulation results not showing on result viewer page for mobile
+- Validation for input fields for both data viewer page & result viewer page for mobile
 
 ## What have I done last week (kester)
 
--   Done api documentation and database schema
--   Worked on...
--   Changed....
+- Worked on completing the BASIC side of things for the webpage.
+- Changed some POST APIs to GET APIs.
+- Resolved query string parsing issues.
+- Helped test the API tester and resolved schema issues together with it.
 
 ## What do I plan to do next week (kester)
 
--   Worked on...
--   Worked on...
--   Changed....
+- Complete ADVANCED side of things for the webpage.
+- Finish learning the 1/0 Knapsack Algorithm
 
 ## Additional Thoughts
 

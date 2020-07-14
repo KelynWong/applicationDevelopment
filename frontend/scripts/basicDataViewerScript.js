@@ -1,49 +1,54 @@
-// Data Viewer Script
+// BASIC Data Viewer Script
 // Name: Wong En Ting Kelyn
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
 
-//Basically the flow:
-// 1. GET the number of rows from the table and set up pagination based off Page Size(Default 5)
-// 2. Retrieve data from table based off Page Size(Default 5) and Page Number(Default 1). 
-// - Since its the first page, no offset is needed, thus the algorithm makes the offset 0.
-// 3. After that, it comes down to user interaction.
-// 4. If the next, previous buttons are pressed:
-// - 1) Increment/Decrease the paginationIndex based on what was clicked.
-// - 2) Modify the class name of buttons so that the button represented by the paginationIndex("tabindex is checked!")
-//      will be modified css wise.
-// - 3) "Change the page" by deleting table data and POST to get data from table(This uses the same exact algorithm as step 2 in flow.)
-//      - Utilises offset and limit to get the data needed for the respective page!
-// 5. If the number buttons are pressed:
-// - Vice versa as to 4, but paginationIndex is changed to the button's respective index.
-// 6. If the filter button is clicked with parameters, the parameters are parsed into the pagination + fill table algorithms
-//    work their magic with the parsed params. (If no params, it'll load all data as usual) 
-// 7. When the clear button is clicked, all parameters saved in script will be reset and the default will be loaded.
-// That should be all!
+// Forcing sequential execution:
+// https://stackoverflow.com/questions/1859185/how-to-force-sequential-javascript-execution
+// function myfunction() {
+//     longfunctionfirst(shortfunctionsecond());
+// }
+// function longfunctionfirst(callback) {
+//     // setTimeout(function() {
+//         alert('first function finished');
+//         if(typeof callback == 'function')
+//             callback();
+//     // }, 1);
+// };
+
+// function shortfunctionsecond() {
+//     setTimeout('alert("second function finished");', 200);
+// };
+// myfunction();
 var paginationIndex = 0; //0 being the first page
 var startingNumber = 0; //For entries algo.
 var endingNumber = 0; //For entries algo.
+
 const baseUrl = "http://localhost:3000";
 var filterCompanyId = "";
 var filterAudienceReach = "";
 // Pagination algorithm:
-function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
+function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, callback) { // callback calls the next function(fill table) to run after function complete.
     var openingTag = '<a class="paginateButton" id="generatedButton" tabindex="';
     var middleTag = '">';
     var closingTag = '</a>';
     var elipsis = '<a class="ellipsis">…</a>';
     var pageSize = table.page.info().length;
     const requestBody = {
-        companyId: filterCompanyId,
-        audienceReach: filterAudienceReach
+        params: {
+            companyId: filterCompanyId,
+            audienceReach: filterAudienceReach
+        }
     };
-    axios.get(`${baseUrl}/extra/advGetRowCount`, requestBody)
+
+    axios.get(`${baseUrl}/extra/basicGetRowCount`, requestBody)
         .then((response) => {
+            console.log("Current Index:" + paginationIndex);
             var parse = response.data[0].count;
             var final = Math.ceil(parse / pageSize - 1); //This gets the max page (in index form)
             $(".pageNumbers").empty(); //Empties the class so it can append and work its magic
             $(".finalPageNumber").empty();
-            console.log(parse);
+
             if (final <= 4 && final != 0) { //If total pages is lesser than 5. (No need for ellipsis)
                 for (i = 0; i <= final; i++) {
                     $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
@@ -88,6 +93,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
             }
             $("#tableControls").prepend(`<div class="entriesArea" id="entriesArea" role="status" aria-live="polite">Showing ${startingNumber} to ${endingNumber} of ${parse} entries</div>`);
             endingNumber = 0;
+            callback(table, filterCompanyId, filterAudienceReach); //Initiates fillTable()
         });
 }
 
@@ -95,16 +101,21 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach) {
 function fillTable(table, filterCompanyId, filterAudienceReach) {
     var pageNo = paginationIndex;
     var pageSize = table.page.info().length;
-    const requestBody = {
-        pageNo: pageNo,
-        pageSize: pageSize,
-        //Specifically for filters
-        companyId: filterCompanyId,
-        audienceReach: filterAudienceReach
+    console.log("filtercompanyid:" + filterCompanyId);
+    const requestBody =
+    {
+        params:
+        {
+            pageNo: pageNo,
+            pageSize: pageSize,
+            //Specifically for filters
+            companyId: filterCompanyId,
+            audienceReach: filterAudienceReach
+        }
     };
-    axios.get(`${baseUrl}/advanced/Alldata`, requestBody)
+
+    axios.get(`${baseUrl}/basic/allData`, requestBody)
         .then((response) => {
-            console.log("response: " + response);
             var data = response.data;
             table.clear().draw();
             data.forEach((param) => {
@@ -112,6 +123,49 @@ function fillTable(table, filterCompanyId, filterAudienceReach) {
             });
         });
 }
+
+
+// Validation functions:
+function checkCompanyId() {
+    console.log("Running check 1");
+    if (filterCompanyId) { // If filterCompanyId exists
+        if (isNaN(filterCompanyId) == true) {
+            filterCompanyId = '';
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Company Id has to be a 10 digit number!");
+        } else if (filterCompanyId % 1 != 0) {
+            filterCompanyId = '';
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Company Id has to be a 10 digit number! Not a decimal!");
+        } else if (filterCompanyId.length != 10) {
+            filterCompanyId = '';
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Company Id has to be a 10 digit number!");
+        } else {
+            filterCompanyId = Math.abs(filterCompanyId);
+        }
+    }
+}
+
+function checkAudienceReach() {
+    console.log("Running check 2");
+
+    // If filterAudienceReach exists
+    if (isNaN(filterAudienceReach) == true) {
+        filterAudienceReach = '';
+        document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+        alert("Audience reach has to be a numeric number!");
+    } else if (filterAudienceReach % 1 != 0) {
+        filterAudienceReach = '';
+        document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+        alert("Audience reach has to be a numeric number! Not a decimal!");
+    } else {
+        filterAudienceReach = Math.abs(filterAudienceReach);
+        // paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+    }
+}
+
+
 
 //Every single script will only run once the DOM is ready!
 $(document).ready(function () {
@@ -141,19 +195,17 @@ $(document).ready(function () {
     });
 
     // Pagination Algorithm that handles pagination and the entries shown.
-    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-    // Retrieve ROW DATA from database based on limit(pageSize) and offset(pageNo * pageSize) values.
-    fillTable(table, filterCompanyId, filterAudienceReach);
+    // Then, Retrieve ROW DATA from database based on limit(pageSize) and offset(pageNo * pageSize) values.
+    paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+
 
     // Click stuff:
     // Onclick PREVIOUS button
     $(document).on('click', '#theTablePrevious', function () {
         if (paginationIndex != 0) {
             paginationIndex -= 1;
-            // Pagination algorithm:
-            paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-            // Get data from table
-            fillTable(table, filterCompanyId, filterAudienceReach);
+            // Do the Pagination algorithm first, then do the Fill Table algorithm.
+            paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
         }
     });
 
@@ -167,8 +219,8 @@ $(document).ready(function () {
         lastPage = Math.max(...array);
         if (paginationIndex < lastPage) {
             paginationIndex += 1;
-            paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-            fillTable(table, filterCompanyId, filterAudienceReach);
+            paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+            // fillTable(table, filterCompanyId, filterAudienceReach, false);
         }
     });
 
@@ -176,53 +228,49 @@ $(document).ready(function () {
     $(document).on('click', '#generatedButton', function () {
         var pageNumberClicked = ($(this).closest(".paginateButton"));
         paginationIndex = pageNumberClicked[0].tabIndex;
-        paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-        fillTable(table, filterCompanyId, filterAudienceReach);
+        paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+        // fillTable(table, filterCompanyId, filterAudienceReach, false);
     });
 
     // Onclick filter button.
     $(document).on('click', '.filterBtn', function () {
+        paginationIndex = 0; //Sets back to page 1.(Highly important)
         filterCompanyId = document.getElementById("companyIdInput").value;
         filterAudienceReach = document.getElementById("audienceReachInput").value;
-        if (!filterCompanyId && !filterAudienceReach) {
-            alert("Please enter company Id or Audience reach or both!");
-        } else {
 
-            if (isNaN(filterCompanyId) == false && isNaN(filterAudienceReach) == false || isNaN(filterCompanyId) == false && filterAudienceReach == '') {
+        // Validation: (Clearer)
+        if (filterCompanyId) { // If filterCompanyId exists
+            checkCompanyId();
+            console.log("company id" + filterCompanyId);
+            if (filterAudienceReach) { // After checks are complete and filterAudienceReach exists
+                checkAudienceReach();
+                if (filterCompanyId != '' && filterAudienceReach != ''){
+                    console.log("audience reach" + filterAudienceReach);
+                    document.getElementById('companyIdInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+                }
+            } else if (filterCompanyId != '') {
+                document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+            }
+        } 
+        else if (filterAudienceReach) {
+            checkAudienceReach();
+            console.log("audience reach" + filterAudienceReach);
 
-                if (filterCompanyId % 1 != 0) {
-                    filterCompanyId = '';
-                    alert("Company Id has to be a 10 digit number! Not a decimal!");
-                }
-                if (filterAudienceReach % 1 != 0) {
-                    filterAudienceReach = '';
-                    alert("Audience reach has to be a 10 digit number! Not a decimal!");
-                }
-                else if (filterCompanyId.length == 10 || filterCompanyId == '') {
-                    filterCompanyId = Math.abs(filterCompanyId);
-                    filterAudienceReach = Math.abs(filterAudienceReach);
-                    paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-                    fillTable(table, filterCompanyId, filterAudienceReach);
-                }
-                else {
-                    filterCompanyId = '';
-                    alert("Company Id has to be a 10 digit number!");
-                }
-            } else {
-                if (isNaN(filterCompanyId)) {
-                    filterCompanyId = '';
-                    alert("Company Id has to be a number!");
-                }
-                else if (filterCompanyId.length != 10) {
-                    filterCompanyId = '';
-                    alert("Company Id has to be a 10 digit number!");
-                }
-                if (isNaN(filterAudienceReach)) {
-                    filterAudienceReach = '';
-                    alert("Audience reach has to be a number!");
-                }
+            
+            if (filterAudienceReach != '') {
+                document.getElementById('audienceReachInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
             }
         }
+        else {
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Please enter company Id or Audience reach or both!");
+        }
+
     });
 
     // Onclick clear button.
@@ -231,17 +279,25 @@ $(document).ready(function () {
         document.getElementById("audienceReachInput").value = "";
         filterCompanyId = "";
         filterAudienceReach = "";
-        paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-        fillTable(table, filterCompanyId, filterAudienceReach);
-        $(".paginateButton[tabindex='" + 0 + "']").click();
         paginationIndex = 0;
+        paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
+        document.getElementById('companyIdInput').style.backgroundColor = null; // Set background back to normal
+        document.getElementById('audienceReachInput').style.backgroundColor = null; // Set background back to normal
+        $(".paginateButton[tabindex='" + 0 + "']").click();
     });
 
     // On change of pageSize - [The show (how many) entries part]
     $("[name='theTable_length'").change(function () {
-        paginationAlgorithm(table, filterCompanyId, filterAudienceReach);
-        fillTable(table, filterCompanyId, filterAudienceReach);
         paginationIndex = 0; //Sets back to page 1.(Highly important)
+        paginationAlgorithm(table, filterCompanyId, filterAudienceReach, fillTable);
         $(".paginateButton[tabindex='" + 0 + "']").click();
+    });
+
+    // On input change, return backgroundColor back to normal.
+    $('#companyIdInput').on('input',function(e){
+        document.getElementById('companyIdInput').style.backgroundColor = null; // Set background back to normal
+    });
+    $('#audienceReachInput').on('input',function(e){
+        document.getElementById('audienceReachInput').style.backgroundColor = null; // Set background back to normal
     });
 });

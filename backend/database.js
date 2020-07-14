@@ -92,20 +92,18 @@ function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
   let i = 1;
   const values = [];
   let whereClause = `WHERE adType='Not Fixed'`;
-  if (!companyId && !audienceReach) whereClause = "";
-  else {
-    if (companyId) { //if companyid exists
-      whereClause += ` AND companyId = $${i++}`
-      values.push(parseInt(companyId)); //Array.push companyid
-    }
-    if (audienceReach) { //if audienceReach exists
-      whereClause += ` AND audienceReach = $${i++}`
-      values.push(parseInt(audienceReach)); //Array.push audiencereach
-    }
+  if (companyId) { //if companyid exists
+    whereClause += ` AND companyId = $${i++}`
+    values.push(parseInt(companyId)); //Array.push companyid
   }
+  if (audienceReach) { //if audienceReach exists
+    whereClause += ` AND audienceReach = $${i++}`
+    values.push(parseInt(audienceReach)); //Array.push audiencereach
+  }
+
   // This part below determines the amount of data being sent to a page.
   let limitOffsetClause;
-  if (!pageNo && !pageSize) limitOffsetClause = "";
+  if (!pageNo || !pageSize) limitOffsetClause = "";
   else {
     limitOffsetClause = `LIMIT $${i++} OFFSET $${i++}`
     values.push(parseInt(pageSize)); //Limit = page size 10 - Amount of data taken.
@@ -113,7 +111,7 @@ function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
   }
 
   const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause}`
-  console.log(query);
+  console.log("basicGetData Query:" + query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {
@@ -124,25 +122,28 @@ function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
 }
 
 
-// GET 4. Retrieve ADVANCE(adType = Not Fixed) data ---
-function advGetData(companyId, audienceReach, pageNo, pageSize, callback) {
+// GET 4. GET ADVANCE(adType = Not Fixed) data ---
+function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) {
 
   //This part below determines what sql query is produced based on the page state.
   let i = 1;
   const values = [];
   let whereClause;
-  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Fixed'";
-  else {
-    whereClause = `WHERE adType = 'Fixed'`;
-    if (companyId) { //if companyid exists
-      whereClause += `AND companyId = $${i++}`
-      values.push(parseInt(companyId)); //Array.push companyid
-    }
-    if (audienceReach) { //if audienceReach exists
-      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
-      values.push(parseInt(audienceReach)); //Array.push audiencereach
-    }
+
+  whereClause = `WHERE adType = 'Fixed'`;
+  if (companyId) { //if companyid exists
+    whereClause += `AND companyId = $${i++}`
+    values.push(parseInt(companyId)); //Array.push companyid
   }
+  if (audienceReach) { //if audienceReach exists
+    whereClause += ` AND audienceReach = $${i++}`
+    values.push(parseInt(audienceReach)); //Array.push audiencereach
+  }
+  if (cost) { //if cost exists
+    whereClause += ` AND cost = $${i++}` 
+    values.push(parseFloat(cost)); //Array.push cost
+  }
+
   // This part below determines the amount of data being sent to a page.
   let limitOffsetClause;
   if (!pageNo && !pageSize) limitOffsetClause = "";
@@ -168,19 +169,20 @@ function basicGetRowCount(companyId, audienceReach, callback) {
   let i = 1;
   const values = [];
   let whereClause;
-  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Not Fixed'";
-  else {
-    whereClause = `WHERE adType = 'Not Fixed'`;
-    if (companyId) { //if companyid exists
-      whereClause += `AND companyId = $${i++}`
-      values.push(parseInt(companyId)); //Array.push companyid
-    }
-    if (audienceReach) { //if audienceReach exists
-      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
-      values.push(parseInt(audienceReach)); //Array.push audiencereach
-    }
+
+  whereClause = `WHERE adType = 'Not Fixed'`;
+  if (companyId) { //if companyid exists
+    whereClause += `AND companyId = $${i++}`
+    values.push(parseInt(companyId)); //Array.push companyid
   }
+  if (audienceReach) { //if audienceReach exists
+    whereClause += ` AND audienceReach = $${i++}`
+    values.push(parseInt(audienceReach)); //Array.push audiencereach
+  }
+
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
+  console.log("basicGetRowCount Query:" + query);
+
   const client = connect();
   client.query(query, values, function (err, { rows }) {
     client.end();
@@ -189,20 +191,24 @@ function basicGetRowCount(companyId, audienceReach, callback) {
 }
 
 // 6. GET ADVANCED: row count of table advertisement ---
-function advGetRowCount(companyId, audienceReach, callback) {
+function advGetRowCount(companyId, audienceReach, cost, callback) {
   let i = 1;
   const values = [];
   let whereClause;
-  if (!companyId && !audienceReach) whereClause = "WHERE adType = 'Fixed'";
+  if (!companyId && !audienceReach && !cost) whereClause = "WHERE adType = 'Fixed'";
   else {
     whereClause = `WHERE adType = 'Fixed'`;
     if (companyId) { //if companyid exists
-      whereClause += `AND companyId = $${i++}`
+      whereClause += `AND companyId = $${i++}`;
       values.push(parseInt(companyId)); //Array.push companyid
     }
     if (audienceReach) { //if audienceReach exists
-      whereClause += (companyId) ? ` AND audienceReach = $${i++}` : `audienceReach = $${i++}`
+      whereClause += ` AND audienceReach = $${i++}`;
       values.push(parseInt(audienceReach)); //Array.push audiencereach
+    }
+    if (cost) { //if cost exists
+      whereClause += ` AND cost = $${i++}`;
+      values.push(parseFloat(cost)); //Array.push cost
     }
   }
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
@@ -226,7 +232,7 @@ function basicGetDataForChart(optionIds, callback) {
   const values = [];
   let whereClause = "WHERE adType = 'Not Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
-    whereClause += `$${i}`
+    whereClause += `$${i}`;
     if (i != optionList.length) whereClause += `, `;
     values.push(parseInt(optionList[i - 1])); //Array.push companyid
   }
