@@ -122,7 +122,7 @@ function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
 }
 
 
-// GET 4. GET ADVANCE(adType = Not Fixed) data ---
+// GET 4. GET ADVANCED (adType = Not Fixed) data ---
 function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) {
 
   //This part below determines what sql query is produced based on the page state.
@@ -139,6 +139,7 @@ function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) 
     whereClause += ` AND audienceReach = $${i++}`
     values.push(parseInt(audienceReach)); //Array.push audiencereach
   }
+  console.log("COST" + cost);
   if (cost) { //if cost exists
     whereClause += ` AND cost = $${i++}` 
     values.push(parseFloat(cost)); //Array.push cost
@@ -154,7 +155,7 @@ function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) 
   }
 
   const query = `SELECT * FROM Advertisement ${whereClause} ${limitOffsetClause}`
-  console.log(query);
+  console.log("ALL DATA:" + query);
   //Connect to database
   const client = connect();
   client.query(query, values, function (err, { rows }) {
@@ -212,6 +213,7 @@ function advGetRowCount(companyId, audienceReach, cost, callback) {
     }
   }
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
+  console.log("advGetRowCount"+query);
   const client = connect();
   client.query(query, values, function (err, { rows }) {
     client.end();
