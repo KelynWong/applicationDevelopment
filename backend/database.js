@@ -34,7 +34,7 @@ function resetTable(callback) {
   client.query(query, (err, res) => {
     console.log(err, res)
     client.end();
-    callback();
+    // callback();
   });
 }
 // --------------- INSERT -----------------------
@@ -141,7 +141,7 @@ function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) 
   }
   console.log("COST" + cost);
   if (cost) { //if cost exists
-    whereClause += ` AND cost = $${i++}` 
+    whereClause += ` AND cost = $${i++}`
     values.push(parseFloat(cost)); //Array.push cost
   }
 
@@ -213,7 +213,7 @@ function advGetRowCount(companyId, audienceReach, cost, callback) {
     }
   }
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
-  console.log("advGetRowCount"+query);
+  console.log("advGetRowCount" + query);
   const client = connect();
   client.query(query, values, function (err, { rows }) {
     client.end();
@@ -251,7 +251,7 @@ function basicGetDataForChart(optionIds, callback) {
   })
 }
 
-// 8. GET data for making of chart ---
+// 8. GET data for making of chart [ADVANCE] ---
 function advGetDataForChart(optionIds, callback) {
   if (optionIds.length == 0) {
     return callback(null, []); // Return empty dataset.
@@ -262,13 +262,13 @@ function advGetDataForChart(optionIds, callback) {
   const values = [];
   let whereClause = "WHERE adType = 'Fixed' AND optionId IN (";
   for (let i = 1; i <= optionList.length; i++) {
-    whereClause += `$${i}`
+    whereClause += `$${i}`;
     if (i != optionList.length) whereClause += `, `;
     values.push(parseInt(optionList[i - 1])); //Array.push companyid
   }
   whereClause += `);`
-  const query = `SELECT optionid, cost, audiencereach, adtype FROM Advertisement ${whereClause}`
-  console.log("values: " + values)
+  const query = `SELECT optionid, companyid, cost, audiencereach, adtype FROM Advertisement ${whereClause}`
+  console.log("values: " + values);
   console.log("query: " + query);
   //Connect to database
   const client = connect();

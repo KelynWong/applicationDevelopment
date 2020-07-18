@@ -73,7 +73,7 @@ app.post('/advance/insert/', function (req, res, next) {
 
 // ----------------DATA VIEWER TABLE---------------------
 // GET 3. BASIC Retrieve all data for table---
-app.get('/basic/allData', function (req, res) { 
+app.get('/basic/allData', function (req, res) {
   const { companyId, audienceReach, pageNo, pageSize } = req.query;
 
   database.basicGetData(companyId, audienceReach, pageNo, pageSize, (error, result) => {
@@ -87,7 +87,7 @@ app.get('/basic/allData', function (req, res) {
 });
 
 // GET 4. ADVANCED Retrieve all data for table---
-app.get('/advanced/allData', function (req, res) {
+app.get('/advance/allData', function (req, res) {
   const { companyId, audienceReach, cost, pageNo, pageSize } = req.query;
 
   database.advGetData(companyId, audienceReach, cost, pageNo, pageSize, (error, result) => {
@@ -101,7 +101,7 @@ app.get('/advanced/allData', function (req, res) {
 });
 
 // GET 5. BASIC: Retrieve all number of row data in table: advertisement ---
-app.get('/extra/basicGetRowCount', function (req, res, next) {
+app.get('/basic/getRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.query;
   database.basicGetRowCount(companyId, audienceReach, (error, result) => {
     if (result.length == 0) {
@@ -115,7 +115,7 @@ app.get('/extra/basicGetRowCount', function (req, res, next) {
 });
 
 // GET 6. ADVANCED: Retrieve all number of row data in table: advertisement ---
-app.get('/extra/advGetRowCount', function (req, res, next) {
+app.get('/advance/getRowCount', function (req, res, next) {
   const { companyId, audienceReach, cost } = req.query;
   database.advGetRowCount(companyId, audienceReach, cost, (error, result) => {
     if (result.length == 0) {
@@ -130,9 +130,9 @@ app.get('/extra/advGetRowCount', function (req, res, next) {
 
 
 // ----------------RESULT VIEWER CHART---------------------
-// GET 7. Retrieve BASIC data for chart --- (GET doesn't work hmm.)
-app.post('/basic/allChartData', function (req, res) {
-  const { optionIds } = req.body;
+// GET 7. Retrieve BASIC data for Google chart --- 
+app.get('/basic/allChartData', function (req, res) {
+  const { optionIds } = req.query;
 
   database.basicGetDataForChart(optionIds, (error, result) => {  // links to database.js
     if (result.length == 0) {
@@ -145,10 +145,9 @@ app.post('/basic/allChartData', function (req, res) {
   })
 });
 
-// POST 8. Retrieve ADVANCE data for chart ---
-app.post('/advanced/allChartData', function (req, res) {
-  console.log(req.body);
-  const { optionIds } = req.body;
+// POST 8. Retrieve ADVANCE data for Google chart ---
+app.get('/advance/allChartData', function (req, res) {
+  const { optionIds } = req.query;
 
   database.advGetDataForChart(optionIds, (error, result) => {  // links to database.js
     if (result.length == 0) {
@@ -204,12 +203,12 @@ app.get('/basic/result', function (req, res, next) {
         // databaseResult[k].audiencereach = updatedAudience;
 
         //We cut people up now.
-        var updatedAudience = databaseResult[k].audiencereach/factor;
+        var updatedAudience = databaseResult[k].audiencereach / factor;
         databaseResult[k].audiencereach = updatedAudience;
         console.log("Aud" + updatedAudience);
         databaseResult[k].cost = updatedCost[k];
       }
-        databaseResult[k]['payment'] = payment[k]; //Adds json object attribute
+      databaseResult[k]['payment'] = payment[k]; //Adds json object attribute
     }
     // Convert to required Schema.
     const result = [];
@@ -231,73 +230,58 @@ app.get('/basic/result', function (req, res, next) {
 // POST 10. Get ADVANCE tabulation results ---
 app.get('/advance/result', function (req, res, next) {
   const { optionIds, budget } = req.query;
-  console.log("optionids: " + optionIds)
-  console.log("budget: " + budget)
-  database.advGetOptionsForComputation(optionIds, (error, result) => { // links to database.js
-    if (result.length == 0) {
-      return res.status(404).json({ "error": "Not found", "code": "404" });
+  console.log("optionids: " + optionIds);
+  console.log("budget: " + budget);
+  database.advGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
+    if (databaseResult.length == 0) {
+      return res.status(404).json({ "error": "Not found", "code": 404 });
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
-      // return next(error);
     }
-    var audience = [];
-    var cost = [];
-    var optionType = []
-    for (let i = 0; i < result.length; i++) {
-      audience.push(result[i].audiencereach)
-      cost.push(Number(result[i].cost))
-      optionType.push(result[i].adtype)
-    }
-    var same = true;
+    let audience = [];
+    let cost = [];
+    let optionType = []
+    let options = [];
 
-    // }else{
-    var updatedCost = []
-    var payment = []
-    // if(optionType[0]=="Not Fixed" && same== true){
-    updatedCost = algo.fractionalKnapsack(audience, cost, budget);
-    for (let k = 0; k < result.length; k++) {
-      console.log("Number(result[k].cost): " + Number(result[k].cost))
-      if (parseInt(result[k].cost) == parseInt(updatedCost[k])) {
-        payment.push('Full')
-      } else if (parseInt(updatedCost[k]) == 0) {
-        payment.push('No')
-        result[k].audiencereach = 0
-      } else {
-        payment.push('Partial')
-        var factor = result[k].cost / updatedCost[k]
-        var updatedAudience = result[k].audiencereach / factor
-        result[k].audiencereach = updatedAudience
+    for (let i = 0; i < databaseResult.length; i++) {
+      audience.push(databaseResult[i].audiencereach);
+      cost.push(Number(databaseResult[i].cost));
+      optionType.push(databaseResult[i].adtype);
+    }
+    audience.unshift(0);
+    cost.unshift(0);
+    let choices = [];
+    let companyid = [];
+    let test = [];
+    let audReach = [];
+
+    choices = algo.fullKnapsack(audience, cost, budget);
+
+    for (let k = 0; k < choices.length; k++) {
+      if (choices[k] == 1) { // full payment
+        options.push(databaseResult[k].optionid);
+        companyid.push(databaseResult[k].companyid);
+        test.push(databaseResult[k].cost);
+        audReach.push(databaseResult[k].audiencereach);
+
+      } else if (choices[k] == 0) { // no payment
+        databaseResult[k].audiencereach = 0
       }
-      result[k].cost = updatedCost[k]
-      result[k]['payment'] = payment[k]
     }
-    // }
-    // else if(optionType[0]=="Fixed" && same== true){
-    //   var n = result.length
-    //   // console.log("RESULTS OF ALGO: "+ algo.fullKnapsack(audience, cost, budget, n))
-    // }
-    res.json(result)
-    //}
+    // Convert to required Schema.
+    const result = [];
+    for (let i = 0; i < options.length; i++) {
+      result.push({
+        optionId: parseInt(options[i]),
+        companyId: parseInt(companyid[i]),
+        amount: parseFloat(test[i]),
+        audienceReached: parseFloat(audReach[i]),
+        // adType: databaseResult[i].adtype,
+        // payment: databaseResult[i].payment
+      });
+    }
+    res.json({ result });
   })
-});
-
-// catch error 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.json({ //Not sending a html file, thus we send a json.
-    error: err.message,
-    code: err.status || 500,
-  });
 });
 
 module.exports = app;
