@@ -1,4 +1,4 @@
-// ADVANCED Data Viewer Script
+// ADVANCE Data Viewer Script
 // Name: Wong En Ting Kelyn
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
@@ -43,7 +43,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
         }
     };
 
-    axios.get(`${baseUrl}/extra/advGetRowCount`, requestBody)
+    axios.get(`${baseUrl}/advance/getRowCount`, requestBody)
         .then((response) => {
             console.log("Current Index:" + paginationIndex);
             var parse = response.data[0].count;
@@ -52,7 +52,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
             $(".finalPageNumber").empty();
 
             if (final <= 4 && final != 0) { //If total pages is lesser than 5. (No need for ellipsis)
-                for (i = 0; i <= final; i++) {
+                for (let i = 0; i <= final; i++) {
                     $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                 }
             }
@@ -61,18 +61,18 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
             }
             // Pagination responsiveness (Here comes the ellipsis!)
             else if (paginationIndex < 3) { // If page index is smaller than index 3(page4)
-                for (i = 0; i <= 4; i++) {
+                for (let i = 0; i <= 4; i++) {
                     $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                 }
                 $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
             }
             else if (paginationIndex < final - 2) { //If page index is smaller than the (last page - 2) - This results in the selected page to be inbetween 2 numbers.
-                for (i = paginationIndex - 2; i <= paginationIndex + 2; i++) {
+                for (let i = paginationIndex - 2; i <= paginationIndex + 2; i++) {
                     $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                 }
                 $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
             } else { // When the page index is nearing its final destination.
-                for (i = final - 5; i <= final - 1; i++) {
+                for (let i = final - 5; i <= final - 1; i++) {
                     $(".pageNumbers").append(openingTag + (i) + middleTag + (i + 1) + closingTag);
                 }
                 $(".finalPageNumber").append(elipsis + openingTag + (final) + middleTag + (final + 1) + closingTag);
@@ -88,7 +88,7 @@ function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filter
                 endingNumber = parse;
             }
             else {
-                for (i = 0; i < pageSize - 1; i++) {
+                for (let i = 0; i < pageSize - 1; i++) {
                     endingNumber += 1;
                 }
                 endingNumber += startingNumber;
@@ -118,7 +118,7 @@ function fillTable(table, filterCompanyId, filterAudienceReach, filterCost) {
     };
     //Clear and redraw first in the case of error 404.(If sql returns no result.)
     table.clear().draw();
-    axios.get(`${baseUrl}/advanced/allData`, requestBody)
+    axios.get(`${baseUrl}/advance/allData`, requestBody)
         .then((response) => {
             var data = response.data;
             table.clear().draw();
@@ -272,7 +272,7 @@ $(document).ready(function () {
             document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
 
-            alert("Fill in at least one of the parameters!(CompanyId, Audience reach, or cost)")
+            alert("Fill in at least one of the parameters!(CompanyId, Audience reach, or cost)");
         } else {
             checkCompanyId();
             checkAudienceReach();
