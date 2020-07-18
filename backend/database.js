@@ -34,7 +34,7 @@ function resetTable(callback) {
   client.query(query, (err, res) => {
     console.log(err, res)
     client.end();
-    // callback();
+    callback();
   });
 }
 // --------------- INSERT -----------------------

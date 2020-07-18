@@ -70,6 +70,8 @@ export default class resultViewerScreen extends React.Component{
             chartOptionid: [],
             chartCost: [],
             chartAudiencereach: [],
+            totalCost: 0,
+            totalPax: 0,
         }
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
@@ -77,6 +79,7 @@ export default class resultViewerScreen extends React.Component{
     baseURL = 'http://192.168.229.1:3000';
 
     getResult = (ev)=>{
+        //clearForComputation();
         console.log('this.state.optionIds: ' + this.state.optionIds)
         console.log('this.state.budget: ' + this.state.budget)
         this.setState({loaded:false, error: null});
@@ -127,15 +130,17 @@ export default class resultViewerScreen extends React.Component{
           chartResults: data
       });
       console.log(this.state.chartResults);
-      for(i=0; i < this.state.chartResults.length; i++){
+      for(var i=0; i < this.state.chartResults.length; i++){
         this.setState(prevState => ({
           chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
           chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
           chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
+          totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
+          totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
         }));
       }
-      console.log("this.state.chartOptionid" + this.state.chartOptionid)
-      console.log("this.state.chartCost" + this.state.chartCost)
+      console.log("this.state.totalCost: " + this.state.totalCost)
+      console.log("this.state.totalPax: " + this.state.totalPax)
       this.setState({loaded:true});
     }
     error = (err) => {
@@ -143,8 +148,31 @@ export default class resultViewerScreen extends React.Component{
         this.setState({loaded: true, error: err.message});
     }
     clearText(){
-      this.setState({optionIds:''})
-      this.setState({budget:''})
+      this.setState({loaded: true})
+      this.setState({error: null})
+      this.setState({optionIds: ''})
+      this.setState({budget: ''})
+      this.setState({modalOpen: false})
+      this.setState({chartOptionid: []})
+      this.setState({chartCost: []})
+      this.setState({chartAudiencereach: []})
+      this.setState({totalCost: 0})
+      this.setState({totalPax: 0})
+      this.setState({chartResults:''})
+      this.setState({modalOpen:false})
+      this.setState({results:''})
+      this.setState({chartResults:''})
+    }
+    clearForComputation(){
+      this.setState({loaded: true})
+      this.setState({error: null})
+      this.setState({modalOpen: false})
+      this.setState({chartOptionid: []})
+      this.setState({chartCost: []})
+      this.setState({chartAudiencereach: []})
+      this.setState({totalCost: 0})
+      this.setState({totalPax: 0})
+      this.setState({chartResults:''})
       this.setState({modalOpen:false})
       this.setState({results:''})
       this.setState({chartResults:''})
@@ -166,7 +194,7 @@ export default class resultViewerScreen extends React.Component{
                             onChangeText={(text) => this.setState({optionIds:text})}
                             keyboardType='numeric'/>
                     </TouchableOpacity>
-                    <Button mode='contained' onPress={() => {this.getResult, this.getChart}}>Compute</Button>
+                    <Button mode='contained' onPress={() => {this.getResult(); this.getChart()}}>Compute</Button>
                 </View>
 
                 <View style={styles.textInputContainer}>
@@ -185,7 +213,12 @@ export default class resultViewerScreen extends React.Component{
             </View>
 
             <View style={styles.resultBar}>
-                      <Icon.Button name="ios-menu" size={25} backgroundColor='#FFFF00' onPress={() => this.setState({modalOpen:true})}></Icon.Button>
+              <View>
+                { !!this.state.totalCost && !!this.state.totalPax && (
+                  <Text>Results: ${this.state.totalCost} for {this.state.totalPax}pax</Text>
+                )}
+              </View>
+              <Icon.Button name="ios-menu" size={25} backgroundColor='#FFFF00' onPress={() => this.setState({modalOpen:true})}></Icon.Button>
             </View>
 
         <View style={styles.dataTableContainer}>
@@ -197,88 +230,92 @@ export default class resultViewerScreen extends React.Component{
                 <Text style={styles.err}>{this.state.error}</Text>
             )}
 
-                { this.state.chartResults && this.state.chartResults.length > 0 && (
-                  <BarChart
-                  data={{
-                    labels: this.state.chartOptionid,
-                    datasets: [
-                      {
-                        data: this.state.chartCost,
+              <View>
+                <ScrollView>
+                  { this.state.chartResults && this.state.chartResults.length > 0 && (
+                    <BarChart
+                    data={{
+                      labels: this.state.chartOptionid,
+                      datasets: [
+                        {
+                          data: this.state.chartCost,
+                        },
+                      ],
+                    }}
+                    width={Dimensions.get('window').width - 16}
+                    height={220}
+                    yAxisLabel={'$'}
+                    fromZero={true}
+                    chartConfig={{
+                      backgroundColor: '#1cc910',
+                      backgroundGradientFrom: '#eff3ff',
+                      backgroundGradientTo: '#efefef',
+                      decimalPlaces: 2,
+                      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                      style: {
+                        borderRadius: 16,
                       },
-                    ],
-                  }}
-                  width={Dimensions.get('window').width - 16}
-                  height={220}
-                  yAxisLabel={'$'}
-                  fromZero={true}
-                  chartConfig={{
-                    backgroundColor: '#1cc910',
-                    backgroundGradientFrom: '#eff3ff',
-                    backgroundGradientTo: '#efefef',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                    style: {
+                    }}
+                    style={{
+                      marginVertical: 8,
                       borderRadius: 16,
-                    },
-                  }}
-                  style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
-                  }}
-                />
-                )}
-                      
-                      { this.state.chartResults && this.state.chartResults.length > 0 && (
-                      <BarChart
-                  data={{
-                    labels: this.state.chartOptionid,
-                    datasets: [
-                      {
-                        data: this.state.chartAudiencereach,
+                    }}
+                  />
+                  )}
+                        
+                        { this.state.chartResults && this.state.chartResults.length > 0 && (
+                        <BarChart
+                    data={{
+                      labels: this.state.chartOptionid,
+                      datasets: [
+                        {
+                          data: this.state.chartAudiencereach,
+                        },
+                      ],
+                    }}
+                    width={Dimensions.get('window').width - 16}
+                    height={220}
+                    yAxisLabel={'$'}
+                    fromZero={true}
+                    chartConfig={{
+                      backgroundColor: '#1cc910',
+                      backgroundGradientFrom: '#eff3ff',
+                      backgroundGradientTo: '#efefef',
+                      decimalPlaces: 2,
+                      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                      style: {
+                        borderRadius: 16,
                       },
-                    ],
-                  }}
-                  width={Dimensions.get('window').width - 16}
-                  height={220}
-                  yAxisLabel={'$'}
-                  fromZero={true}
-                  chartConfig={{
-                    backgroundColor: '#1cc910',
-                    backgroundGradientFrom: '#eff3ff',
-                    backgroundGradientTo: '#efefef',
-                    decimalPlaces: 2,
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                    style: {
+                    }}
+                    style={{
+                      marginVertical: 8,
                       borderRadius: 16,
-                    },
-                  }}
-                  style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
-                  }}
-                />
-                )}
-
-                { this.state.results && this.state.results.length > 0 && (this.state.results.map( (result, i) => (        
+                    }}
+                  />
+                  )}
+                </ScrollView>
+              </View>
+                       
                     <Modal visible={this.state.modalOpen}>
                       <View>
                         <View style={styles.modalBar}>
                           <Icon.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({modalOpen:false})}></Icon.Button>
                           <Text>Tabulation</Text>
                         </View>
-        
-                        <Card key={i}>
-                          <Text>{result.payment}</Text>
-                          <Text>{result.optionid}</Text>
-                          <Text>{result.companyid}</Text>
-                          <Text>{result.cost}</Text>
-                          <Text>{result.audiencereach}</Text>
-                        </Card>
+                        { this.state.results && this.state.results.length > 0 && (this.state.results.map( (result, i) => ( 
+                          <Card key={i}>
+                            <Text>{result.payment} payment for</Text>
+                            <Text>option {result.optionid}</Text>
+                            <Text>from company {result.companyid}</Text>
+                            <Text>${result.cost} for {result.audiencereach}pax</Text>
+                          </Card>
+                          ))
+                        )}
                       </View>
                     </Modal>
                             
-                  ))
-                )}
+
+                
 
         </View>
       </View>

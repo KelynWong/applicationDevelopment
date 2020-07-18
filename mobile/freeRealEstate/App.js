@@ -27,7 +27,7 @@ const advanceResultViewerStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const basicDataViewerStackScreen= ({navigation}) => (
-      <DataViewerStack.Navigator screenOptions={{
+      <basicDataViewerStack.Navigator screenOptions={{
             headerStyle: {
                 backgroundColor: '#009387',
             },
@@ -42,11 +42,11 @@ const basicDataViewerStackScreen= ({navigation}) => (
                   <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
                 )
             }}/>
-        </DataViewerStack.Navigator>
+        </basicDataViewerStack.Navigator>
 )
 
 const basicResultViewerStackScreen= ({navigation}) => (
-  <ResultViewerStack.Navigator screenOptions={{
+  <basicResultViewerStack.Navigator screenOptions={{
         headerStyle: {
             backgroundColor: '#009387',
         },
@@ -61,11 +61,11 @@ const basicResultViewerStackScreen= ({navigation}) => (
               <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
             )
         }}/>
-    </ResultViewerStack.Navigator>
+    </basicResultViewerStack.Navigator>
 )
 
 const advanceDataViewerStackScreen= ({navigation}) => (
-  <DataViewerStack.Navigator screenOptions={{
+  <advanceDataViewerStack.Navigator screenOptions={{
         headerStyle: {
             backgroundColor: '#009387',
         },
@@ -80,11 +80,11 @@ const advanceDataViewerStackScreen= ({navigation}) => (
               <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
             )
         }}/>
-    </DataViewerStack.Navigator>
+    </advanceDataViewerStack.Navigator>
 )
 
 const advanceResultViewerStackScreen= ({navigation}) => (
-<ResultViewerStack.Navigator screenOptions={{
+<advanceResultViewerStack.Navigator screenOptions={{
     headerStyle: {
         backgroundColor: '#009387',
     },
@@ -99,13 +99,13 @@ const advanceResultViewerStackScreen= ({navigation}) => (
           <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
         )
     }}/>
-</ResultViewerStack.Navigator>
+</advanceResultViewerStack.Navigator>
 )
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='basicDataViewer'>
+      <Drawer.Navigator initialRouteName='basicResultViewer'>
         <Drawer.Screen name='basicDataViewer' component={basicDataViewerStackScreen}/>
         <Drawer.Screen name='basicResultViewer' component={basicResultViewerStackScreen}/>
         <Drawer.Screen name='advanceDataViewer' component={advanceDataViewerStackScreen}/>

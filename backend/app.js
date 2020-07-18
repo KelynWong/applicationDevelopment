@@ -34,10 +34,10 @@ app.get('/reset/', function (req, res, next) {
     if (error) { //Return error if error.
       // res.json({ "error": error.detail, "code": error.code });
       // return next(error);
-      res.send(error);
+      return res.send(error);
     }
     console.log(result)
-    res.json({ "result": "success" });
+    res.status(200).json({ "result": "success" });
     // res.send(result);
   });
 });
@@ -49,7 +49,7 @@ app.post('/basic/insert/', function (req, res, next) {
   database.basicInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
-      res.json({ "error": error.detail, "code": error.code }); // OK
+      return res.json({ "error": error.detail, "code": error.code }); // OK
       // return next(error);
     }
     console.log(result)
@@ -63,11 +63,12 @@ app.post('/advance/insert/', function (req, res, next) {
   database.advInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
-      res.json({ "error": error.detail, "code": error.code }); //OK
+      return res.json({ "error": error.detail, "code": error.code }); //OK
       // return next(error);
+    }else{
+      console.log(result)
+      return res.json({ "result": "success" }); // Checked
     }
-    console.log(result)
-    res.json({ "result": "success" }); // Checked
   });
 });
 
@@ -168,7 +169,7 @@ app.get('/basic/result', function (req, res, next) {
   console.log("budget: " + budget);
   database.basicGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
     if (databaseResult.length == 0) {
-      return res.status(404).json({ "error": "Not found", "code": 404 });
+      return res.json({});
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
     }
@@ -234,7 +235,7 @@ app.get('/advance/result', function (req, res, next) {
   console.log("budget: " + budget);
   database.advGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
     if (databaseResult.length == 0) {
-      return res.status(404).json({ "error": "Not found", "code": 404 });
+      return res.json({});
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
     }

@@ -1,30 +1,32 @@
 import * as React from 'react';
 import { useState }from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Picker} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { DataTable, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-// import Picker from '@react-native-community/picker';
+import { Dropdown } from 'react-native-material-dropdown';
 
-// const itemsPerPage = 2;
 
-//   const items = [
-//    {
-//      key: 1,
-//      name: 'Page 1',
-//    },
-//    {
-//      key: 2,
-//      name: 'Page 2',
-//    },
-//    {
-//      key: 3,
-//      name: 'Page 3',
-//    }
-//  ];
-
-//  const [page, setPage] = React.useState(0);
-// const from = page * itemsPerPage;
-// const to = (page + 1) * itemsPerPage;
+let data = [{
+  value: '5',
+}, {
+  value: '10',
+}, {
+  value: '15',
+}, {
+  value: '20',
+}, {
+  value: '25',
+}, {
+  value: '30',
+}, {
+  value: '35',
+}, {
+  value: '40',
+}, {
+  value: '45',
+}, {
+  value: '50',
+}];
 
 export default class dataViewerScreen extends React.Component{
     constructor(){
@@ -37,7 +39,7 @@ export default class dataViewerScreen extends React.Component{
             audienceReach: '',
             rowCount: null,
             pageNo: 0,
-            pageSize: 3, //default 3 rows in one page
+            pageSize: 5, //default 5 rows in one page
             page: 1,
         }
         this.getData = this.getData.bind(this);
@@ -47,15 +49,10 @@ export default class dataViewerScreen extends React.Component{
     componentDidMount(){
       this.getRowCount();
       this.setState({loaded:false, error: null});
-      let url = this.baseURL + '/basic/Alldata';
+      let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}`;
       
       let req = new Request(url, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-          body: JSON.stringify({
-              pageNo: this.state.pageNo, //OFFSET
-              pageSize: this.state.pageSize, //LIMIT 
-          })
+          method: 'GET',
       });
       
       fetch(req)
@@ -64,23 +61,19 @@ export default class dataViewerScreen extends React.Component{
       .catch(this.badStuff)
     }
     getData = (ev)=>{
-        console.log('this.state.page: ', this.state.page)
-        console.log('this.state.pageNo: ', this.state.pageNo)
-        console.log('this.state.companyId: ' + this.state.companyId)
-        console.log('this.state.audienceReach: ' + this.state.audienceReach)
+      if (!this.state.companyId && !this.state.audienceReach) {
+        Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      } else {
+          this.companyIdValidation();
+          this.audienceReachValidation();
+      }
         this.setState({loaded:false, error: null});
-        let url = this.baseURL + '/basic/Alldata';
+        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
         
         let req = new Request(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-            body: JSON.stringify({
-                pageNo: this.state.pageNo, //OFFSET
-                pageSize: this.state.pageSize, //LIMIT 
-                //Specifically for filters
-                companyId: this.state.companyId,
-                audienceReach: this.state.audienceReach
-            })
+            method: 'GET',
         });
         
         fetch(req)
@@ -94,20 +87,16 @@ export default class dataViewerScreen extends React.Component{
         });
         console.log(this.state.results);
         this.setState({loaded:true});
+        this.getRowCount;
     }
     getRowCount = (ev)=>{
       console.log('this.state.companyId: ' + this.state.companyId)
       console.log('this.state.audienceReach: ' + this.state.audienceReach)
       this.setState({loaded:false, error: null});
-      let url = this.baseURL + '/extra/basicGetRowCount';
+      let url = this.baseURL + `/extra/basicGetRowCount?companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
       
       let req = new Request(url, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-          body: JSON.stringify({
-              companyId: this.state.companyId,
-              audienceReach: this.state.audienceReach
-          })
+          method: 'GET',
       });
       
       fetch(req)
@@ -127,8 +116,12 @@ export default class dataViewerScreen extends React.Component{
         this.setState({loaded: true, error: err.message});
     }
     clearText(){
-      this.setState({companyId:''})
-      this.setState({audienceReach:''})
+      this.setState({
+        companyId:'',
+        audienceReach:''
+      }, () => {
+        this.componentDidMount();
+      });
     }
     setPage(page){
       var temp = 0;
@@ -140,6 +133,45 @@ export default class dataViewerScreen extends React.Component{
       this.setState({ pageNo: temp})
       console.log("this.state.pageNo: " + this.state.pageNo)
       // this.getData();
+    }
+
+    companyIdValidation(){
+      console.log("this.state.companyId.length: " + this.state.companyId.length)
+      if (this.state.companyId) {
+        if (isNaN(this.state.companyId) == true) {
+          this.setState({ companyId: ''})
+          Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
+            {text: 'Understood', onPress: () => console.log('Alert closed.')}
+          ]);
+        } else if (this.state.companyId % 1 != 0) {
+          this.setState({ companyId: ''})
+          Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
+            {text: 'Understood', onPress: () => console.log('Alert closed.')}
+          ]);
+        } else if (this.state.companyId.length != 10) {
+          this.setState({ companyId: ''})
+          Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
+            {text: 'Understood', onPress: () => console.log('Alert closed.')}
+          ]);
+        }
+      }
+    }
+
+    audienceReachValidation(){
+      if (this.state.audienceReach) {
+        // If filterAudienceReach exists
+        if (isNaN(this.state.audienceReach) == true) {
+          this.setState({ audienceReach: ''})
+          Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
+            {text: 'Understood', onPress: () => console.log('Alert closed.')}
+          ]);
+        } else if (this.state.audienceReach % 1 != 0) {
+            this.setState({ audienceReach: ''})
+            Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
+              {text: 'Understood', onPress: () => console.log('Alert closed.')}
+            ]);
+        }
+      }
     }
     
     render() {
@@ -156,9 +188,10 @@ export default class dataViewerScreen extends React.Component{
                             placeholderTextColor='rgb(0,0,0)'
                             multiline= {false} 
                             onChangeText={(text) => this.setState({companyId:text})}
+                            value= {this.state.companyId}
                             keyboardType='numeric'/>
                     </TouchableOpacity>
-                    <Button mode='contained' onPress={() => { this.getData(); this.getRowCount(); }}>Filter</Button>
+                    <Button mode='contained' onPress={() => { this.getData() }}>Filter</Button>
                 </View>
 
                 <View style={styles.textInputContainer}>
@@ -170,59 +203,22 @@ export default class dataViewerScreen extends React.Component{
                         placeholderTextColor='rgb(0,0,0)'
                         multiline= {true} 
                         onChangeText={(text) => this.setState({audienceReach:text})}
+                        value= {this.state.audienceReach}
                         keyboardType='numeric'/>
                     </TouchableOpacity>
-                    <Button mode='contained' onPress={() => {this.clearText}}>Clear</Button>
+                    <Button mode='contained' onPress={() => {this.clearText()}}>Clear</Button>
                 </View>
             </View>
 
-            {/* <DropDownPicker
-              items={[
-                  {label: '1', value: '1'},
-                  {label: '2', value: '2'},
-                  {label: '3', value: '3'},
-                  {label: '4', value: '4'},
-                  {label: '5', value: '5'},
-                  {label: '6', value: '6'},
-                  {label: '7', value: '7'},
-                  {label: '8', value: '8'},
-                  {label: '9', value: '9'},
-                  {label: '10', value: '10'},
-              ]}
-              labelStyle={{color: '#00FF00'}}
-              placeholder="Number of rows per page"
-              defaultValue={3}
-              containerStyle={{height: 40}}
-              style={{backgroundColor: '#fafafa'}}
-              itemStyle={{
-                  justifyContent: 'flex-start'
-              }}
-              dropDownStyle={{backgroundColor: '#fafafa'}}
-              onChangeItem={item => this.setState({
-                  pageSize: item.value
-              })}
-            /> */}
-
-            <View>
-              <Picker
-              style={{width:'100%'}}
-              selectedValue={this.state.pageSize}
-              onValueChange={(itemValue, itemIndex) =>
-              this.setState({pageSize: itemValue})}
-              >
-                <Picker.Item label="Number of entries per page" value={0}></Picker.Item>
-                <Picker.Item label="1" value={1}></Picker.Item>
-                <Picker.Item label="2" value={2}></Picker.Item>
-                <Picker.Item label="3" value={3}></Picker.Item>
-                <Picker.Item label="4" value={4}></Picker.Item>
-                <Picker.Item label="5" value={5}></Picker.Item>
-                <Picker.Item label="6" value={6}></Picker.Item>
-                <Picker.Item label="7" value={7}></Picker.Item>
-                <Picker.Item label="8" value={8}></Picker.Item>
-                <Picker.Item label="9" value={9}></Picker.Item>
-                <Picker.Item label="10" value={10}></Picker.Item>
-              </Picker>
-            </View>
+        <Dropdown
+        label='Page size'
+        data={data}
+        // pickerStyle={}
+        value= {this.state.pageSize}
+        onChangeText= {value => {
+          this.setState({ pageSize: value })
+        }}
+        />
 
         <View style={styles.dataTableContainer}>
           <DataTable>
@@ -257,15 +253,19 @@ export default class dataViewerScreen extends React.Component{
                 <Text style={styles.err}>{this.state.error}</Text>
               )}
 
-              { this.state.results && this.state.results.length > 0 && (this.state.results.map( (result, i) => (
-                <DataTable.Row key={i}>
-                <DataTable.Cell numeric>{result.optionid}</DataTable.Cell>
-                <DataTable.Cell numeric>{result.companyid}</DataTable.Cell>
-                <DataTable.Cell numeric>{result.cost}</DataTable.Cell>
-                <DataTable.Cell numeric>{result.audiencereach}</DataTable.Cell>
-                <DataTable.Cell>{result.adtype}</DataTable.Cell>
-              </DataTable.Row>
-              )))}
+              <View style={styles.dataTableContent}>
+                <ScrollView>
+                  { this.state.results && this.state.results.length > 0 && (this.state.results.map( (result, i) => (
+                    <DataTable.Row key={i}>
+                    <DataTable.Cell numeric>{result.optionid}</DataTable.Cell>
+                    <DataTable.Cell numeric>{result.companyid}</DataTable.Cell>
+                    <DataTable.Cell numeric>{result.cost}</DataTable.Cell>
+                    <DataTable.Cell numeric>{result.audiencereach}</DataTable.Cell>
+                    <DataTable.Cell>{result.adtype}</DataTable.Cell>
+                  </DataTable.Row>
+                  )))}
+                </ScrollView>
+              </View>
 
               { this.state.rowCount && (
                 <DataTable.Pagination
@@ -306,6 +306,9 @@ const styles = StyleSheet.create({
   dataTableContainer:{
     flex: 6,
     width: "100%",
+  },
+  dataTableContent:{
+    height: 300,
   },
   textInputContainer:{
     flexDirection: 'row',
