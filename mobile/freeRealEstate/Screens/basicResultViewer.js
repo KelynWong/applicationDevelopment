@@ -1,67 +1,33 @@
 import * as React from 'react';
 import { useState }from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
 import { DataTable, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Card from '../myComponents/card';
 import {BarChart} from "react-native-chart-kit";
 
-// const itemsPerPage = 2;
-
-//   const items = [
-//    {
-//      key: 1,
-//      name: 'Page 1',
-//    },
-//    {
-//      key: 2,
-//      name: 'Page 2',
-//    },
-//    {
-//      key: 3,
-//      name: 'Page 3',
-//    }
-//  ];
-
-//  const [page, setPage] = React.useState(0);
-// const from = page * itemsPerPage;
-// const to = (page + 1) * itemsPerPage;
-
-// const data = {
-//   labels: ["January", "February", "March", "April", "May", "June"],
-//   datasets: [
-//     {
-//       data: [20, 45, 28, 80, 99, 43]
-//     }
-//   ]
-// };
+var totalCost = 0
+var totalPax = 0
 
 export default class resultViewerScreen extends React.Component{
     constructor(){
         super();
         this.state = {
             results: {
-                payment: '',
-                optionid: '',
-                companyid: '',
-                cost: '',
-                audiencereach: ''
+                result: [{
+                  adType: '',
+                  payment: '',
+                  optionId: '',
+                  companyId: '',
+                  amount: '',
+                  audienceReach: ''
+                }]
             },
             chartResults: {
               optionid: '',
               cost: '',
               audiencereach: ''
             },
-          chartConfig: {
-            backgroundGradientFrom: "#1E2923",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "#08130D",
-            backgroundGradientToOpacity: 0.5,
-            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-            strokeWidth: 2, // optional, default 3
-            barPercentage: 0.5,
-            useShadowColorFromDataset: false // optional
-          },
             loaded: true,
             error: null,
             optionIds: '',
@@ -70,8 +36,8 @@ export default class resultViewerScreen extends React.Component{
             chartOptionid: [],
             chartCost: [],
             chartAudiencereach: [],
-            totalCost: 0,
-            totalPax: 0,
+            totalCost: '',
+            totalPax: '',
         }
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
@@ -79,19 +45,13 @@ export default class resultViewerScreen extends React.Component{
     baseURL = 'http://192.168.229.1:3000';
 
     getResult = (ev)=>{
-        //clearForComputation();
         console.log('this.state.optionIds: ' + this.state.optionIds)
         console.log('this.state.budget: ' + this.state.budget)
         this.setState({loaded:false, error: null});
-        let url = this.baseURL + '/basic/result';
+        let url = this.baseURL + `/basic/result?optionIds=${this.state.optionIds}&budget=${this.state.budget}`;
         
         let req = new Request(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-            body: JSON.stringify({
-              optionIds: this.state.optionIds,
-              budget: this.state.budget
-            })
+            method: 'GET',
         });
         
         fetch(req)
@@ -103,21 +63,26 @@ export default class resultViewerScreen extends React.Component{
         this.setState({
             results: data
         });
-        console.log(this.state.results);
-        console.log("this.state.results.length" + this.state.results.length);
+        console.log("this.state.results: " + this.state.results);
+        console.log("this.state.results.length: " + this.state.results.result.length);
+        
+        for(var i=0; i < this.state.results.result.length; i++){
+          totalCost += this.state.results.result[i].amount
+          totalCost.toFixed(3)
+          totalPax += this.state.results.result[i].audienceReached
+          totalPax.toFixed(3)
+        }
+        this.setState({totalCost: totalCost});
+        this.setState({totalPax: totalPax});
         this.setState({loaded:true});
     }
     getChart = (ev)=>{
       console.log('this.state.optionIds: ' + this.state.optionIds)
       this.setState({loaded:false, error: null});
-      let url = this.baseURL + '/basic/allChartData';
+      let url = this.baseURL + `/basic/allChartData?optionIds=${this.state.optionIds}`;
       
       let req = new Request(url, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-          body: JSON.stringify({
-            optionIds: this.state.optionIds,
-          })
+          method: 'GET',
       });
       
       fetch(req)
@@ -135,47 +100,135 @@ export default class resultViewerScreen extends React.Component{
           chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
           chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
           chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-          totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
-          totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
+          // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
+          // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
         }));
       }
       console.log("this.state.totalCost: " + this.state.totalCost)
       console.log("this.state.totalPax: " + this.state.totalPax)
-      this.setState({loaded:true});
+      //this.setState({loaded:true});
+      this.getResult();
     }
     error = (err) => {
         console.log(err)
         this.setState({loaded: true, error: err.message});
     }
     clearText(){
-      this.setState({loaded: true})
-      this.setState({error: null})
-      this.setState({optionIds: ''})
-      this.setState({budget: ''})
-      this.setState({modalOpen: false})
-      this.setState({chartOptionid: []})
-      this.setState({chartCost: []})
-      this.setState({chartAudiencereach: []})
-      this.setState({totalCost: 0})
-      this.setState({totalPax: 0})
-      this.setState({chartResults:''})
-      this.setState({modalOpen:false})
-      this.setState({results:''})
-      this.setState({chartResults:''})
+      this.setState({
+        loaded: true,
+        error: null,
+        modalOpen: false,
+        chartOptionid: [],
+        chartCost: [],
+        chartAudiencereach: [],
+        totalCost: 0,
+        totalPax: 0,
+        chartResults:'',
+        modalOpen:false,
+        results:'',
+        chartResults:'',
+        optionIds: '',
+        budget: ''
+      })
     }
     clearForComputation(){
-      this.setState({loaded: true})
-      this.setState({error: null})
-      this.setState({modalOpen: false})
-      this.setState({chartOptionid: []})
-      this.setState({chartCost: []})
-      this.setState({chartAudiencereach: []})
-      this.setState({totalCost: 0})
-      this.setState({totalPax: 0})
-      this.setState({chartResults:''})
-      this.setState({modalOpen:false})
-      this.setState({results:''})
-      this.setState({chartResults:''})
+      this.setState({
+        loaded: true,
+        error: null,
+        modalOpen: false,
+        chartOptionid: [],
+        chartCost: [],
+        chartAudiencereach: [],
+        totalCost: 0,
+        totalPax: 0,
+        chartResults:'',
+        modalOpen:false,
+        results:'',
+        chartResults:''
+      }, () => {
+        this.validation();
+      });
+    }
+
+    validation(){
+      if (this.state.optionIds == '' && this.state.budget == '') {
+          Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
+            {text: 'Understood', onPress: () => console.log('Alert closed.')}
+          ]);
+      }
+      else if (this.state.budget == '') {
+        this.setState({ optionIds: ''})
+        this.setState({ budget: ''})
+        Alert.alert('OOPS!', "Please enter a Budget!", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      }
+      else if (this.state.optionIds == '') {
+        this.setState({ optionIds: ''})
+        this.setState({ budget: ''})
+        Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      }
+      else if (isNaN(this.state.budget)) {
+        this.setState({ optionIds: ''})
+        this.setState({ budget: ''})
+        Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      }
+      else if (this.state.budget <= 0) {
+        this.setState({ optionIds: ''})
+        this.setState({ budget: ''})
+        Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      }
+      else if (this.state.optionIds.search(",") == -1) {
+        this.setState({ optionIds: ''})
+        this.setState({ budget: ''})
+        Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
+          {text: 'Understood', onPress: () => console.log('Alert closed.')}
+        ]);
+      }
+      else {
+          var optionList;
+          optionList = this.state.optionIds.toString().split(','); //optionList array
+          if (optionList.length < 2) {
+              this.setState({ optionIds: ''})
+              this.setState({ budget: ''})
+              Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
+                {text: 'Understood', onPress: () => console.log('Alert closed.')}
+              ]);
+          }
+          else {
+              var lengthCheck = [];
+              // var isIntCheck = [];
+              for (let i = 0; i < optionList.length; i++) {
+                  optionList[i] = parseInt(optionList[i]);
+                  optionList[i] = optionList[i].toString();
+
+                  if (optionList[i].length == 10) {
+                      lengthCheck[i] = true;
+                      console.log("Pass2" + optionList[i]);
+                  } else {
+                      lengthCheck[i] = false;
+                      console.log("Failed2" + optionList[i]);
+                  }
+                  // optionList[i] = optionList[i].toString();
+              }
+              if (!lengthCheck.every(v => v == true)) {
+                this.setState({ optionIds: ''})
+                this.setState({ budget: ''})
+                Alert.alert('OOPS!', "Please make sure your optionIds are exactly 10 digits each, and digits only!", [
+                  {text: 'Understood', onPress: () => console.log('Alert closed.')}
+                ]);
+              }
+              else {
+                this.getChart();
+              }
+          }
+      }
     }
     
     render() {
@@ -192,9 +245,10 @@ export default class resultViewerScreen extends React.Component{
                             placeholderTextColor='rgb(0,0,0)'
                             multiline= {false} 
                             onChangeText={(text) => this.setState({optionIds:text})}
+                            value= {this.state.optionIds}
                             keyboardType='numeric'/>
                     </TouchableOpacity>
-                    <Button mode='contained' onPress={() => {this.getResult(); this.getChart()}}>Compute</Button>
+                    <Button mode='contained' onPress={() => {this.clearForComputation()}}>Compute</Button>
                 </View>
 
                 <View style={styles.textInputContainer}>
@@ -206,6 +260,7 @@ export default class resultViewerScreen extends React.Component{
                         placeholderTextColor='rgb(0,0,0)'
                         multiline= {true} 
                         onChangeText={(text) => this.setState({budget:text})}
+                        value= {this.state.budget}
                         keyboardType='numeric'/>
                     </TouchableOpacity>
                     <Button mode='contained' onPress={() => {this.clearText()}}>Clear</Button>
@@ -215,7 +270,7 @@ export default class resultViewerScreen extends React.Component{
             <View style={styles.resultBar}>
               <View>
                 { !!this.state.totalCost && !!this.state.totalPax && (
-                  <Text>Results: ${this.state.totalCost} for {this.state.totalPax}pax</Text>
+                  <Text>Results: ${totalCost} for {totalPax}pax</Text>
                 )}
               </View>
               <Icon.Button name="ios-menu" size={25} backgroundColor='#FFFF00' onPress={() => this.setState({modalOpen:true})}></Icon.Button>
@@ -226,13 +281,13 @@ export default class resultViewerScreen extends React.Component{
               <ActivityIndicator size="large" color="black"></ActivityIndicator>
             )}
 
-            { this.state.error && (
+            { !!this.state.error && (
                 <Text style={styles.err}>{this.state.error}</Text>
             )}
 
               <View>
                 <ScrollView>
-                  { this.state.chartResults && this.state.chartResults.length > 0 && (
+                  { !!this.state.chartResults && !!this.state.chartResults.length > 0 && (
                     <BarChart
                     data={{
                       labels: this.state.chartOptionid,
@@ -263,7 +318,7 @@ export default class resultViewerScreen extends React.Component{
                   />
                   )}
                         
-                        { this.state.chartResults && this.state.chartResults.length > 0 && (
+                        { !!this.state.chartResults && !!this.state.chartResults.length > 0 && (
                         <BarChart
                     data={{
                       labels: this.state.chartOptionid,
@@ -302,12 +357,12 @@ export default class resultViewerScreen extends React.Component{
                           <Icon.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({modalOpen:false})}></Icon.Button>
                           <Text>Tabulation</Text>
                         </View>
-                        { this.state.results && this.state.results.length > 0 && (this.state.results.map( (result, i) => ( 
+                        { !!this.state.results.result && !!this.state.results.result.length > 0 && (this.state.results.result.map( (data, i) => ( 
                           <Card key={i}>
-                            <Text>{result.payment} payment for</Text>
-                            <Text>option {result.optionid}</Text>
-                            <Text>from company {result.companyid}</Text>
-                            <Text>${result.cost} for {result.audiencereach}pax</Text>
+                            <Text>{data.payment} payment for</Text>
+                            <Text>option {data.optionId}</Text>
+                            <Text>from company {data.companyId}</Text>
+                            <Text>${data.amount} for {data.audienceReached}pax</Text>
                           </Card>
                           ))
                         )}
