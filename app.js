@@ -169,9 +169,11 @@ app.get('/basic/result', function (req, res, next) {
   console.log("budget: " + budget);
   database.basicGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
     if (databaseResult.length == 0) {
-      return res.json({});
+      return res.json({"result": []});
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
+    } else if(budget == null){
+      return res.json({"error": "budget cannot be null!"});
     }
     var audience = [];
     var cost = [];
@@ -235,9 +237,11 @@ app.get('/advance/result', function (req, res, next) {
   console.log("budget: " + budget);
   database.advGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
     if (databaseResult.length == 0) {
-      return res.json({});
+      return res.json({"result": []});
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
+    }else if(budget == null){
+      return res.json({"error": "budget cannot be null!"});
     }
     let audience = [];
     let cost = [];
