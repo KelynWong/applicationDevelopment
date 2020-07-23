@@ -14,17 +14,40 @@ import basicDataViewerScreen from './Screens/basicDataViewer'
 import basicResultViewerScreen from './Screens/basicResultViewer'
 import advanceDataViewerScreen from './Screens/advDataViewer'
 import advanceResultViewerScreen from './Screens/advResultViewer'
+import layoutTest from './Screens/layoutTest'
+
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+const testStack = createStackNavigator();
 const basicDataViewerStack = createStackNavigator();
 const basicResultViewerStack = createStackNavigator();
 const advanceDataViewerStack = createStackNavigator();
 const advanceResultViewerStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+
+const test = ({navigation}) => (
+    <testStack.Navigator screenOptions={{
+          headerStyle: {
+              backgroundColor: '#009387',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+              fontWeight: 'bold'
+          }
+      }}>
+          <testStack.Screen name="layoutTest" component={layoutTest} options={{
+              title: 'Layout test.',
+              headerLeft: () => (
+                <Icon.Button  name="ios-menu" size={25} backgroundColor='#009387' onPress={() => navigation.openDrawer()}></Icon.Button>
+              )
+          }}/>
+      </testStack.Navigator>
+)
 
 const basicDataViewerStackScreen= ({navigation}) => (
       <basicDataViewerStack.Navigator screenOptions={{
@@ -105,7 +128,9 @@ const advanceResultViewerStackScreen= ({navigation}) => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='basicResultViewer'>
+      <Drawer.Navigator initialRouteName='layoutTest'>
+        <Drawer.Screen name='testing' component={test}/>
+
         <Drawer.Screen name='basicDataViewer' component={basicDataViewerStackScreen}/>
         <Drawer.Screen name='basicResultViewer' component={basicResultViewerStackScreen}/>
         <Drawer.Screen name='advanceDataViewer' component={advanceDataViewerStackScreen}/>
