@@ -1,4 +1,4 @@
-/* Basic Result Viewer */ 
+/* Basic Result Viewer */
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
@@ -7,9 +7,8 @@ import { Button } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import Card from '../myComponents/card';
+import Card from '../myComponents/card'; //Disregard first 
 import { BarChart } from "react-native-chart-kit";
-
 
 var totalCost = 0;
 var totalPax = 0;
@@ -383,21 +382,27 @@ export default class dataViewerScreen extends React.Component {
                         </View>
 
                         <Modal visible={this.state.modalOpen}>
-                            <View>
+
+                            <View style={styles.tabulationArea}>
                                 <View style={styles.modalBar}>
-                                    <Ionicons.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({ modalOpen: false })}></Ionicons.Button>
-                                    <Text>Tabulation</Text>
+                                    <Ionicons.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({ modalOpen: false })}>
+                                        <Text style={styles.barText}>Tabulation</Text>
+
+                                    </Ionicons.Button>
                                 </View>
                                 {!!this.state.results.result && !!this.state.results.result.length > 0 && (this.state.results.result.map((data, i) => (
-                                    <Card key={i}>
-                                        <Text>{data.payment} payment for</Text>
-                                        <Text>option {data.optionId}</Text>
-                                        <Text>from company {data.companyId}</Text>
-                                        <Text>${data.amount} for {data.audienceReached}pax</Text>
-                                    </Card>
+
+                                    <View key={i} style={styles.cardContent}>
+                                        <Text style={styles.cardText}>{data.payment} payment for</Text>
+                                        <Text style={styles.cardText}>option {data.optionId}</Text>
+                                        <Text style={styles.cardText}>from company {data.companyId}</Text>
+                                        <Text style={styles.cardText}>${data.amount} for {data.audienceReached}pax</Text>
+                                    </View>
                                 ))
                                 )}
                             </View>
+
+
                         </Modal>
                     </View>
 
@@ -408,6 +413,46 @@ export default class dataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    barText: {
+        color: 'white',
+        fontSize: 20
+    },
+    cardText: {
+        color: 'black',
+        fontSize: 20
+    },
+    cardContent: {
+        marginHorizontal: 18,
+        marginVertical: 10,
+        // backgroundColor: 'blue',
+        fontSize: 50,
+        // borderWidth: 3,
+        borderBottomWidth: 3,
+        borderColor: '#000000',
+    },
+    modalBar: {
+        //flexDirection: 'row',
+        //marginTop: "50%",
+        height: 45,
+        width: '100%',
+        backgroundColor: '#009387',
+        color: 'white',
+    },
+    tabulationArea: {
+        // backgroundColor: 'green',
+        borderRadius: 6,
+        // elevation: 3,
+        backgroundColor: '#fff',
+        shadowOffset: { width: 1, height: 1 },
+        shadowColor: "#333",
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        fontSize: 50,
+
+
+        // marginHorizontal: 4,
+        // marginVertical: 6,
+    },
     container: {
         flex: 1,
         // backgroundColor: 'powderblue',

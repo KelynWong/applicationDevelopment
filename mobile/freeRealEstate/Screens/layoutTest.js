@@ -5,9 +5,6 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Activi
 import { DataTable, Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-material-dropdown';
 
-
-
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -128,7 +125,6 @@ export default class dataViewerScreen extends React.Component {
             .catch(this.badStuff)
     }
 
-
     showRowCount = (data) => {
         this.setState({
             rowCount: data
@@ -136,7 +132,6 @@ export default class dataViewerScreen extends React.Component {
         console.log(this.state.rowCount[0].count);
         this.setState({ loaded: true });
     }
-
 
     badStuff = (err) => {
         console.log(err)
@@ -149,23 +144,6 @@ export default class dataViewerScreen extends React.Component {
         }, () => {
             this.componentDidMount();
         });
-    }
-    setPage(page, callback) {
-
-        // this.setState({ page: page })
-        // console.log("parsed in page:" + page);
-
-        // this.setState({ pageNo: page });
-        // callback();
-
-        // console.log("Current: this.state.page: " + this.state.page)
-
-
-
-
-        // this.setState({ pageNo: temp }) //
-
-        // this.getData();
     }
 
     companyIdValidation() {
@@ -236,7 +214,6 @@ export default class dataViewerScreen extends React.Component {
                             </Button>
                         </View>
 
-
                         <View style={styles.textInputContainer}>
                             <View style={styles.icon}>
                                 <Ionicons name="ios-person" size={30}></Ionicons>
@@ -268,7 +245,7 @@ export default class dataViewerScreen extends React.Component {
                             fontSize={25}
                             labelFontSize={18}
                             onChangeText={value => {
-                                this.setState({ pageNo: 0});
+                                this.setState({ pageNo: 0 });
                                 this.setState({ pageSize: value }, () => this.getData());
                             }}
                         />
@@ -322,26 +299,27 @@ export default class dataViewerScreen extends React.Component {
                                 <ScrollView>
                                     {this.state.results && this.state.results.length > 0 && (this.state.results.map((result, i) => (
                                         <DataTable.Row key={i} style={styles.colourTest}>
-                                            {/* <DataTable.Cell numeric>{result.optionid}</DataTable.Cell>
-                                            <DataTable.Cell numeric>{result.companyid}</DataTable.Cell>
-                                            <DataTable.Cell numeric>{result.cost}</DataTable.Cell>
-                                            <DataTable.Cell numeric>{result.audiencereach}</DataTable.Cell>
-                                            <DataTable.Cell>{result.adtype}</DataTable.Cell> */}
                                             <DataTable.Cell style={styles.cell1} numeric>{result.optionid}</DataTable.Cell>
                                             <DataTable.Cell style={styles.cell2} numeric>{result.companyid}</DataTable.Cell>
                                             <DataTable.Cell style={styles.cell3} numeric>{result.cost}</DataTable.Cell>
                                             <DataTable.Cell style={styles.cell4} numeric>{result.audiencereach}</DataTable.Cell>
                                             <DataTable.Cell style={styles.cell5}>{result.adtype}</DataTable.Cell>
-
                                         </DataTable.Row>
                                     )))}
                                 </ScrollView>
                             </View>
 
-
                         </DataTable>
                     </View>
                     <View style={styles.paginationContainer}>
+
+
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: 0 }, () => this.getData()); }}>
+                            <Text style={styles.buttonText}>First</Text>
+                        </Button>
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: Math.floor(this.state.rowCount[0].count / this.state.pageSize) }, () => this.getData()); }}>
+                            <Text style={styles.buttonText}>Last</Text>
+                        </Button>
                         {this.state.rowCount && (
                             <DataTable.Pagination style={styles.pagination}
                                 page={this.state.pageNo} //Page is the current page
@@ -356,9 +334,9 @@ export default class dataViewerScreen extends React.Component {
                                 }}
                                 label={`${((this.state.pageNo) * this.state.pageSize) + 1}-${
 
-                                    
+
                                     ((this.state.pageNo + 1) * this.state.pageSize) >= this.state.rowCount[0].count ? this.state.rowCount[0].count : ((this.state.pageNo + 1) * this.state.pageSize)
-                                } of ${this.state.rowCount[0].count}`} //correct
+                                    } of ${this.state.rowCount[0].count}`} //correct
                             />
                         )}
                     </View>
@@ -370,6 +348,22 @@ export default class dataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    dataTableContent: {
+        height: 270,
+        // flex: 12,
+    },
+    pageButton: {
+        flex: 1,
+        textAlign: 'center',
+        justifyContent: 'center',
+        backgroundColor: null,
+        shadowRadius: 0,
+        elevation: 0,
+    },
+    buttonText: {
+        color: 'black',
+        textDecorationLine: 'underline',
+    },
     colourTest: {
         // flex: 4,
         // backgroundColor: 'green',
@@ -495,6 +489,7 @@ const styles = StyleSheet.create({
     // Chart Area
     tableContainer: {
         flex: 10,
+        // maxHeight: 40,
         // backgroundColor: 'grey'
         width: "100%",
     },
@@ -529,11 +524,13 @@ const styles = StyleSheet.create({
         // backgroundColor: 'red'
     },
     paginationContainer: {
+        flexDirection: 'row',
         flex: 2,
         backgroundColor: '#009387'
     },
     pagination: {
-        fontSize: 20,
+        flex: 5,
+        fontSize: 30,
     },
 
 
