@@ -12,6 +12,7 @@ import { BarChart } from "react-native-chart-kit";
 
 var totalCost = 0;
 var totalPax = 0;
+var paxFixed = 0;
 
 export default class dataViewerScreen extends React.Component {
     constructor() {
@@ -24,7 +25,7 @@ export default class dataViewerScreen extends React.Component {
                     optionId: '',
                     companyId: '',
                     amount: '',
-                    audienceReach: ''
+                    audienceReached: ''
                 }]
             },
             chartResults: {
@@ -64,23 +65,30 @@ export default class dataViewerScreen extends React.Component {
             .catch(this.error)
     }
     showResult = (data) => {
+        for (var i = 0; i < data.result.length; i++) {
+            totalCost += data.result[i].amount;
+            totalPax += data.result[i].audienceReached
+        }
+        totalPax = parseFloat(totalPax.toFixed(3));
+        this.setState({ totalCost: totalCost });
+        this.setState({ totalPax: totalPax });
+
         this.setState({
             results: data
         });
-        console.log("this.state.results: " + this.state.results);
-        console.log("this.state.results.length: " + this.state.results.result.length);
 
-        //  var totalCost = 0;
+        let resultsCopy = JSON.parse(JSON.stringify(this.state.results))
 
-        for (var i = 0; i < this.state.results.result.length; i++) {
-            totalCost += this.state.results.result[i].amount;
-            totalCost.toFixed(3);
-            totalPax += this.state.results.result[i].audienceReached
-            totalPax.toFixed(3)
+        console.log("resultsCopy: " + resultsCopy.result[0])
+        //toFixed(3) audienceReached
+        for (var i = 0; i < data.result.length; i++) {
+            resultsCopy.result[i].audienceReached = resultsCopy.result[i].audienceReached.toFixed(3)
         }
-        this.setState({ totalCost: totalCost });
-        this.setState({ totalPax: totalPax });
-        this.setState({ loaded: true });
+        this.setState({
+            results : resultsCopy 
+        }, () => {
+            this.setState({ loaded: true }); 
+        }) 
     }
     getChart = (ev) => {
         console.log('this.state.optionIds: ' + this.state.optionIds)
@@ -112,7 +120,6 @@ export default class dataViewerScreen extends React.Component {
         }
         console.log("this.state.totalCost: " + this.state.totalCost)
         console.log("this.state.totalPax: " + this.state.totalPax)
-        // this.setState({loaded:true});
         this.getResult();
     }
     error = (err) => {
@@ -138,6 +145,8 @@ export default class dataViewerScreen extends React.Component {
         })
     }
     clearForComputation() { // Set states for computation.
+        totalCost = 0
+        totalPax = 0
         this.setState({
             loaded: true,
             error: null,
@@ -237,6 +246,14 @@ export default class dataViewerScreen extends React.Component {
         }
     }
 
+    checkModel(){
+        if(this.state.results.result[0].amount == ''){
+          this.setState({ modalOpen: false });
+        }else{
+          this.setState({ modalOpen: true });
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -297,7 +314,7 @@ export default class dataViewerScreen extends React.Component {
                             )}
                             {/* <Text style={styles.resultsText}>Results: $10001 for 10001 pax</Text>  */}
                         </View>
-                        <Button style={styles.tabButtonContainer} mode='contained' onPress={() => this.setState({ modalOpen: true })}>
+                        <Button style={styles.tabButtonContainer} mode='contained' onPress={() => {this.checkModel()}}>
                             <Ionicons style={styles.tabButton} name="ios-menu" size={30}></Ionicons>
                         </Button>
 
@@ -326,7 +343,7 @@ export default class dataViewerScreen extends React.Component {
                                         }}
                                         width={Dimensions.get('window').width - 16}
                                         height={220}
-                                        yAxisLabel={'$'}
+                                        yAxisSuffix={'pax'}
                                         fromZero={true}
                                         chartConfig={{
                                             backgroundColor: '#1cc910',
@@ -391,7 +408,6 @@ export default class dataViewerScreen extends React.Component {
                                     </Ionicons.Button>
                                 </View>
                                 {!!this.state.results.result && !!this.state.results.result.length > 0 && (this.state.results.result.map((data, i) => (
-
                                     <View key={i} style={styles.cardContent}>
                                         <Text style={styles.cardText}>{data.payment} payment for</Text>
                                         <Text style={styles.cardText}>option {data.optionId}</Text>
@@ -401,7 +417,6 @@ export default class dataViewerScreen extends React.Component {
                                 ))
                                 )}
                             </View>
-
 
                         </Modal>
                     </View>
