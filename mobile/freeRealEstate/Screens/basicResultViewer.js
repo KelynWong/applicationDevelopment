@@ -33,6 +33,11 @@ export default class dataViewerScreen extends React.Component {
                 cost: '',
                 audiencereach: ''
             },
+            chartResultsCheck: {
+                optionid: '',
+                cost: '',
+                audiencereach: ''
+            },
             loaded: true,
             error: null,
             optionIds: '',
@@ -47,8 +52,8 @@ export default class dataViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    // baseURL = 'http://192.168.229.1:3000';
-    baseURL = 'http://192.168.86.1:3000';
+     baseURL = 'http://192.168.229.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
     getResult = (ev) => {
         console.log('this.state.optionIds: ' + this.state.optionIds);
         console.log('this.state.budget: ' + this.state.budget);
@@ -106,21 +111,36 @@ export default class dataViewerScreen extends React.Component {
     }
     showChart = (data) => {
         this.setState({
-            chartResults: data
+            chartResultsCheck: data
         });
-        console.log(this.state.chartResults);
-        for (var i = 0; i < this.state.chartResults.length; i++) {
-            this.setState(prevState => ({
-                chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
-                chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
-                chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-                // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
-                // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
-            }));
+        console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
+        if(this.state.chartResultsCheck.length == undefined){
+            Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+            this.setState({ loaded: true });
+        }else if (this.state.chartResultsCheck.length == 1){
+            Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+            this.setState({ loaded: true });
+        }else{
+            this.setState({
+                chartResults: data
+            });
+            for (var i = 0; i < this.state.chartResults.length; i++) {
+                this.setState(prevState => ({
+                    chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
+                    chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
+                    chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
+                    // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
+                    // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
+                }));
+            }
+            console.log("this.state.totalCost: " + this.state.totalCost)
+            console.log("this.state.totalPax: " + this.state.totalPax)
+            this.getResult();
         }
-        console.log("this.state.totalCost: " + this.state.totalCost)
-        console.log("this.state.totalPax: " + this.state.totalPax)
-        this.getResult();
     }
     error = (err) => {
         console.log(err)
@@ -274,7 +294,7 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="OptionIds"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={false}
-                                    onChangeText={(text) => this.setState({ optionIds: text })}
+                                    onChangeText={(text) => {this.setState({optionIds: text})}}
                                     value={this.state.optionIds}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
@@ -294,7 +314,7 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="Budget"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => this.setState({ budget: text })}
+                                    onChangeText={(text) => {this.setState({ budget: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
                                     value={this.state.budget}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
