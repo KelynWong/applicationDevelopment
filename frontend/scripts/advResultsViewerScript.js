@@ -144,7 +144,7 @@ $(document).ready(function () {
                                         var postHtml1 = `
                                     <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);" class="card-body">
                                         <h5>Full payment for option ${tabulation.optionId} from company ${tabulation.companyId}</h5>
-                                        <p>$${tabulation.amount} -> ${tabulation.audienceReached}pax</p>
+                                        <p>$${tabulation.amount} -> ${tabulation.audienceReached.toFixed(3)}pax</p>
                                     </div>
                                     `;
                                         $(`#${tabulation.optionId}`).empty();
