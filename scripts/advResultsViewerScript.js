@@ -73,97 +73,112 @@ $(document).ready(function () {
                     axios.get(`${baseUrl}/advance/allChartData`, requestBody) // Links to app.js
                         .then((response) => {
                             console.log("response.data.error: " + response.data.error);
-                            google.charts.load('current', { 'packages': ['bar'] });
-                            google.charts.setOnLoadCallback(drawStuff);
+                            console.log("response.data.length: " + response.data.length)
+                            if(response.data.length == 1){
+                                document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                                alert("One or more of the optionId you have entered is invalid!")
+                            }else if(response.data.length > 1){
+                                console.log("response.data.error: " + response.data.error);
+                                google.charts.load('current', { 'packages': ['bar'] });
+                                google.charts.setOnLoadCallback(drawStuff);
 
-                            var allData = response.data;
-                            console.log("allData: " + allData);
-                            var optionid = [];
-                            var audiencereach = [];
-                            var cost = [];
-                            console.log("allData.length" + allData.length);
-                            for (var i = 0; i < allData.length; i++) {
-                                optionid.push(response.data[i].optionid);
-                                audiencereach.push(response.data[i].audiencereach);
-                                cost.push(response.data[i].cost);
-                            }
-                            console.log("optionid: " + optionid);
-                            console.log("audiencereach: " + audiencereach);
-                            console.log("cost: " + cost);
-                            var dataArray = [['OptionId', 'Audience Reach', 'Cost']];
-                            for (var n = 0; n < allData.length; n++) {
-                                dataArray.push([optionid[n], audiencereach[n], cost[n]]);
-                            }
-                            console.log("dataArray: " + dataArray);
-                            function drawStuff() {
-                                var data = new google.visualization.arrayToDataTable(dataArray);
+                                var allData = response.data;
+                                console.log("allData: " + allData);
+                                var optionid = [];
+                                var audiencereach = [];
+                                var cost = [];
+                                console.log("allData.length" + allData.length);
+                                for (var i = 0; i < allData.length; i++) {
+                                    optionid.push(response.data[i].optionid);
+                                    audiencereach.push(response.data[i].audiencereach);
+                                    cost.push(response.data[i].cost);
+                                }
+                                console.log("optionid: " + optionid);
+                                console.log("audiencereach: " + audiencereach);
+                                console.log("cost: " + cost);
+                                var dataArray = [['OptionId', 'Audience Reach', 'Cost']];
+                                for (var n = 0; n < allData.length; n++) {
+                                    dataArray.push([optionid[n], audiencereach[n], cost[n]]);
+                                }
+                                console.log("dataArray: " + dataArray);
+                                function drawStuff() {
+                                    var data = new google.visualization.arrayToDataTable(dataArray);
 
-                                var options = {
-                                    // width: 800,
-                                    //height:800,
-                                    bars: 'horizontal', // Required for Material Bar Charts.
-                                    series: {
-                                        0: { axis: 'audiencereach' }, // Bind series 0 to an axis named 'audiencereach'.
-                                        1: { axis: 'cost' } // Bind series 1 to an axis named 'cost'.
-                                    },
-                                    axes: {
-                                        x: {
-                                            cost: { label: 'Cost' }, // Bottom x-axis.
-                                            audiencereach: { side: 'top', label: 'Audience Reach' } // Top x-axis.
-                                        }
-                                    },
-                                };
-                                var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
-                                chart.draw(data, options);
+                                    var options = {
+                                        // width: 800,
+                                        //height:800,
+                                        bars: 'horizontal', // Required for Material Bar Charts.
+                                        series: {
+                                            0: { axis: 'audiencereach' }, // Bind series 0 to an axis named 'audiencereach'.
+                                            1: { axis: 'cost' } // Bind series 1 to an axis named 'cost'.
+                                        },
+                                        axes: {
+                                            x: {
+                                                cost: { label: 'Cost' }, // Bottom x-axis.
+                                                audiencereach: { side: 'top', label: 'Audience Reach' } // Top x-axis.
+                                            }
+                                        },
+                                    };
+                                    var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
+                                    chart.draw(data, options);
 
-                                $("#tabulation").empty();
+                                    $("#tabulation").empty();
 
-                                allData.forEach((tabulation) => {
-                                    const postHtml1 = `
-                                        <div id="${tabulation.optionid}" style="width: auto;" class="card" style="margin-top: 2rem" >
-                                            <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)" class="card-body">
-                                                <h5>No payment for option ${tabulation.optionid} from company ${tabulation.companyid}</h5>
-                                                <p>0 -> 0 pax</p>
+                                    allData.forEach((tabulation) => {
+                                        const postHtml1 = `
+                                            <div id="${tabulation.optionid}" style="width: auto;" class="card" style="margin-top: 2rem" >
+                                                <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)" class="card-body">
+                                                    <h5>No payment for option ${tabulation.optionid} from company ${tabulation.companyid}</h5>
+                                                    <p>0 -> 0 pax</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `;
-                                    $("#tabulation").append(postHtml1);
-                                    //id="${tabulation.optionid}" 
-                                });
+                                        `;
+                                        $("#tabulation").append(postHtml1);
+                                        //id="${tabulation.optionid}" 
+                                    });
+                                }
                             }
-
+                        });
+                        
                             axios.get(`${baseUrl}/advance/result?optionIds=${requestBody.params.optionIds}&budget=${requestBody.params.budget}`) // Links to app.js
                                 .then((response) => {
-                                    console.log("response.data: " + response);
-                                    var people = 0;
-                                    var maxAmount = 0;
-                                    console.log(response.data.result);
-                                    const tabulations = response.data.result;
+                                    console.log("response.data.result.length: " + response.data.result.length)
+                                    if(response.data.result.length == 0){
+                                        document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                                        document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                        alert("Please enter optionIds that are valid!")
+                                    }else if(response.data.result.length > 1){
+                                        console.log("response.data: " + response);
+                                        var people = 0;
+                                        var maxAmount = 0;
+                                        console.log(response.data.result);
+                                        const tabulations = response.data.result;
 
-                                    tabulations.forEach((tabulation) => {
-                                        var postHtml1 = `
-                                    <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);" class="card-body">
-                                        <h5>Full payment for option ${tabulation.optionId} from company ${tabulation.companyId}</h5>
-                                        <p>$${tabulation.amount} -> ${tabulation.audienceReached.toFixed(3)}pax</p>
-                                    </div>
-                                    `;
-                                        $(`#${tabulation.optionId}`).empty();
-                                        $(`#${tabulation.optionId}`).append(postHtml1);
+                                        tabulations.forEach((tabulation) => {
+                                            var postHtml1 = `
+                                        <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);" class="card-body">
+                                            <h5>Full payment for option ${tabulation.optionId} from company ${tabulation.companyId}</h5>
+                                            <p>$${tabulation.amount} -> ${tabulation.audienceReached.toFixed(3)}pax</p>
+                                        </div>
+                                        `;
+                                            $(`#${tabulation.optionId}`).empty();
+                                            $(`#${tabulation.optionId}`).append(postHtml1);
 
-                                        people += parseFloat(tabulation.audienceReached.toFixed(3));
-                                        // people = people.toFixed(3);
-                                        maxAmount += parseFloat(tabulation.amount);
-                                    });
+                                            people += parseFloat(tabulation.audienceReached.toFixed(3));
+                                            // people = people.toFixed(3);
+                                            maxAmount += parseFloat(tabulation.amount);
+                                        });
 
-                                    // console.log(Object.keys(response.data).length)
-                                    $("#resultsArea").empty();
-                                    const postHtml2 = `<h3>Result -> $ ${maxAmount} -> ${people} People</h3>`;
-                                    $("#resultsArea").append(postHtml2);
-                                    document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-                                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-
+                                        // console.log(Object.keys(response.data).length)
+                                        $("#resultsArea").empty();
+                                        const postHtml2 = `<h3>Result -> $ ${maxAmount} -> ${people} People</h3>`;
+                                        $("#resultsArea").append(postHtml2);
+                                        document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                        document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                    }
                                 });
-                        });
+                        
                 }
             }
         }
