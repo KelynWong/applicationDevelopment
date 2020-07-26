@@ -1,4 +1,4 @@
-/* Layout Test for basic data viewer */
+/* ADVANCE data viewer */
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
@@ -6,7 +6,7 @@ import { DataTable, Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-material-dropdown';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 let data = [{
@@ -38,12 +38,19 @@ export default class dataViewerScreen extends React.Component {
             results: [],
             loaded: true,
             error: null,
-            companyId: '',
-            audienceReach: '',
+            // Parsed into API
+            companyIdParse: '',
+            audienceReachParse: '',
+            costParse: '',
+            // Changed on text change, parsed into the parse above only when Filter is clicked.
+            // Prevents override of search result without filter button click consent.
+            companyIdParam: '',
+            audienceReachParam: '',
+            costParam: '',
+
             rowCount: null,
             pageNo: 0,
             pageSize: 5, //default 5 rows in one page
-            // page: 0,
         }
         this.getData = this.getData.bind(this);
     }
@@ -52,28 +59,21 @@ export default class dataViewerScreen extends React.Component {
 
     componentDidMount() {
         this.getRowCount();
-        this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}`;
-
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
-
-        fetch(url, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
     }
-    getData = (ev) => { // On Filter
+    // RUN 1st.
+    parseParam = (ev) => {
+        this.setState({
+            companyIdParse: this.state.companyIdParam,
+            audienceReachParse: this.state.audienceReachParam,
+            costParse: this.state.costParam
 
+        }, () => {
+            this.getRowCount();
+        });
+    }
+    getRowCount = (ev) => {
         // // Validation: 
-        // if (!this.state.companyId && !this.state.audienceReach) {
+        // if (!this.state.companyIdParse && !this.state.audienceReachParse) {
         //     Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
         //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
         //     ]);
@@ -81,39 +81,12 @@ export default class dataViewerScreen extends React.Component {
         //     this.companyIdValidation();
         //     this.audienceReachValidation();
         // }
+        console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
+        console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
+        console.log('this.state.costParse: ' + this.state.costParse);
 
         this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
-
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
-
-        fetch(url, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
-                'Content-Type': 'application/json'
-            }
-        })
-            .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
-    }
-    showData = (data) => {
-        this.setState({
-            results: data
-        });
-        console.log(this.state.results);
-        this.setState({ loaded: true });
-        this.getRowCount;
-    }
-
-    getRowCount = (ev) => {
-        console.log('this.state.companyId: ' + this.state.companyId);
-        console.log('this.state.audienceReach: ' + this.state.audienceReach);
-        this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/getRowCount?companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
+        let url = this.baseURL + `/advance/getRowCount?companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}&cost=${this.state.costParse}`;
 
         let req = new Request(url, {
             method: 'GET',
@@ -125,12 +98,51 @@ export default class dataViewerScreen extends React.Component {
             .catch(this.badStuff)
     }
 
+    // RUN 2nd.
     showRowCount = (data) => {
         this.setState({
             rowCount: data
         });
-        console.log(this.state.rowCount[0].count);
+        console.log("ROW COUNT:" + this.state.rowCount[0].count);
         this.setState({ loaded: true });
+
+        this.getData();
+    }
+    // RUN 3rd. 
+    getData = (ev) => { // On Filter
+
+        this.setState({ loaded: false, error: null });
+        console.log(this.state.companyIdParse);
+        console.log(this.state.audienceReachParse);
+        console.log(this.state.costParse);
+
+        let url = this.baseURL + `/advance/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}&cost=${this.state.costParse}`;
+
+        // let req = new Request(url, {
+        //     method: 'GET',
+        // });
+
+        fetch(url, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
+            .then(this.showData)
+            .catch(this.badStuff)
+    }
+
+    // RUN 4th.
+    showData = (data) => {
+        this.setState({
+            results: data
+        });
+
+        console.log(this.state.results);
+        this.setState({ loaded: true });
+        // this.getRowCount;
     }
 
     badStuff = (err) => {
@@ -139,28 +151,33 @@ export default class dataViewerScreen extends React.Component {
     }
     clearText() {
         this.setState({
-            companyId: '',
-            audienceReach: ''
+            companyIdParse: '',
+            audienceReachParse: '',
+            costParse: '',
+            companyIdParam: '',
+            audienceReachParam: '',
+            costParam: '',
+            pageNo: 0
         }, () => {
             this.componentDidMount();
         });
     }
 
     companyIdValidation() {
-        console.log("this.state.companyId.length: " + this.state.companyId.length)
-        if (this.state.companyId) {
-            if (isNaN(this.state.companyId) == true) {
-                this.setState({ companyId: '' })
+        console.log("this.state.companyIdParse.length: " + this.state.companyIdParse.length)
+        if (this.state.companyIdParse) {
+            if (isNaN(this.state.companyIdParse) == true) {
+                this.setState({ companyIdParse: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyId % 1 != 0) {
-                this.setState({ companyId: '' })
+            } else if (this.state.companyIdParse % 1 != 0) {
+                this.setState({ companyIdParse: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyId.length != 10) {
-                this.setState({ companyId: '' })
+            } else if (this.state.companyIdParse.length != 10) {
+                this.setState({ companyIdParse: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -169,15 +186,15 @@ export default class dataViewerScreen extends React.Component {
     }
 
     audienceReachValidation() {
-        if (this.state.audienceReach) {
+        if (this.state.audienceReachParse) {
             // If filterAudienceReach exists
-            if (isNaN(this.state.audienceReach) == true) {
-                this.setState({ audienceReach: '' })
+            if (isNaN(this.state.audienceReachParse) == true) {
+                this.setState({ audienceReachParse: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.audienceReach % 1 != 0) {
-                this.setState({ audienceReach: '' })
+            } else if (this.state.audienceReachParse % 1 != 0) {
+                this.setState({ audienceReachParse: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -192,47 +209,74 @@ export default class dataViewerScreen extends React.Component {
                 <View style={styles.row1}>
                     <View style={styles.row1Title}>
                         <Text style={styles.filterText}>Filter by:</Text>
-
                     </View>
+
+
                     <View style={styles.row1Params}>
-                        <View style={styles.textInputContainer}>
-                            <View style={styles.icon}>
-                                <Ionicons name="ios-business" size={30}></Ionicons>
+                        <View style={styles.parameters}>
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <Ionicons name="ios-business" size={30}></Ionicons>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="CompanyId"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={false}
+                                        onChangeText={(text) => this.setState({ companyIdParam: text })}
+                                        value={this.state.companyIdParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={styles.paramArea}>
-                                <TextInput
-                                    style={[styles.bodyText]}
-                                    placeholder="CompanyId"
-                                    placeholderTextColor='rgb(0,0,0)'
-                                    multiline={false}
-                                    onChangeText={(text) => this.setState({ companyId: text })}
-                                    value={this.state.companyId}
-                                    keyboardType='numeric' />
-                            </TouchableOpacity>
-                            <Button style={styles.buttonFilter} mode='contained' onPress={() => { this.getData() }}>
-                                <Text style={styles.testText}>Filter</Text>
-                            </Button>
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <Ionicons name="ios-person" size={30}></Ionicons>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="Audience Reach"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={true}
+                                        onChangeText={(text) => this.setState({ audienceReachParam: text })}
+                                        value={this.state.audienceReachParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
+                            </View>
+
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <FontAwesome name="dollar" size={30}></FontAwesome>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="Cost"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={true}
+                                        onChangeText={(text) => this.setState({ costParam: text })}
+                                        value={this.state.costParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
+
+                            </View>
                         </View>
 
-                        <View style={styles.textInputContainer}>
-                            <View style={styles.icon}>
-                                <Ionicons name="ios-person" size={30}></Ionicons>
-                            </View>
-                            <TouchableOpacity style={styles.paramArea}>
-                                <TextInput
-                                    style={[styles.bodyText]}
-                                    placeholder="Audience Reach"
-                                    placeholderTextColor='rgb(0,0,0)'
-                                    multiline={true}
-                                    onChangeText={(text) => this.setState({ audienceReach: text })}
-                                    value={this.state.audienceReach}
-                                    keyboardType='numeric' />
-                            </TouchableOpacity>
+                        <View style={styles.paramButtons}>
+                            <Button style={styles.buttonFilter} mode='contained' onPress={() => { this.parseParam() }}>
+                                <Text style={styles.testText}>Filter</Text>
+                            </Button>
                             <Button style={styles.buttonClear} mode='contained' onPress={() => { this.clearText() }}>
                                 <Text style={styles.testText}>Clear</Text>
                             </Button>
                         </View>
                     </View>
+
+
                 </View>
 
                 <View style={styles.row2}>
@@ -348,9 +392,13 @@ export default class dataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+
+    parameters: {
+        flex: 8,
+        backgroundColor: 'green',
+    },
     dataTableContent: {
-        height: 270,
-        // flex: 12,
+        height: 230,
     },
     pageButton: {
         flex: 1,
@@ -383,14 +431,14 @@ const styles = StyleSheet.create({
     },
     // Row 1 -----------------
     row1: {
-        flex: 3,
+        flex: 5,
         backgroundColor: 'skyblue',
         flexDirection: 'column'
 
     },
 
     row1Title: {
-        flex: 1,
+        flex: 0.7,
         // backgroundColor: 'blue'
     },
     filterText: {
@@ -415,6 +463,10 @@ const styles = StyleSheet.create({
     },
     paramArea: {
         flex: 6
+    },
+    paramButtons: {
+        flex: 3,
+        // backgroundColor: 'red',
     },
     bodyText: {
         fontSize: 17,
@@ -453,7 +505,8 @@ const styles = StyleSheet.create({
     row1Params: {
         flex: 2,
         padding: 0,
-        backgroundColor: 'powderblue'
+        backgroundColor: 'powderblue',
+        flexDirection: 'row'
     },
     // Row 2 -------------
     row2: {

@@ -169,7 +169,7 @@ app.get('/basic/result', function (req, res, next) {
   console.log("budget: " + budget);
   database.basicGetOptionsForComputation(optionIds, (error, databaseResult) => { // links to database.js
     if (databaseResult.length == 0) {
-      return res.json({"result": []});
+      return res.json({"result": []}); //Return empty result.
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
     } else if(budget == null){

@@ -1,4 +1,4 @@
-/* Layout Test for basic data viewer */
+/* BASIC data viewer */
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
@@ -38,12 +38,17 @@ export default class dataViewerScreen extends React.Component {
             results: [],
             loaded: true,
             error: null,
-            companyId: '',
-            audienceReach: '',
+            // Parsed into API
+            companyIdParse: '',
+            audienceReachParse: '',
+            // Changed on text change, parsed into the parse above only when Filter is clicked.
+            // Prevents override of search result without filter button click consent.
+            companyIdParam: '',
+            audienceReachParam: '',
+
             rowCount: null,
             pageNo: 0,
             pageSize: 5, //default 5 rows in one page
-            // page: 0,
         }
         this.getData = this.getData.bind(this);
     }
@@ -52,68 +57,74 @@ export default class dataViewerScreen extends React.Component {
 
     componentDidMount() {
         this.getRowCount();
-        this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}`;
 
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
 
-        fetch(url, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
-                'Content-Type': 'application/json'
+        // Below code No longer needed.
+        // let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}`;
+
+        // // let req = new Request(url, {
+        // //     method: 'GET',
+        // // });
+
+        // fetch(url, {
+        //     method: 'get',
+        //     headers: {
+        //         'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+        //     .then((response) => response.json())
+        //     .then(this.showData)
+        //     .catch(this.badStuff)
+    }
+    // RUN 0. (When filter button is pressed)
+    // Validation has been moved here.
+    parseParam = (ev) => {
+        // Validation: 
+        if (!this.state.companyIdParam && !this.state.audienceReachParam) {
+            Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        } else {
+            // If pass the validation checks, go through.
+            if (this.state.audienceReachParam && this.state.companyIdParam){
+                if (this.companyIdValidation() && this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
             }
-        })
-            .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
-    }
-    getData = (ev) => { // On Filter
-
-        // // Validation: 
-        // if (!this.state.companyId && !this.state.audienceReach) {
-        //     Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
-        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
-        //     ]);
-        // } else {
-        //     this.companyIdValidation();
-        //     this.audienceReachValidation();
-        // }
-
-        this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
-
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
-
-        fetch(url, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
-                'Content-Type': 'application/json'
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam) {
+                if (this.companyIdValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            } else if (this.state.audienceReachParam != '' && this.state.companyIdParam == '') {
+                console.log("HI");
+                if (this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
             }
-        })
-            .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
+        }
     }
-    showData = (data) => {
-        this.setState({
-            results: data
-        });
-        console.log(this.state.results);
-        this.setState({ loaded: true });
-        this.getRowCount;
-    }
-
+    // RUN 1st
     getRowCount = (ev) => {
-        console.log('this.state.companyId: ' + this.state.companyId);
-        console.log('this.state.audienceReach: ' + this.state.audienceReach);
+        console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
+        console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
         this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/basic/getRowCount?companyId=${this.state.companyId}&audienceReach=${this.state.audienceReach}`;
+        let url = this.baseURL + `/basic/getRowCount?companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}`;
 
         let req = new Request(url, {
             method: 'GET',
@@ -125,62 +136,112 @@ export default class dataViewerScreen extends React.Component {
             .catch(this.badStuff)
     }
 
+    // RUN 2nd.
     showRowCount = (data) => {
         this.setState({
             rowCount: data
         });
-        console.log(this.state.rowCount[0].count);
+        console.log("ROW COUNT:" + this.state.rowCount[0].count);
         this.setState({ loaded: true });
+
+        this.getData();
+    }
+    // RUN 3rd. 
+    getData = (ev) => { // On Filter
+
+        this.setState({ loaded: false, error: null });
+        console.log(this.state.companyIdParse);
+        console.log(this.state.audienceReachParse);
+
+        let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}`;
+
+        // let req = new Request(url, {
+        //     method: 'GET',
+        // });
+
+        fetch(url, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
+            .then(this.showData)
+            .catch(this.badStuff)
     }
 
+    // RUN 4th.
+    showData = (data) => {
+        this.setState({
+            results: data
+        });
+
+        console.log(this.state.results);
+        this.setState({ loaded: true });
+        // this.getRowCount;
+    }
+
+
+    // Error handler
     badStuff = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
+
+    // Clear Text
     clearText() {
         this.setState({
-            companyId: '',
-            audienceReach: ''
+            companyIdParse: '',
+            audienceReachParse: '',
+            companyIdParam: '',
+            audienceReachParam: '',
+            pageNo: 0
         }, () => {
             this.componentDidMount();
         });
     }
 
+    // Validation
     companyIdValidation() {
-        console.log("this.state.companyId.length: " + this.state.companyId.length)
-        if (this.state.companyId) {
-            if (isNaN(this.state.companyId) == true) {
-                this.setState({ companyId: '' })
+        console.log("this.state.companyIdParam.length: " + this.state.companyIdParam.length)
+        if (this.state.companyIdParam) {
+            if (isNaN(this.state.companyIdParam) == true) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyId % 1 != 0) {
-                this.setState({ companyId: '' })
+            } else if (this.state.companyIdParam % 1 != 0) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyId.length != 10) {
-                this.setState({ companyId: '' })
+            } else if (this.state.companyIdParam.length != 10) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+            } else {
+                return true;
             }
         }
     }
 
     audienceReachValidation() {
-        if (this.state.audienceReach) {
+        if (this.state.audienceReachParam) {
             // If filterAudienceReach exists
-            if (isNaN(this.state.audienceReach) == true) {
-                this.setState({ audienceReach: '' })
+            if (isNaN(this.state.audienceReachParam) == true) {
+                // this.setState({ audienceReachParam: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.audienceReach % 1 != 0) {
-                this.setState({ audienceReach: '' })
+            } else if (this.state.audienceReachParam % 1 != 0) {
+                // this.setState({ audienceReachParam: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+            } else {
+                return true;
             }
         }
     }
@@ -205,11 +266,11 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="CompanyId"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={false}
-                                    onChangeText={(text) => this.setState({ companyId: text })}
-                                    value={this.state.companyId}
+                                    onChangeText={(text) => this.setState({ companyIdParam: text })}
+                                    value={this.state.companyIdParam}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
-                            <Button style={styles.buttonFilter} mode='contained' onPress={() => { this.getData() }}>
+                            <Button style={styles.buttonFilter} mode='contained' onPress={() => { this.parseParam() }}>
                                 <Text style={styles.testText}>Filter</Text>
                             </Button>
                         </View>
@@ -224,8 +285,8 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="Audience Reach"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => this.setState({ audienceReach: text })}
-                                    value={this.state.audienceReach}
+                                    onChangeText={(text) => this.setState({ audienceReachParam: text })}
+                                    value={this.state.audienceReachParam}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
                             <Button style={styles.buttonClear} mode='contained' onPress={() => { this.clearText() }}>
@@ -246,7 +307,7 @@ export default class dataViewerScreen extends React.Component {
                             labelFontSize={18}
                             onChangeText={value => {
                                 this.setState({ pageNo: 0 });
-                                this.setState({ pageSize: value }, () => this.getData());
+                                this.setState({ pageSize: value }, () => this.getRowCount());
                             }}
                         />
                     </View>
@@ -314,10 +375,10 @@ export default class dataViewerScreen extends React.Component {
                     <View style={styles.paginationContainer}>
 
 
-                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: 0 }, () => this.getData()); }}>
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: 0 }, () => this.getRowCount()); }}>
                             <Text style={styles.buttonText}>First</Text>
                         </Button>
-                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: Math.floor(this.state.rowCount[0].count / this.state.pageSize) }, () => this.getData()); }}>
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: Math.floor(this.state.rowCount[0].count / this.state.pageSize) }, () => this.getRowCount()); }}>
                             <Text style={styles.buttonText}>Last</Text>
                         </Button>
                         {this.state.rowCount && (
@@ -327,10 +388,10 @@ export default class dataViewerScreen extends React.Component {
                                 onPageChange={pagee => {
                                     console.log('change', pagee) //pagee = current page index
 
-                                    this.setState({ pageNo: pagee }, () => this.getData()); //Set State actually takes time to set a state. So callbacks must be done.
+                                    this.setState({ pageNo: pagee }, () => this.getRowCount()); //Set State actually takes time to set a state. So callbacks must be done.
 
                                     // console.log("TEST" + this.state.pageNo)
-                                    // this.getData();
+                                    // this.getRowCount();
                                 }}
                                 label={`${((this.state.pageNo) * this.state.pageSize) + 1}-${
 

@@ -38,11 +38,12 @@ Class: DIT/FT/2B/01
 
 </head>
 <script>
-    var validate = function(e) {
+    var validate = function (e) {
         var t = e.value;
         e.value = (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t;
     }
 </script>
+
 <body>
     <div class="container-fluid">
         <div class="row" id="rows">
@@ -92,7 +93,8 @@ Class: DIT/FT/2B/01
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-dollar"></i>
                         </div>
-                        <input type="text" placeholder="Budget" class="form-control" id="budgetInput" oninput="validate(this)" required>
+                        <input type="text" placeholder="Budget" class="form-control" id="budgetInput"
+                            oninput="validate(this)" required>
                         <button type="button" class="btn btn-success computeBtn">Compute</button>
                     </div>
                 </div>
@@ -104,7 +106,6 @@ Class: DIT/FT/2B/01
                             <h3>Result -></h3>
                         </div>
                         <div id="dual_x_div" class="container"></div>
-
                     </div>
 
                     <div id="tabulationContainer" class="container col-2">

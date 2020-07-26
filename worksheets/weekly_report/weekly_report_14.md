@@ -4,27 +4,24 @@ This report is for you to document the progres of your project. You should also 
 
 ## What have I done last week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+-  Fixed the errors of the results not displaying on basic result viewer for mobile.
+-  Clearing button function and clearing results before another computing.
+-  Figured out how to add up the total amount and audiencereach and display it.
 
 ## What do I plan to do next week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Caching and fixing up the validation.
+
 
 ## What have I done last week (kester)
 
--   Done api documentation and database schema
--   Worked on...
--   Changed....
+-   Completed all stylings for mobile side
+-   Finished coding in terms of mobile's API and data handling.
 
 ## What do I plan to do next week (kester)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Try out Heroku
+-   Test deployment of a react native application on android.
 
 ## Additional Thoughts
 
