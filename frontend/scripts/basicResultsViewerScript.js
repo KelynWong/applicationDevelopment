@@ -59,11 +59,24 @@ $(document).ready(function () {
                     }
                     // optionList[i] = optionList[i].toString();
                 }
+                var same = false
+                for (let j = 0; j < optionList.length; j++) {
+                    for (let k = 0; k < optionList.length; k++) {
+                        if (optionList[j] == optionList[k] && j != k) {
+                            same = true
+                        }
+                    }
+                }
                 if (!lengthCheck.every(v => v == true)) {
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                     alert("Please make sure your optionIds are exactly 10 digits each, and digits only!");
                 }
-                else {
-
+                else if(same == true){
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    alert("Please make sure you don't enter the same optionId!");
+                }else{
                     console.log("optionIdsInput: " + optionIdsInput);
                     console.log("budgetInput: " + budgetInput);
                     const requestBody = {
@@ -74,13 +87,11 @@ $(document).ready(function () {
                     };
                     axios.get(`${baseUrl}/basic/allChartData`, requestBody) // Links to app.js
                         .then((response) => {
-                            console.log("response.data.error: " + response.data.error);
-                            console.log("response.data.length: " + response.data.length)
-                            if(response.data.length == 1){
+                            if(response.data.length != optionList.length){
                                 document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                                 document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                                 alert("One or more of the optionId you have entered is invalid!")
-                            }else if(response.data.length > 1){
+                            }else if(response.data.length == optionList.length){
                                 console.log("response.data.error: " + response.data.error);
                                 google.charts.load('current', { 'packages': ['bar'] });
                                 google.charts.setOnLoadCallback(drawStuff);
@@ -135,7 +146,7 @@ $(document).ready(function () {
                                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                                     document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                                     alert("Please enter optionIds that are valid!")
-                                }else if(response.data.result.length > 1){
+                                }else if(response.data.result.length == optionList.length){
                                     console.log("response.data: " + response);
                                     var people = 0;
                                     var maxAmount = 0;

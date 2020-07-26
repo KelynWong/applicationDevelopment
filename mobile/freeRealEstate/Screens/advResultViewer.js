@@ -12,6 +12,7 @@ import { BarChart } from "react-native-chart-kit";
 
 var totalCost = 0;
 var totalPax = 0;
+var optionList;
 
 export default class dataViewerScreen extends React.Component {
     constructor() {
@@ -61,8 +62,8 @@ export default class dataViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    // baseURL = 'http://192.168.229.1:3000';
-    baseURL = 'http://192.168.86.1:3000';
+    baseURL = 'http://192.168.229.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
 
     // Run 1st.
     clearForComputation() { // Set states for computation.
@@ -104,46 +105,33 @@ export default class dataViewerScreen extends React.Component {
             ]);
         }
         else if (this.state.budget == '') {
-            this.setState({ optionIds: '' })
-            this.setState({ budget: '' })
             Alert.alert('OOPS!', "Please enter a Budget!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
         else if (this.state.optionIds == '') {
-            this.setState({ optionIds: '' })
-            this.setState({ budget: '' })
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
         else if (isNaN(this.state.budget)) {
-            this.setState({ optionIds: '' })
-            this.setState({ budget: '' })
             Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
         else if (this.state.budget <= 0) {
-            this.setState({ optionIds: '' })
-            this.setState({ budget: '' })
             Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
         else if (this.state.optionIds.search(",") == -1) {
-            this.setState({ optionIds: '' })
-            this.setState({ budget: '' })
             Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
         else {
-            var optionList;
             optionList = this.state.optionIds.toString().split(','); //optionList array
             if (optionList.length < 2) {
-                this.setState({ optionIds: '' });
-                this.setState({ budget: '' });
                 Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -163,14 +151,24 @@ export default class dataViewerScreen extends React.Component {
                         console.log("Option Invalid(Length): " + optionList[i]);
                     }
                 }
+                var same = false
+                for (let j = 0; j < optionList.length; j++) {
+                    for (let k = 0; k < optionList.length; k++) {
+                        if (optionList[j] == optionList[k] && j != k) {
+                            same = true
+                        }
+                    }
+                }
                 if (!lengthCheck.every(v => v == true)) {
-                    this.setState({ optionIds: '' });
-                    this.setState({ budget: '' });
                     Alert.alert('OOPS!', "Please make sure your optionIds are exactly 10 digits each, and digits only!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
-                else {
+                else if(same == true){
+                    Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }else{
                     this.getChart(); //Get chart
                 }
             }
@@ -205,7 +203,7 @@ export default class dataViewerScreen extends React.Component {
             ]);
 
             this.setState({ loaded: true });
-        } else if (this.state.chartResultsCheck.length == 1) {
+        } else if (this.state.chartResultsCheck.length != optionList.length) {
             Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
@@ -418,7 +416,7 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="Budget"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => this.setState({ budget: text })}
+                                    onChangeText={(text) => {this.setState({ budget: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
                                     value={this.state.budget}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
