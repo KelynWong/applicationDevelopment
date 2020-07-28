@@ -41,7 +41,12 @@ Class: DIT/FT/2B/01
     <!-- Axios -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
-
+<script>
+    var validate = function (e) {
+        var t = e.value;
+        e.value = (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t;
+    }
+</script>
 <body>
     <div class="container-fluid">
         <div class="row" id="rows">
@@ -94,7 +99,7 @@ Class: DIT/FT/2B/01
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-dollar"></i>
                         </div>
-                        <input type="text" placeholder="Cost" class="form-control" id="costInput">
+                        <input type="text" placeholder="Cost" class="form-control" oninput="validate(this)" id="costInput">
                         <button type="button" class="btn btn-success filterBtn">Filter</button>
                         <button type="button" class="btn btn-warning clearBtn">Clear</button>
                     </div>
