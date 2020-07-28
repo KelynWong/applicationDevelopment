@@ -114,10 +114,15 @@ function basicGetData(companyId, audienceReach, pageNo, pageSize, callback) {
   console.log("basicGetData Query:" + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
@@ -158,10 +163,15 @@ function advGetData(companyId, audienceReach, cost, pageNo, pageSize, callback) 
   console.log("ALL DATA:" + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
@@ -185,8 +195,14 @@ function basicGetRowCount(companyId, audienceReach, callback) {
   console.log("basicGetRowCount Query:" + query);
 
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
+    console.log(rows)
     callback(err, rows);
   })
 }
@@ -215,8 +231,14 @@ function advGetRowCount(companyId, audienceReach, cost, callback) {
   const query = `SELECT COUNT(*) FROM advertisement ${whereClause};`
   console.log("advGetRowCount" + query);
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
+    console.log(rows)
     callback(err, rows);
   })
 }
@@ -244,10 +266,15 @@ function basicGetDataForChart(optionIds, callback) {
   console.log("query: " + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
@@ -272,10 +299,15 @@ function advGetDataForChart(optionIds, callback) {
   console.log("query: " + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
@@ -299,10 +331,15 @@ function basicGetOptionsForComputation(optionIds, callback) {
   console.log("query: " + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
@@ -326,10 +363,15 @@ function advGetOptionsForComputation(optionIds, callback) {
   console.log("query: " + query);
   //Connect to database
   const client = connect();
-  client.query(query, values, function (err, { rows }) {
+  client.query(query, values, function (err, result) {
     client.end();
-    callback(err, rows);
+    if (err) {
+      console.log(err); 
+      return;
+    }
+    const rows = result.rows
     console.log(rows)
+    callback(err, rows);
   })
 }
 
