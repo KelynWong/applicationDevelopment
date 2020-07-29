@@ -398,7 +398,7 @@ export default class dataViewerScreen extends React.Component {
                                         }}
                                         width={Dimensions.get('window').width - 16}
                                         height={220}
-                                        yAxisSuffix={'pax'}
+                                        yAxisLabel={'$'}
                                         fromZero={true}
                                         chartConfig={{
                                             backgroundColor: '#1cc910',
@@ -430,7 +430,7 @@ export default class dataViewerScreen extends React.Component {
                                         }}
                                         width={Dimensions.get('window').width - 16}
                                         height={220}
-                                        yAxisLabel={'$'}
+                                        yAxisSuffix={'pax'}
                                         fromZero={true}
                                         chartConfig={{
                                             backgroundColor: '#1cc910',
