@@ -131,10 +131,10 @@ export default function App() {
       <Drawer.Navigator initialRouteName='layoutTest'>
         <Drawer.Screen name='testing' component={test}/>
 
-        <Drawer.Screen name='basicDataViewer' component={basicDataViewerStackScreen}/>
-        <Drawer.Screen name='basicResultViewer' component={basicResultViewerStackScreen}/>
-        <Drawer.Screen name='advanceDataViewer' component={advanceDataViewerStackScreen}/>
-        <Drawer.Screen name='advanceResultViewer' component={advanceResultViewerStackScreen}/>
+        <Drawer.Screen name='Data Viewer (basic)' component={basicDataViewerStackScreen}/>
+        <Drawer.Screen name='Data Viewer (advance)' component={advanceDataViewerStackScreen}/>
+        <Drawer.Screen name='Result Viewer (basic)' component={basicResultViewerStackScreen}/>
+        <Drawer.Screen name='Result Viewer (advance)' component={advanceResultViewerStackScreen}/>
       </Drawer.Navigator>
     </NavigationContainer>
   );
