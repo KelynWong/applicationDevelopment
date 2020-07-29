@@ -94,23 +94,8 @@ export default class dataViewerScreen extends React.Component {
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
-        else if (this.state.budget == '') {
-            Alert.alert('OOPS!', "Please enter a Budget!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else if (isNaN(this.state.budget)) {
-            Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else if (this.state.budget <= 0) {
-            Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
@@ -159,7 +144,23 @@ export default class dataViewerScreen extends React.Component {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                }else{
+                }
+                else if (this.state.budget == '') {
+                    Alert.alert('OOPS!', "Please enter a Budget!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }
+                else if (isNaN(this.state.budget)) {
+                    Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }
+                else if (this.state.budget <= 0) {
+                    Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }
+                else{
                     this.getChart(); //Get chart
                 }
             }

@@ -10,38 +10,25 @@ $(document).ready(function () {
         var budgetInput = document.getElementById("budgetInput").value; //Get budget input
 
         // Field Validation -> Needs Extra Checking
-        if (optionIdsInput == '' && budgetInput == '') {
+        if (optionIdsInput == '' && budgetInput == '') { //check if both fields are empty
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionIds and budget!");
         }
-        else if (budgetInput == '') {
-            document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-            alert("Please enter a Budget!");
-        }
-        else if (optionIdsInput == '') {
+        else if (optionIdsInput == '') { //check if optionIds field is empty
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionsIds!");
         }
-        else if (isNaN(budgetInput)) {
-            document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-            alert("Please enter a numeric value for Budget!");
-        }
-        else if (budgetInput <= 0) {
-            document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-            alert("Please enter a numeric value bigger than $0.00");
-        }
-        else if (optionIdsInput.search(",") == -1) {
+        else if (optionIdsInput.search(",") == -1) { //check if there is a comma in the optionIds field
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionIds, seperated by a comma!");
         }
         else {
             var optionList;
             optionList = optionIdsInput.toString().split(','); //optionList array
-            if (optionList.length < 2) {
+            if (optionList.length < 2) { //check if there is more than one optionIds
                 document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                alert("Please enter at least 2 optionIds and budget!");
+                alert("Please enter at least 2 optionIds!");
             }
             else {
                 var lengthCheck = [];
@@ -67,16 +54,30 @@ $(document).ready(function () {
                         }
                     }
                 }
-                if (!lengthCheck.every(v => v == true)) {
+                if (!lengthCheck.every(v => v == true)) { //check ebery optionId in the list if they are 10 digits each
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                     alert("Please make sure your optionIds are exactly 10 digits each, and digits only!");
                 }
-                else if(same == true){
+                else if(same == true){ //check within the optionIds if have any repeated optionId
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                     alert("Please make sure you don't enter the same optionId!");
-                }else{
+                }
+                else if (budgetInput == '') { //check if budget field is empty
+                    document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    alert("Please enter a Budget!");
+                }
+                else if (isNaN(budgetInput)) { //check if there is any alphabets in the budget field
+                    document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    alert("Please enter a numeric value for Budget!");
+                }
+                else if (budgetInput <= 0) { //check if budget has a negative value
+                    document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                    alert("Please enter a numeric value bigger than $0.00");
+                }
+                else{
                     console.log("optionIdsInput: " + optionIdsInput);
                     console.log("budgetInput: " + budgetInput);
                     const requestBody = {
