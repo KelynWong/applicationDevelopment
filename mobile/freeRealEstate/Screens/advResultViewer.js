@@ -1,14 +1,21 @@
-/* ADVANCE Result Viewer */
+// ADVANCE Result Viewer Screen
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
+// Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import Card from '../myComponents/card'; //Disregard first 
+// Chart import
 import { BarChart } from "react-native-chart-kit";
+
+import Card from '../myComponents/card'; //Disregard first 
+
 
 var totalCost = 0;
 var totalPax = 0;
@@ -45,12 +52,16 @@ export default class dataViewerScreen extends React.Component {
                 cost: '',
                 audiencereach: ''
             },
+
+            // Content State identifiers.
             loaded: true,
             error: null,
+            modalOpen: false,
+
             optionIds: '',
             budget: '',
-            modalOpen: false,
             companyIdArray: [],
+            
             // Used by Chart
             chartOptionid: [],
             chartCost: [],
@@ -62,8 +73,13 @@ export default class dataViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    baseURL = 'http://192.168.229.1:3000';
-    //baseURL = 'http://192.168.86.1:3000';
+    // Kelyn's IP
+    // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
+    baseURL = 'http://192.168.86.1:3000';
+
+    //School IP
+    // baseURL ='http://172.22.1.9:3000'
 
     // Run 1st.
     clearForComputation() { // Set states for computation.

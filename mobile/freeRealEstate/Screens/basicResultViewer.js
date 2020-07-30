@@ -1,14 +1,24 @@
-/* BASIC Result Viewer */
+// BASIC Result Viewer Screen
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
+// Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import Card from '../myComponents/card'; //Disregard first 
+// Cache Manager
+import cacheManager from '../cacheManager'
+
+// Chart
 import { BarChart } from "react-native-chart-kit";
+
+import Card from '../myComponents/card'; //Disregard first 
+
 
 var totalCost = 0;
 var totalPax = 0;
@@ -18,6 +28,7 @@ export default class dataViewerScreen extends React.Component {
     constructor() {
         super();
         this.state = {
+            // Results Response
             results: {
                 result: [{
                     adType: '',
@@ -28,22 +39,31 @@ export default class dataViewerScreen extends React.Component {
                     audienceReached: ''
                 }]
             },
+            // Chart Results Response
             chartResults: {
                 optionid: '',
                 cost: '',
                 audiencereach: ''
             },
             // OptionId no exist check.
-            chartResultsCheck: {
+            chartResultsCheck: [{
                 optionid: '',
                 cost: '',
                 audiencereach: ''
-            },
+            }],
+
+            // Cache items.
+            cacheData: {},
+            cacheKeys: [],
+
+            // Content State identifiers.
             loaded: true,
             error: null,
+            modalOpen: false,
+
             optionIds: '',
             budget: '',
-            modalOpen: false,
+
             // Used by Chart
             chartOptionid: [],
             chartCost: [],
@@ -54,9 +74,19 @@ export default class dataViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    baseURL = 'http://192.168.229.1:3000';
-    //baseURL = 'http://192.168.86.1:3000';
+    // Kelyn's IP
+    // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
+    baseURL = 'http://192.168.86.1:3000';
 
+    //School IP
+    // baseURL ='http://172.22.1.9:3000'
+
+
+    componentDidMount() {
+        // Clear all caches. For assignment use.
+        cacheManager.clearAll();
+    }
     // RUN 1st.
     clearForComputation() { // Set states for computation.
         totalCost = 0
@@ -65,13 +95,13 @@ export default class dataViewerScreen extends React.Component {
             loaded: true,
             error: null,
             modalOpen: false,
+
             chartOptionid: [],
             chartCost: [],
             chartAudiencereach: [],
             totalCost: 0,
             totalPax: 0,
-            chartResults: '',
-            modalOpen: false,
+            chartResults: {},
             results: {
                 result: [{
                     adType: '',
@@ -83,85 +113,93 @@ export default class dataViewerScreen extends React.Component {
                 }]
             },
         }, () => {
-            this.validation(); // Run validation.
+            this.validation(); // Run validation(2nd).
         });
     }
 
     // RUN 2nd.
     validation() {
+        // If optionIds and budget is empty
         if (this.state.optionIds == '' && this.state.budget == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        // If budget is empty
+        else if (this.state.budget == '') {
+            Alert.alert('OOPS!', "Please enter a Budget!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        }
+        // If optionIds is empty
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        // If budget is not a number.
+        else if (isNaN(this.state.budget)) {
+            Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        }
+        // If budget < $0.00.
+        else if (this.state.budget <= 0) {
+            Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        }
+        // If optionids < 2.
         else if (this.state.optionIds.search(",") == -1) {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        // Valid, move on to secondary validation.
         else {
             optionList = this.state.optionIds.toString().split(','); //optionList array
+            // If optionids < 2
             if (optionList.length < 2) {
                 Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             }
+            // If optionids < 2
             else {
                 var lengthCheck = [];
-                // var isIntCheck = [];
                 for (let i = 0; i < optionList.length; i++) {
                     optionList[i] = parseInt(optionList[i]);
                     optionList[i] = optionList[i].toString();
-
+                    // Length check
                     if (optionList[i].length == 10) {
                         lengthCheck[i] = true;
-                        console.log("Pass2" + optionList[i]);
+                        console.log("Passed: " + optionList[i]);
                     } else {
                         lengthCheck[i] = false;
-                        console.log("Failed2" + optionList[i]);
+                        console.log("Failed: " + optionList[i]);
                     }
-                    // optionList[i] = optionList[i].toString();
                 }
                 var same = false
                 for (let j = 0; j < optionList.length; j++) {
                     for (let k = 0; k < optionList.length; k++) {
                         if (optionList[j] == optionList[k] && j != k) {
-                            same = true
+                            same = true;
                         }
                     }
                 }
+                // Check if length of options ids are 10 digits each.
                 if (!lengthCheck.every(v => v == true)) {
                     Alert.alert('OOPS!', "Please make sure your optionIds are exactly 10 digits each, and digits only!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
-                else if(same == true){
+                // Check if there is repeated optionIds.
+                else if (same == true) {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                }
-                else if (this.state.budget == '') {
-                    Alert.alert('OOPS!', "Please enter a Budget!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (isNaN(this.state.budget)) {
-                    Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (this.state.budget <= 0) {
-                    Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else{
-                    this.getChart(); //Get chart
+                } else {
+                    this.getChart(); //Get chart(3rd)
                 }
             }
         }
@@ -177,48 +215,114 @@ export default class dataViewerScreen extends React.Component {
             method: 'GET',
         });
 
+        //If error, get from cache.
         fetch(req)
             .then(response => response.json())
-            .then(this.showChart)
-            .catch(this.error)
+            .then((json) => { // When network is available..
+                console.log("Response JSON (Chart):");
+                console.log(json);
+                // Set Cache
+                this.showChart(json);
+
+                cacheManager
+                    .set(url, json)
+                    .catch((error) => { //correct. 
+                        console.log("Internal SET Cache Error 1!:")
+                        // Works
+                        this.setState({
+                            error: "Cache(Chart) Internal Set Error!"
+                        });
+                        // Does not work
+                        // this.setState({
+                        //     error: error.message 
+                        // })
+                    });
+
+
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("CHART ERROR CATCH");
+                console.log(error);
+
+                console.log(error.message);
+                // const result = JSON.parse({ error: error.message });
+                // this.setState({ data: { error: error.message } });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { //This works!
+                            console.log("Cache does not exist:");
+                            // result.cacheMessage = 'URL not cached';
+                            // error(error);
+
+                            // this.setState({ error: error.message });
+                            this.setState({ error: "No Cache Stored!" })
+                        } else {
+                            // result.json = cacheData;
+                            // result.cached = true;
+
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showChart(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error 1:")
+                        this.setState({
+                            error: "No Cache Stored!"
+                        })
+                    });
+            })
     }
 
     // RUN 4th.
     showChart = (data) => {
+        console.log(data);
         this.setState({
             chartResultsCheck: data
-        });
-        console.log("optionList.length: " + optionList.length)
-        console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
-        if (this.state.chartResultsCheck.length == undefined) {
-            Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-            this.setState({ loaded: true });
-        } else if (this.state.chartResultsCheck.length != optionList.length) {
-            Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-            this.setState({ loaded: true });
-        } else {
+        }, () => {
+            // Option id existance check.
+            console.log("optionList.length: " + optionList.length);
+            console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
+            if (this.state.chartResultsCheck.length == undefined) {
+                Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                this.setState({ loaded: true });
+            } else if (this.state.chartResultsCheck.length != optionList.length) {
+                Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                this.setState({ loaded: true });
+            } else {
+                this.setState({
+                    chartResults: data
+                }, () => {
+                    // console.log("CHART RESULTS");
+                    for (let i = 0; i < this.state.chartResults.length; i++) {
+                        // console.log("LOOP LOG");
+                        // console.log(this.state.chartResults);
 
-            this.setState({
-                chartResults: data
-            });
-            console.log(this.state.chartResults);
-            for (var i = 0; i < this.state.chartResults.length; i++) {
-                this.setState(prevState => ({
-                    chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
-                    chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
-                    chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-                    // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
-                    // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
-                }));
+                        this.setState(prevState => ({
+                            chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
+                            chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
+                            chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
+                            // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
+                            // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
+                        }));
+                    }
+                    console.log("this.state.totalCost: " + this.state.totalCost);
+                    console.log("this.state.totalPax: " + this.state.totalPax);
+                    this.getResult();
+                });
             }
-            console.log("this.state.totalCost: " + this.state.totalCost)
-            console.log("this.state.totalPax: " + this.state.totalPax)
-            this.getResult();
-        }
+        })
+
     }
 
     // RUN 5th.
@@ -234,8 +338,60 @@ export default class dataViewerScreen extends React.Component {
 
         fetch(req)
             .then(response => response.json())
-            .then(this.showResult)
-            .catch(this.error)
+            .then((json) => { // When network is available..
+                console.log("Response JSON (Results):");
+                console.log(json);
+                // Set Cache
+                this.showResult(json);
+                cacheManager
+                    .set(url, json)
+                    .catch((error) => {
+                        console.log("Internal SET Cache Error 2!:")
+                        // Works
+                        this.setState({
+                            error: "Cache(Results) Internal Set Error!"
+                        });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("RESULT COMPUTATION CATCH")
+                console.log(error);
+
+                let result = { error: error.message };
+                // this.setState({ data: { error: error.message } });
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        console.log("CACHE DATA RESULTS");
+                        console.log(cacheData);
+                        // this.setState({ chartResultsCheck: cacheData });
+
+                        // Add to cacheData array!
+                        if (!cacheData) {
+                            result.cacheMessage = 'URL not cached';
+                            this.setState({
+                                error: "No Cache Stored!"
+                            })
+
+                        } else {
+                            // result.json = cacheData;
+                            // result.cached = true;
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Results via Cache");
+                                this.showResult(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => { // When no network or Error.
+                        console.log("RESULT COMPUTATION CATCH")
+                        console.log(error);
+
+                        console.log("GET Cache Error 2:")
+                        this.setState({
+                            error: "No Cache Stored!"
+                        })
+                    });
+            })
     }
 
     //RUN 6th.
@@ -248,16 +404,13 @@ export default class dataViewerScreen extends React.Component {
         this.setState({ totalCost: totalCost });
         this.setState({ totalPax: totalPax });
 
-        this.setState({
-            results: data
-        });
+        let resultsCopy = JSON.parse(JSON.stringify(data));
 
-        let resultsCopy = JSON.parse(JSON.stringify(this.state.results))
-
-        console.log("resultsCopy: " + resultsCopy.result[0])
+        // console.log("resultsCopy: " + resultsCopy.result[0])
         //toFixed(3) audienceReached
-        for (var i = 0; i < data.result.length; i++) {
-            resultsCopy.result[i].audienceReached = resultsCopy.result[i].audienceReached.toFixed(3)
+        for (let j = 0; j < data.result.length; j++) {
+            // console.log(j);
+            resultsCopy.result[j].audienceReached = resultsCopy.result[j].audienceReached.toFixed(3);
         }
         this.setState({
             results: resultsCopy
@@ -309,6 +462,7 @@ export default class dataViewerScreen extends React.Component {
         }
     }
 
+    // Render
     render() {
         return (
             <View style={styles.container}>
@@ -326,7 +480,7 @@ export default class dataViewerScreen extends React.Component {
                             <TouchableOpacity style={styles.paramArea}>
                                 <TextInput
                                     style={[styles.bodyText]}
-                                    placeholder="OptionIds"
+                                    placeholder="OptionIddddddddddd"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={false}
                                     onChangeText={(text) => this.setState({ optionIds: text })}
@@ -349,7 +503,7 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="Budget"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => {this.setState({ budget: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
+                                    onChangeText={(text) => { this.setState({ budget: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
                                     value={this.state.budget}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
@@ -392,13 +546,13 @@ export default class dataViewerScreen extends React.Component {
                                             labels: this.state.chartOptionid,
                                             datasets: [
                                                 {
-                                                    data: this.state.chartCost,
+                                                    data: this.state.chartAudiencereach,
                                                 },
                                             ],
                                         }}
                                         width={Dimensions.get('window').width - 16}
                                         height={220}
-                                        yAxisLabel={'$'}
+                                        yAxisSuffix={'pax'}
                                         fromZero={true}
                                         chartConfig={{
                                             backgroundColor: '#1cc910',
@@ -424,13 +578,13 @@ export default class dataViewerScreen extends React.Component {
                                             labels: this.state.chartOptionid,
                                             datasets: [
                                                 {
-                                                    data: this.state.chartAudiencereach,
+                                                    data: this.state.chartCost,
                                                 },
                                             ],
                                         }}
                                         width={Dimensions.get('window').width - 16}
                                         height={220}
-                                        yAxisSuffix={'pax'}
+                                        yAxisLabel={'$'}
                                         fromZero={true}
                                         chartConfig={{
                                             backgroundColor: '#1cc910',
@@ -475,7 +629,6 @@ export default class dataViewerScreen extends React.Component {
 
                         </Modal>
                     </View>
-
                 </View>
             </View>
         );
