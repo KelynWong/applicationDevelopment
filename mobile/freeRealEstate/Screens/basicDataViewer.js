@@ -31,7 +31,7 @@ let data = [{
     value: '50',
 }];
 
-export default class dataViewerScreen extends React.Component {
+export default class basicDataViewerScreen extends React.Component {
     constructor() {
         super();
         this.state = {
