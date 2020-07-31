@@ -11,7 +11,7 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import basicDataViewerScreen from './Screens/basicDataViewer'
-import basicResultViewerScreen from './Screens/testBasicResultViewer'
+import basicResultViewerScreen from './Screens/basicResultViewer'
 import advanceDataViewerScreen from './Screens/advDataViewer'
 import advanceResultViewerScreen from './Screens/advResultViewer'
 import layoutTest from './Screens/layoutTest'
