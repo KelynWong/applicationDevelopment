@@ -1,14 +1,24 @@
-/* ADVANCE Result Viewer */
+// ADVANCE Result Viewer Screen
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 
+// Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import Card from '../myComponents/card'; //Disregard first 
+// Cache Manager
+import cacheManager from '../cacheManager'
+
+// Chart import
 import { BarChart } from "react-native-chart-kit";
+
+import Card from '../myComponents/card'; //Disregard first 
+
 
 var totalCost = 0;
 var totalPax = 0;
@@ -29,7 +39,7 @@ export default class advResultViewerScreen extends React.Component {
                     audienceReached: ''
                 }]
             },
-            // State change on API call
+            // Chart Results Response
             chartResults: {
                 payment: 'No',
                 amount: '0',
@@ -45,12 +55,20 @@ export default class advResultViewerScreen extends React.Component {
                 cost: '',
                 audiencereach: ''
             },
+
+            // Cache items.
+            cacheData: {},
+            cacheKeys: [],
+
+            // Content State identifiers.
             loaded: true,
             error: null,
+            modalOpen: false,
+
             optionIds: '',
             budget: '',
-            modalOpen: false,
             companyIdArray: [],
+
             // Used by Chart
             chartOptionid: [],
             chartCost: [],
@@ -62,10 +80,15 @@ export default class advResultViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    baseURL = 'http://192.168.229.1:3000';
-    //baseURL = 'http://192.168.86.1:3000';
+    // Kelyn's IP
+    // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
+    baseURL = 'http://192.168.86.1:3000';
 
-    // Run 1st.
+    //School IP
+    // baseURL ='http://172.22.1.9:3000'
+
+    // RUN 1st.
     clearForComputation() { // Set states for computation.
         totalCost = 0;
         totalPax = 0;
@@ -93,11 +116,11 @@ export default class advResultViewerScreen extends React.Component {
             },
             tabulationComplete: false,
         }, () => {
-            this.validation(); // Run validation.
+            this.validation(); // Run validation(2nd).
         });
     }
 
-    // Run 2nd.
+    // RUN 2nd.
     validation() {
         if (this.state.optionIds == '' && this.state.budget == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
@@ -160,7 +183,7 @@ export default class advResultViewerScreen extends React.Component {
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
-                else if(same == true){
+                else if (same == true) {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
@@ -180,14 +203,14 @@ export default class advResultViewerScreen extends React.Component {
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
-                else{
+                else {
                     this.getChart(); //Get chart
                 }
             }
         }
     }
 
-    // Run 3rd.
+    // RUN 3rd.
     getChart = (ev) => {
         console.log('this.state.optionIds: ' + this.state.optionIds);
         this.setState({ loaded: false, error: null });
@@ -197,63 +220,106 @@ export default class advResultViewerScreen extends React.Component {
             method: 'GET',
         });
 
+        //If error, get from cache.
         fetch(req)
             .then(response => response.json())
-            .then(this.showChart)
-            .catch(this.error)
+            .then((json) => { // When network is available..
+                console.log("Response JSON (Chart):");
+                console.log(json);
+                // Show Chart Representation of options.
+                this.showChart(json);
+                // Set Cache
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Cache Set Completed! (Chart)")
+                    )
+                    .catch((error) => { //correct. 
+                        console.log("Internal SET Cache Error (Chart)!:")
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("CHART ERROR CATCH");
+                console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Chart Results for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showChart(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
+                    });
+            })
     }
 
-    // Run 4th.
+    // RUN 4th.
     showChart = (data) => {
         this.setState({
             chartResultsCheck: data
-        });
-        console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
-        if (this.state.chartResultsCheck.length == undefined) {
-            Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-
-            this.setState({ loaded: true });
-        } else if (this.state.chartResultsCheck.length != optionList.length) {
-            Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-            this.setState({ loaded: true });
-        } else {
-
-            function addAttributes(x) {
-                if (Array.isArray(x)) { // if data is an array
-                    x.forEach(addAttributes); // call the function on each item
-                } else if (x instanceof Object) { // otherwise, if data is an object
-                    // add attribute to each object index.
-                    x.payment = 'No';
-                    x.amount = '0';
-                    x.audienceReached = '0';
+        }, () => {
+            // Option id existence check.
+            console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
+            if (this.state.chartResultsCheck.length == undefined) {
+                Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                this.setState({ loaded: true });
+            } else if (this.state.chartResultsCheck.length != optionList.length) {
+                Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                this.setState({ loaded: true });
+            } else {
+                function addAttributes(x) {
+                    if (Array.isArray(x)) { // if data is an array
+                        x.forEach(addAttributes); // call the function on each item
+                    } else if (x instanceof Object) { // otherwise, if data is an object
+                        // add attribute to each object index.
+                        x.payment = 'No';
+                        x.amount = '0';
+                        x.audienceReached = '0';
+                    }
                 }
+                addAttributes(data);
+                this.setState({
+                    chartResults: data
+                }, () => {
+                    console.log(this.state.chartResults);
+                    // Sets items to previous state as such that the whole state isn't re-written.
+                    for (let i = 0; i < this.state.chartResults.length; i++) {
+                        // Adding results to states needed by chart.
+                        this.setState(prevState => ({
+                            chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
+                            chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
+                            chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
+                            companyIdArray: [...prevState.companyIdArray, this.state.chartResults[i].companyid],
+                        }));
+                    }
+                    this.getResult();
+                });
             }
-
-            addAttributes(data);
-            this.setState({
-                chartResults: data
-            });
-            console.log(this.state.chartResults);
-            for (var i = 0; i < this.state.chartResults.length; i++) {
-                // Adding results to states needed by chart.
-                this.setState(prevState => ({
-                    chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
-                    chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
-                    chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-                    companyIdArray: [...prevState.companyIdArray, this.state.chartResults[i].companyid],
-                }));
-            }
-            // console.log("this.state.totalCost: " + this.state.totalCost);
-            // console.log("this.state.totalPax: " + this.state.totalPax);
-            this.getResult();
-        }
+        });
     }
 
-    // Run 5th
+    // RUN 5th
     getResult = (ev) => {
         console.log('this.state.optionIds: ' + this.state.optionIds);
         console.log('this.state.budget: ' + this.state.budget);
@@ -266,11 +332,54 @@ export default class advResultViewerScreen extends React.Component {
 
         fetch(req)
             .then(response => response.json())
-            .then(this.showResult)
-            .catch(this.error)
+            .then((json) => { // When network is available..
+                console.log("Response JSON (Results):");
+                console.log(json);
+                // Set Cache
+                this.showResult(json);
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Cache Set Completed! (Results)")
+                    )
+                    .catch((error) => {
+                        console.log("Internal SET Cache Error (Results)!:")
+                        // Works
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error..
+                console.log("RESULT COMPUTATION CATCH")
+                console.log(error);
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        console.log("CACHE DATA RESULTS");
+                        console.log(cacheData);
+                        // this.setState({ chartResultsCheck: cacheData });
+                        let result = { error: error.message }
+                        // Add to cacheData array!
+                        if (!cacheData) {
+                            result.cacheMessage = 'Results for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Results via Cache");
+                                this.showResult(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => { // When no network or Error.
+                        console.log("RESULT COMPUTATION CATCH")
+                        console.log("GET Cache Error! (Results)")
+                        this.setState({ error: error.message });
+                    });
+            })
     }
 
-    // Run 6th
+    // RUN 6th
     showResult = (data) => {
         // Retrieve overall total result.
         totalCost = 0;
@@ -282,8 +391,6 @@ export default class advResultViewerScreen extends React.Component {
                 totalPax += data.result[i].audienceReached;
             }
         }
-
-
         // Parse to 3 d.p. for output.
         totalPax = parseFloat(totalPax.toFixed(3));
 
@@ -299,10 +406,6 @@ export default class advResultViewerScreen extends React.Component {
         // Make a copy of this.state.results to append it and place back into this.state.results
         let resultsCopy = JSON.parse(JSON.stringify(this.state.results))
 
-        // console.log("resultsCopy: " + resultsCopy.result[0]);
-        // for (var i = 0; i < data.result.length; i++) {
-        //     resultsCopy.result[i].audienceReached = resultsCopy.result[i].audienceReached;
-        // }
         this.setState({
             results: resultsCopy
         }, () => {
@@ -323,8 +426,6 @@ export default class advResultViewerScreen extends React.Component {
                 }
                 this.setState({ chartResults: x });
             }
-
-
             console.log(this.state.results.result);
             console.log(this.state.chartResults);
             console.log("totalPax: " + totalPax);
@@ -334,13 +435,13 @@ export default class advResultViewerScreen extends React.Component {
         })
     }
 
-    // Error handle.
+    // Error handler.
     error = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
 
-    // Clear text
+    // Clear text.
     clearText() {
         this.setState({
             loaded: true,
@@ -428,7 +529,7 @@ export default class advResultViewerScreen extends React.Component {
                                     placeholder="Budget"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => {this.setState({ budget: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
+                                    onChangeText={(text) => { this.setState({ budget: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
                                     value={this.state.budget}
                                     keyboardType='numeric' />
                             </TouchableOpacity>
@@ -446,7 +547,6 @@ export default class advResultViewerScreen extends React.Component {
                             {this.state.tabulationComplete && (
                                 <Text style={styles.resultsText}>Results: ${totalCost} for {totalPax}pax</Text>
                             )}
-                            {/* <Text style={styles.resultsText}>Results: $10001 for 10001 pax</Text>  */}
                         </View>
                         <Button style={styles.tabButtonContainer} mode='contained' onPress={() => { this.checkModal() }}>
                             <Ionicons style={styles.tabButton} name="ios-menu" size={30}></Ionicons>
@@ -462,7 +562,7 @@ export default class advResultViewerScreen extends React.Component {
                         {!!this.state.error && (
                             <Text style={styles.err}>{this.state.error}</Text>
                         )}
-
+                        
                         <View>
                             <ScrollView>
                                 {!!this.state.chartResults && !!this.state.chartResults.length > 0 && (
@@ -534,7 +634,6 @@ export default class advResultViewerScreen extends React.Component {
                         </View>
 
                         <Modal visible={this.state.modalOpen}>
-
                             <View style={styles.tabulationArea}>
                                 <View style={styles.modalBar}>
                                     <Ionicons.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({ modalOpen: false })}>
@@ -552,10 +651,8 @@ export default class advResultViewerScreen extends React.Component {
                                 ))
                                 )}
                             </View>
-
                         </Modal>
                     </View>
-
                 </View>
             </View>
         );
@@ -598,6 +695,11 @@ const styles = StyleSheet.create({
     },
 
     // Main styles: ----------
+    err: {
+        fontSize: 20,
+        color: 'red',
+        textAlign: 'center',
+    },
     container: {
         // backgroundColor: 'powderblue',
         flex: 1,

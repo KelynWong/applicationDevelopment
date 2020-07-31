@@ -1,13 +1,16 @@
-/* ADVANCE data viewer */
+// ADVANCE Data Viewer Screen
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { DataTable, Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-material-dropdown';
 
+// Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
 
 let data = [{
     value: '5',
@@ -54,8 +57,13 @@ export default class advDataViewerScreen extends React.Component {
         }
         this.getData = this.getData.bind(this);
     }
+    // Kelyn's IP
     // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
     baseURL = 'http://192.168.86.1:3000';
+
+    // School IP
+    // baseURL ='http://172.22.1.9:3000'
 
     componentDidMount() {
         this.getRowCount();
@@ -70,7 +78,9 @@ export default class advDataViewerScreen extends React.Component {
         }, () => {
             this.getRowCount();
         });
-    }
+    }    
+    
+    // RUN 2nd.
     getRowCount = (ev) => {
         // // Validation: 
         // if (!this.state.companyIdParse && !this.state.audienceReachParse) {
@@ -98,7 +108,7 @@ export default class advDataViewerScreen extends React.Component {
             .catch(this.badStuff)
     }
 
-    // RUN 2nd.
+    // RUN 3rd.
     showRowCount = (data) => {
         this.setState({
             rowCount: data
@@ -108,7 +118,8 @@ export default class advDataViewerScreen extends React.Component {
 
         this.getData();
     }
-    // RUN 3rd. 
+    
+    // RUN 4th. 
     getData = (ev) => { // On Filter
 
         this.setState({ loaded: false, error: null });
@@ -117,10 +128,6 @@ export default class advDataViewerScreen extends React.Component {
         console.log(this.state.costParse);
 
         let url = this.baseURL + `/advance/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}&cost=${this.state.costParse}`;
-
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
 
         fetch(url, {
             method: 'get',
@@ -134,7 +141,7 @@ export default class advDataViewerScreen extends React.Component {
             .catch(this.badStuff)
     }
 
-    // RUN 4th.
+    // RUN 5th.
     showData = (data) => {
         this.setState({
             results: data
@@ -142,13 +149,13 @@ export default class advDataViewerScreen extends React.Component {
 
         console.log(this.state.results);
         this.setState({ loaded: true });
-        // this.getRowCount;
     }
 
     badStuff = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
+
     clearText() {
         this.setState({
             companyIdParse: '',
@@ -163,6 +170,7 @@ export default class advDataViewerScreen extends React.Component {
         });
     }
 
+    // Validation:
     companyIdValidation() {
         console.log("this.state.companyIdParse.length: " + this.state.companyIdParse.length)
         if (this.state.companyIdParse) {

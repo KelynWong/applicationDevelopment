@@ -40,7 +40,9 @@ export default class dataViewerScreen extends React.Component {
                 cost: '',
                 audiencereach: ''
             },
+
             cacheData: {},
+
             loaded: true,
             error: null,
             optionIds: '',
@@ -56,8 +58,13 @@ export default class dataViewerScreen extends React.Component {
         this.getResult = this.getResult.bind(this);
         this.getChart = this.getChart.bind(this);
     }
-    baseURL = 'http://192.168.229.1:3000';
-    //baseURL = 'http://192.168.86.1:3000';
+    // Kelyn's IP
+    // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
+    baseURL = 'http://192.168.86.1:3000';
+
+    //School IP
+    // baseURL ='http://172.22.1.9:3000'
 
     // RUN 1st.
     clearForComputation() { // Set states for computation.
@@ -157,11 +164,11 @@ export default class dataViewerScreen extends React.Component {
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
-                else if(same == true){
+                else if (same == true) {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                }else{
+                } else {
                     this.getChart(); //Get chart
                 }
             }
@@ -184,31 +191,37 @@ export default class dataViewerScreen extends React.Component {
                 console.log("json")
                 console.log("json: " + json)
                 JSON.stringify(json)
+                // Set cache - Working
                 cacheManager.set(req, json)
-                .catch(this.error)
-                return json
+                    .catch(this.error, () => {
+                        console.log("HI" + json);
+                    });
+
+                return json;
             })
             .then(this.showChart)
             .catch((err) => {
+                console.log("I Like Grapes");
                 console.log(err);
-                const result = {error: err.message};
-                cacheManager.get(req)
-                .then((cachedJson) => {
-                    if(!cachedJson){
-                        result.cacheMessage = 'URL not cached'
-                        return this.setState({chartResultsCheck: result})
-                    }
-                    result.json = cachedJson;
-                    result.cached = true;
-                    this.setState({chartResultsCheck: result})
-                    console.log("result: " + result)
-                }).catch(cacheError => {
-                    console.log("result2: " + result)
-                    this.setState({
-                        chartResultsCheck: result,
-                        cacheData: {error: cacheError.message}
-                    })
-                })
+                const result = { error: err.message };
+
+                // cacheManager.get(req)
+                //     .then((cachedJson) => {
+                //         if (!cachedJson) {
+                //             result.cacheMessage = 'URL not cached'
+                //             return this.setState({ chartResultsCheck: result })
+                //         }
+                //         result.json = cachedJson;
+                //         result.cached = true;
+                //         this.setState({ chartResultsCheck: result })
+                //         console.log("result: " + result)
+                //     }).catch(cacheError => {
+                //         console.log("result2: " + result)
+                //         this.setState({
+                //             chartResultsCheck: result,
+                //             cacheData: { error: cacheError.message }
+                //         })
+                //     });
             })
     }
 
@@ -378,7 +391,7 @@ export default class dataViewerScreen extends React.Component {
                                     placeholder="Budget"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={true}
-                                    onChangeText={(text) => {this.setState({ budget: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
+                                    onChangeText={(text) => { this.setState({ budget: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
                                     value={this.state.budget}
                                     keyboardType='numeric' />
                             </TouchableOpacity>

@@ -1,4 +1,7 @@
-/* BASIC data viewer */
+// BASIC Data Viewer Screen
+// Name: Wong En Ting Kelyn
+// Name: Teh Huan Xi Kester
+// Class: DIT/FT/2B/01
 
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
@@ -52,33 +55,19 @@ export default class basicDataViewerScreen extends React.Component {
         }
         this.getData = this.getData.bind(this);
     }
+    // Kelyn's IP
     // baseURL = 'http://192.168.229.1:3000';
+    // Kester's IP
     baseURL = 'http://192.168.86.1:3000';
+
+    //School IP
+    // baseURL ='http://172.22.1.9:3000'
 
     componentDidMount() {
         this.getRowCount();
-
-
-        // Below code No longer needed.
-        // let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}`;
-
-        // // let req = new Request(url, {
-        // //     method: 'GET',
-        // // });
-
-        // fetch(url, {
-        //     method: 'get',
-        //     headers: {
-        //         'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then(this.showData)
-        //     .catch(this.badStuff)
     }
+
     // RUN 0. (When filter button is pressed)
-    // Validation has been moved here.
     parseParam = (ev) => {
         // Validation: 
         if (!this.state.companyIdParam && !this.state.audienceReachParam) {
@@ -87,7 +76,7 @@ export default class basicDataViewerScreen extends React.Component {
             ]);
         } else {
             // If pass the validation checks, go through.
-            if (this.state.audienceReachParam && this.state.companyIdParam){
+            if (this.state.audienceReachParam && this.state.companyIdParam) {
                 if (this.companyIdValidation() && this.audienceReachValidation()) {
                     this.setState({
                         companyIdParse: this.state.companyIdParam,
@@ -119,6 +108,7 @@ export default class basicDataViewerScreen extends React.Component {
             }
         }
     }
+
     // RUN 1st
     getRowCount = (ev) => {
         console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
@@ -148,16 +138,11 @@ export default class basicDataViewerScreen extends React.Component {
     }
     // RUN 3rd. 
     getData = (ev) => { // On Filter
-
         this.setState({ loaded: false, error: null });
         console.log(this.state.companyIdParse);
         console.log(this.state.audienceReachParse);
 
         let url = this.baseURL + `/basic/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}`;
-
-        // let req = new Request(url, {
-        //     method: 'GET',
-        // });
 
         fetch(url, {
             method: 'get',
@@ -179,9 +164,7 @@ export default class basicDataViewerScreen extends React.Component {
 
         console.log(this.state.results);
         this.setState({ loaded: true });
-        // this.getRowCount;
     }
-
 
     // Error handler
     badStuff = (err) => {
