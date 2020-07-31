@@ -82,11 +82,11 @@ export default class dataViewerScreen extends React.Component {
     //School IP
     // baseURL ='http://172.22.1.9:3000'
 
-
     componentDidMount() {
         // Clear all caches. For assignment use.
         cacheManager.clearAll();
     }
+
     // RUN 1st.
     clearForComputation() { // Set states for computation.
         totalCost = 0
@@ -95,7 +95,6 @@ export default class dataViewerScreen extends React.Component {
             loaded: true,
             error: null,
             modalOpen: false,
-
             chartOptionid: [],
             chartCost: [],
             chartAudiencereach: [],
@@ -221,50 +220,41 @@ export default class dataViewerScreen extends React.Component {
             .then((json) => { // When network is available..
                 console.log("Response JSON (Chart):");
                 console.log(json);
-                // Set Cache
+                // Show Chart Representation of options.
                 this.showChart(json);
-
+                // Set Cache
                 cacheManager
                     .set(url, json)
+                    .then(
+                        console.log("Cache Set Completed! (Chart)")
+                    )
                     .catch((error) => { //correct. 
-                        console.log("Internal SET Cache Error 1!:")
+                        console.log("Internal SET Cache Error (Chart)!:")
                         // Works
-                        this.setState({
-                            error: "Cache(Chart) Internal Set Error!"
-                        });
-                        // Does not work
                         // this.setState({
-                        //     error: error.message 
-                        // })
+                        //     error: "Cache(Chart) Internal Set Error!"
+                        // });
+                        this.setState({ error: error.message });
                     });
-
-
             })
             .catch((error) => { // When no network or Error.
                 console.log("CHART ERROR CATCH");
                 console.log(error);
-
                 console.log(error.message);
-                // const result = JSON.parse({ error: error.message });
-                // this.setState({ data: { error: error.message } });
+                this.setState({ error: error.message });
 
                 cacheManager
                     .get(url)
                     .then((cacheData) => {
+                        let result = { error: error.message };
                         console.log("CACHE DATA");
                         console.log(cacheData);
 
-                        if (!cacheData) { //This works!
+                        if (!cacheData) { // If Cache does not exist.
                             console.log("Cache does not exist:");
-                            // result.cacheMessage = 'URL not cached';
-                            // error(error);
-
-                            // this.setState({ error: error.message });
-                            this.setState({ error: "No Cache Stored!" })
+                            result.cacheMessage = 'Chart Results for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
                         } else {
-                            // result.json = cacheData;
-                            // result.cached = true;
-
                             this.setState({ cacheData: cacheData }, () => {
                                 console.log("Show Cache Data Chart");
                                 this.showChart(this.state.cacheData);
@@ -272,21 +262,18 @@ export default class dataViewerScreen extends React.Component {
                         }
                     })
                     .catch((error) => {
-                        console.log("Get Cache Error 1:")
-                        this.setState({
-                            error: "No Cache Stored!"
-                        })
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
                     });
             })
     }
 
     // RUN 4th.
     showChart = (data) => {
-        console.log(data);
         this.setState({
             chartResultsCheck: data
         }, () => {
-            // Option id existance check.
+            // Option id existence check.
             console.log("optionList.length: " + optionList.length);
             console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
             if (this.state.chartResultsCheck.length == undefined) {
@@ -303,17 +290,12 @@ export default class dataViewerScreen extends React.Component {
                 this.setState({
                     chartResults: data
                 }, () => {
-                    // console.log("CHART RESULTS");
+                    // Sets items to previous state as such that the whole state isn't re-written.
                     for (let i = 0; i < this.state.chartResults.length; i++) {
-                        // console.log("LOOP LOG");
-                        // console.log(this.state.chartResults);
-
                         this.setState(prevState => ({
                             chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
                             chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
                             chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-                            // totalCost: [...prevState.totalCost + this.state.chartResults[i].cost],
-                            // totalPax: [...prevState.totalPax + this.state.chartResults[i].audiencereach],
                         }));
                     }
                     console.log("this.state.totalCost: " + this.state.totalCost);
@@ -345,37 +327,32 @@ export default class dataViewerScreen extends React.Component {
                 this.showResult(json);
                 cacheManager
                     .set(url, json)
+                    .then(
+                        console.log("Cache Set Completed! (Results)")
+                    )
                     .catch((error) => {
-                        console.log("Internal SET Cache Error 2!:")
+                        console.log("Internal SET Cache Error (Results)!:")
                         // Works
-                        this.setState({
-                            error: "Cache(Results) Internal Set Error!"
-                        });
+                        this.setState({ error: error.message });
                     });
             })
-            .catch((error) => { // When no network or Error.
+            .catch((error) => { // When no network or Error..
                 console.log("RESULT COMPUTATION CATCH")
                 console.log(error);
 
-                let result = { error: error.message };
-                // this.setState({ data: { error: error.message } });
                 cacheManager
                     .get(url)
                     .then((cacheData) => {
                         console.log("CACHE DATA RESULTS");
                         console.log(cacheData);
                         // this.setState({ chartResultsCheck: cacheData });
-
+                        let result = { error: error.message }
                         // Add to cacheData array!
                         if (!cacheData) {
-                            result.cacheMessage = 'URL not cached';
-                            this.setState({
-                                error: "No Cache Stored!"
-                            })
+                            result.cacheMessage = 'Results for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
 
                         } else {
-                            // result.json = cacheData;
-                            // result.cached = true;
                             this.setState({ cacheData: cacheData }, () => {
                                 console.log("Show Results via Cache");
                                 this.showResult(this.state.cacheData);
@@ -384,12 +361,8 @@ export default class dataViewerScreen extends React.Component {
                     })
                     .catch((error) => { // When no network or Error.
                         console.log("RESULT COMPUTATION CATCH")
-                        console.log(error);
-
-                        console.log("GET Cache Error 2:")
-                        this.setState({
-                            error: "No Cache Stored!"
-                        })
+                        console.log("GET Cache Error! (Results)")
+                        this.setState({ error: error.message });
                     });
             })
     }
@@ -406,10 +379,7 @@ export default class dataViewerScreen extends React.Component {
 
         let resultsCopy = JSON.parse(JSON.stringify(data));
 
-        // console.log("resultsCopy: " + resultsCopy.result[0])
-        //toFixed(3) audienceReached
         for (let j = 0; j < data.result.length; j++) {
-            // console.log(j);
             resultsCopy.result[j].audienceReached = resultsCopy.result[j].audienceReached.toFixed(3);
         }
         this.setState({
@@ -521,7 +491,6 @@ export default class dataViewerScreen extends React.Component {
                             {!!this.state.totalCost && !!this.state.totalPax && (
                                 <Text style={styles.resultsText}>Results: ${totalCost} for {totalPax}pax</Text>
                             )}
-                            {/* <Text style={styles.resultsText}>Results: $10001 for 10001 pax</Text>  */}
                         </View>
                         <Button style={styles.tabButtonContainer} mode='contained' onPress={() => { this.checkModal() }}>
                             <Ionicons style={styles.tabButton} name="ios-menu" size={30}></Ionicons>
@@ -671,6 +640,11 @@ const styles = StyleSheet.create({
     },
 
     // Main styles: ----------
+    err: {
+        fontSize: 20,
+        color: 'red',
+        textAlign: 'center',
+    },
     container: {
         // backgroundColor: 'powderblue',
         flex: 1,

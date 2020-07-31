@@ -7,19 +7,17 @@
 import { AsyncStorage } from 'react-native';
 
 async function set(key, value){
-    console.log("Cache Set!");
-    // efqf.q; -> Script Crasher
+    console.log("Cache Set Running!");
     return await AsyncStorage.setItem(key, JSON.stringify(value));
 }
 
 async function get(key, isJson = true){
+    console.log("Cache Get Running!");
     const item = await AsyncStorage.getItem(key);
-    console.log("GETTING");
+    console.log("Cache Getting...");
     console.log(JSON.parse(item));
-    console.log("GETTING");
+    console.log("Cache Got!");
     return (isJson) ? JSON.parse(item) : item; // Return JSON if JSON, return item if item
-
-    // return callback(item);
 }
 
 // Clears entire AsyncStorage libs.

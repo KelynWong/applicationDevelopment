@@ -78,8 +78,8 @@ export default class dataViewerScreen extends React.Component {
         }, () => {
             this.getRowCount();
         });
-    }
-
+    }    
+    
     // RUN 2nd.
     getRowCount = (ev) => {
         // // Validation: 
@@ -118,7 +118,7 @@ export default class dataViewerScreen extends React.Component {
 
         this.getData();
     }
-
+    
     // RUN 4th. 
     getData = (ev) => { // On Filter
 
@@ -266,7 +266,7 @@ export default class dataViewerScreen extends React.Component {
                                         placeholder="Cost"
                                         placeholderTextColor='rgb(0,0,0)'
                                         multiline={true}
-                                        onChangeText={(text) => this.setState({ costParam: text })}
+                                        onChangeText={(text) => {this.setState({ costParam: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
                                         value={this.state.costParam}
                                         keyboardType='numeric' />
                                 </TouchableOpacity>
