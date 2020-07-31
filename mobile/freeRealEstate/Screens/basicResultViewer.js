@@ -24,7 +24,7 @@ var totalCost = 0;
 var totalPax = 0;
 var optionList;
 
-export default class dataViewerScreen extends React.Component {
+export default class basicResultViewerScreen extends React.Component {
     constructor() {
         super();
         this.state = {
