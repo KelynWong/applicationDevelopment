@@ -258,7 +258,7 @@ export default class dataViewerScreen extends React.Component {
                                         placeholder="Cost"
                                         placeholderTextColor='rgb(0,0,0)'
                                         multiline={true}
-                                        onChangeText={(text) => this.setState({ costParam: text })}
+                                        onChangeText={(text) => {this.setState({ costParam: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
                                         value={this.state.costParam}
                                         keyboardType='numeric' />
                                 </TouchableOpacity>
