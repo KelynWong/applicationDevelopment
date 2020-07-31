@@ -19,6 +19,14 @@ $(document).ready(function () {
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionsIds!");
         }
+        else if (isNaN(optionIdsInput) == true) { //check if optionIds field is an alphabet
+            document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("OptionIds cannot have alphabets!");
+        }
+        else if (optionIdsInput % 1 != 0) { //check if optionIds field is an decimal
+            document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("OptionIds cannot have decimals!");
+        }
         else if (optionIdsInput.search(",") == -1) { //check if there is a comma in the optionIds field
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionIds, seperated by a comma!");

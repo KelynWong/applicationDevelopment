@@ -99,6 +99,16 @@ export default class basicResultViewerScreen extends React.Component {
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        else if (isNaN(this.state.optionIds) == true) { 
+            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        }
+        else if (this.state.optionIds % 1 != 0) { 
+            Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        }
         else if (this.state.optionIds.search(",") == -1) {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
