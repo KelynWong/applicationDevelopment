@@ -19,7 +19,6 @@ import { BarChart } from "react-native-chart-kit";
 
 import Card from '../myComponents/card'; //Disregard first 
 
-
 var totalCost = 0;
 var totalPax = 0;
 var optionList;
@@ -88,6 +87,12 @@ export default class advResultViewerScreen extends React.Component {
     //School IP
     // baseURL ='http://172.22.1.9:3000'
 
+    // RUN 0.
+    componentDidMount() {
+        // Clear all caches. For assignment use.
+        cacheManager.clearAll();
+    }
+
     // RUN 1st.
     clearForComputation() { // Set states for computation.
         totalCost = 0;
@@ -122,33 +127,39 @@ export default class advResultViewerScreen extends React.Component {
 
     // RUN 2nd.
     validation() {
+        // If optionIds and budget is empty.
         if (this.state.optionIds == '' && this.state.budget == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
-        }
+        }// If optionIds is empty.
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
-        else if (isNaN(this.state.optionIds) == true) { 
-            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else if (this.state.optionIds % 1 != 0) { 
+        // OptionIds when parsed in would consist of the comma!!!
+        // else if (isNaN(this.state.optionIds) == true) { 
+        //     Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
+        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
+        //     ]);
+        // }
+        // If optionIds is a decimal.
+        else if (this.state.optionIds % 1 != 0) {
             Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        // If optionids < 2.
         else if (this.state.optionIds.search(",") == -1) {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
+        // Valid, move on to secondary validation.
         else {
             optionList = this.state.optionIds.toString().split(','); //optionList array
+            // If optionids < 2
             if (optionList.length < 2) {
                 Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
@@ -156,11 +167,10 @@ export default class advResultViewerScreen extends React.Component {
             }
             else {
                 var lengthCheck = [];
-                // var isIntCheck = [];
                 for (let i = 0; i < optionList.length; i++) {
                     optionList[i] = parseInt(optionList[i]);
                     optionList[i] = optionList[i].toString();
-
+                    // Length check
                     if (optionList[i].length == 10) {
                         lengthCheck[i] = true;
                         console.log("Pass2" + optionList[i]);
@@ -168,7 +178,6 @@ export default class advResultViewerScreen extends React.Component {
                         lengthCheck[i] = false;
                         console.log("Failed2" + optionList[i]);
                     }
-                    // optionList[i] = optionList[i].toString();
                 }
                 var same = false
                 for (let j = 0; j < optionList.length; j++) {
@@ -178,11 +187,13 @@ export default class advResultViewerScreen extends React.Component {
                         }
                     }
                 }
+                // Check if length of options ids are 10 digits each.
                 if (!lengthCheck.every(v => v == true)) {
                     Alert.alert('OOPS!', "Please make sure your optionIds are exactly 10 digits each, and digits only!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
+                // Check if there is repeated optionIds.
                 else if (same == true) {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
@@ -489,6 +500,7 @@ export default class advResultViewerScreen extends React.Component {
         }
     }
 
+    // Render
     render() {
         return (
             <View style={styles.container}>
@@ -562,7 +574,7 @@ export default class advResultViewerScreen extends React.Component {
                         {!!this.state.error && (
                             <Text style={styles.err}>{this.state.error}</Text>
                         )}
-                        
+
                         <View>
                             <ScrollView>
                                 {!!this.state.chartResults && !!this.state.chartResults.length > 0 && (

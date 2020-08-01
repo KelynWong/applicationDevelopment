@@ -82,6 +82,7 @@ export default class basicResultViewerScreen extends React.Component {
     //School IP
     // baseURL ='http://172.22.1.9:3000'
 
+    // RUN 0.
     componentDidMount() {
         // Clear all caches. For assignment use.
         cacheManager.clearAll();
@@ -137,13 +138,13 @@ export default class basicResultViewerScreen extends React.Component {
             ]);
         }
         // If optionIds is an alphabet
-        else if (isNaN(this.state.optionIds) == true) { 
-            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
+        // else if (isNaN(this.state.optionIds) == true) { 
+        //     Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
+        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
+        //     ]);
+        // }
         // If optionIds is a decimal
-        else if (this.state.optionIds % 1 != 0) { 
+        else if (this.state.optionIds % 1 != 0) {
             Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
@@ -175,7 +176,6 @@ export default class basicResultViewerScreen extends React.Component {
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             }
-            // If optionids < 2
             else {
                 var lengthCheck = [];
                 for (let i = 0; i < optionList.length; i++) {
@@ -242,10 +242,6 @@ export default class basicResultViewerScreen extends React.Component {
                     )
                     .catch((error) => { //correct. 
                         console.log("Internal SET Cache Error (Chart)!:")
-                        // Works
-                        // this.setState({
-                        //     error: "Cache(Chart) Internal Set Error!"
-                        // });
                         this.setState({ error: error.message });
                     });
             })
@@ -379,7 +375,7 @@ export default class basicResultViewerScreen extends React.Component {
             })
     }
 
-    //RUN 6th.
+    // RUN 6th.
     showResult = (data) => {
         for (var i = 0; i < data.result.length; i++) {
             totalCost += data.result[i].amount;
@@ -607,7 +603,6 @@ export default class basicResultViewerScreen extends React.Component {
                                 ))
                                 )}
                             </View>
-
                         </Modal>
                     </View>
                 </View>
@@ -769,5 +764,4 @@ const styles = StyleSheet.create({
         backgroundColor: 'grey',
         flex: 12,
     }
-
 });

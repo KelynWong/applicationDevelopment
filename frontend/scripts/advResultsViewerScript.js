@@ -19,10 +19,11 @@ $(document).ready(function () {
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionsIds!");
         }
-        else if (isNaN(optionIdsInput) == true) { //check if optionIds field is an alphabet
-            document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-            alert("OptionIds cannot have alphabets!");
-        }
+        // CHECK ON THIS
+        // else if (isNaN(optionIdsInput) == true) { //check if optionIds field is an alphabet
+        //     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+        //     alert("OptionIds cannot have alphabets!");
+        // }
         else if (optionIdsInput % 1 != 0) { //check if optionIds field is an decimal
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("OptionIds cannot have decimals!");

@@ -8,6 +8,9 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Activi
 import { DataTable, Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-material-dropdown';
 
+// Cache Manager
+import cacheManager from '../cacheManager'
+
 // Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -41,6 +44,10 @@ export default class advDataViewerScreen extends React.Component {
             results: [],
             loaded: true,
             error: null,
+            // Cache items.
+            cacheData: {},
+            cacheKeys: [],
+
             // Parsed into API
             companyIdParse: '',
             audienceReachParse: '',
@@ -58,15 +65,17 @@ export default class advDataViewerScreen extends React.Component {
         this.getData = this.getData.bind(this);
     }
     // Kelyn's IP
-    baseURL = 'http://192.168.229.1:3000';
+    // baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    //baseURL = 'http://192.168.86.1:3000';
+    baseURL = 'http://192.168.86.1:3000';
 
     // School IP
     // baseURL ='http://172.22.1.9:3000'
 
     componentDidMount() {
         this.getRowCount();
+        // Clear all caches. For assignment use.
+        cacheManager.clearAll();
     }
 
     // RUN 0. (When filter button is pressed)
@@ -99,7 +108,7 @@ export default class advDataViewerScreen extends React.Component {
                         this.getRowCount();
                     });
                 }
-            } 
+            }
             else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam == '') {
                 if (this.companyIdValidation()) {
                     this.setState({
@@ -134,17 +143,6 @@ export default class advDataViewerScreen extends React.Component {
                 }
             }
             else if (this.state.audienceReachParam && this.state.companyIdParam == '' && this.state.costParam) {
-                if (this.companyIdValidation() && this.costValidation()) {
-                    this.setState({
-                        companyIdParse: this.state.companyIdParam,
-                        audienceReachParse: this.state.audienceReachParam,
-                        costParse: this.state.costParam
-                    }, () => {
-                        this.getRowCount();
-                    });
-                }
-            }
-            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam) {
                 if (this.audienceReachValidation() && this.costValidation()) {
                     this.setState({
                         companyIdParse: this.state.companyIdParam,
@@ -155,10 +153,21 @@ export default class advDataViewerScreen extends React.Component {
                     });
                 }
             }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam) {
+                if (this.companyIdValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
         }
-    }  
-    
-    // RUN 2nd.
+    }
+
+    // RUN 1st.
     getRowCount = (ev) => {
         console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
         console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
@@ -173,11 +182,55 @@ export default class advDataViewerScreen extends React.Component {
 
         fetch(req)
             .then((response) => response.json())
-            .then(this.showRowCount)
-            .catch(this.badStuff)
+            .then((json) => { // When network is available..
+                console.log("Show Row Count Response");
+                console.log(json);
+                // Show Row Count
+                this.showRowCount(json);
+                // Set Cache
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Set Show Row Count Cache!")
+                    )
+                    .catch((error) => { //correct. 
+                        console.log("Internal Set Show Row Count Cache Error!:")
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("Show Row Count ERROR CATCH");
+                console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Row Count for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showRowCount(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
+                    });
+            })
+        // .catch(this.badStuff)
     }
 
-    // RUN 3rd.
+    // RUN 2nd.
     showRowCount = (data) => {
         this.setState({
             rowCount: data
@@ -187,8 +240,8 @@ export default class advDataViewerScreen extends React.Component {
 
         this.getData();
     }
-    
-    // RUN 4th. 
+
+    // RUN 3rd. 
     getData = (ev) => { // On Filter
 
         this.setState({ loaded: false, error: null });
@@ -206,25 +259,70 @@ export default class advDataViewerScreen extends React.Component {
             }
         })
             .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
+            .then((json) => { // When network is available..
+                console.log("Get Data Response");
+                console.log(json);
+                // Show Row Count
+                this.showData(json);
+                // Set Cache
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Set Get Data Cache!")
+                    )
+                    .catch((error) => { //correct. 
+                        console.log("Internal Get Data Cache Error!:")
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("Get Data ERROR CATCH");
+                console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Get Data for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showData(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
+                    });
+            })
+        // .catch(this.badStuff)
     }
 
-    // RUN 5th.
+    // RUN 4th.
     showData = (data) => {
         this.setState({
             results: data
         });
-
         console.log(this.state.results);
         this.setState({ loaded: true });
     }
 
+    // Error Handler
     badStuff = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
 
+    // Clear Text
     clearText() {
         this.setState({
             companyIdParse: '',
@@ -244,17 +342,17 @@ export default class advDataViewerScreen extends React.Component {
         console.log("this.state.companyIdParam.length: " + this.state.companyIdParam.length)
         if (this.state.companyIdParam) {
             if (isNaN(this.state.companyIdParam) == true) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' });
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             } else if (this.state.companyIdParam % 1 != 0) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' });
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             } else if (this.state.companyIdParam.length != 10) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' });
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -267,41 +365,42 @@ export default class advDataViewerScreen extends React.Component {
     audienceReachValidation() {
         if (this.state.audienceReachParam) {
             // If filterAudienceReach exists
+            // If is not number.
             if (isNaN(this.state.audienceReachParam) == true) {
-                // this.setState({ audienceReachParam: '' })
+                this.setState({ audienceReachParam: '' });
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+                // If smaller than 1.
+            } else if (this.state.audienceReachParam < 1) {
+                this.setState({ audienceReachParam: '' });
+                Alert.alert('OOPS!', "Audience reach has to be 1 or more!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                // If decimal.
             } else if (this.state.audienceReachParam % 1 != 0) {
-                // this.setState({ audienceReachParam: '' })
+                this.setState({ audienceReachParam: '' });
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else {
+            }
+            else {
                 return true;
             }
         }
     }
 
     costValidation() {
-        if (filterCost) {
-            if (isNaN(filterCost) == true) {
-                filterCost = '';
-                document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                alert("Cost has to be a numeric number!");
-            } else if (filterCost == '') {
-                filterCost = '';
-    
-            } else {
-                filterCost = Math.abs(filterCost);
-            }
-        }
         if (this.state.costParam) {
+            // If not a number
             if (isNaN(this.state.costParam) == true) {
+                this.setState({ costParam: '' });
                 Alert.alert('OOPS!', "Cost has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+                // If lesser than 0
             } else if (this.state.costParam <= 0) {
+                this.setState({ costParam: '' });
                 Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -311,6 +410,7 @@ export default class advDataViewerScreen extends React.Component {
         }
     }
 
+    // Render
     render() {
         return (
             <View style={styles.container}>
@@ -367,7 +467,7 @@ export default class advDataViewerScreen extends React.Component {
                                         placeholder="Cost"
                                         placeholderTextColor='rgb(0,0,0)'
                                         multiline={true}
-                                        onChangeText={(text) => {this.setState({ costParam: text.toString().split(".").map((el,i)=>i?el.split("").slice(0,2).join(""):el).join(".")})}}
+                                        onChangeText={(text) => { this.setState({ costParam: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
                                         value={this.state.costParam}
                                         keyboardType='numeric' />
                                 </TouchableOpacity>
@@ -493,7 +593,6 @@ export default class advDataViewerScreen extends React.Component {
                             />
                         )}
                     </View>
-
                 </View>
             </View>
         );
@@ -501,7 +600,11 @@ export default class advDataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
+    err: {
+        fontSize: 20,
+        color: 'red',
+        textAlign: 'center',
+    },
     parameters: {
         flex: 8,
         backgroundColor: 'green',
@@ -694,6 +797,4 @@ const styles = StyleSheet.create({
         flex: 5,
         fontSize: 30,
     },
-
-
 });

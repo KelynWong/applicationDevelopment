@@ -1,236 +1,209 @@
-// ADVANCE Result Viewer Screen
+// ADVANCE Data Viewer Screen
 // Name: Wong En Ting Kelyn
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
 
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Modal, Dimensions, Alert } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { DataTable, Button } from 'react-native-paper';
+import { Dropdown } from 'react-native-material-dropdown';
+
+// Cache Manager
+import cacheManager from '../cacheManager'
 
 // Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-// Cache Manager
-import cacheManager from '../cacheManager'
+let data = [{
+    value: '5',
+}, {
+    value: '10',
+}, {
+    value: '15',
+}, {
+    value: '20',
+}, {
+    value: '25',
+}, {
+    value: '30',
+}, {
+    value: '35',
+}, {
+    value: '40',
+}, {
+    value: '45',
+}, {
+    value: '50',
+}];
 
-// Chart import
-import { BarChart } from "react-native-chart-kit";
-
-import Card from '../myComponents/card'; //Disregard first 
-
-
-var totalCost = 0;
-var totalPax = 0;
-var optionList;
-
-export default class dataViewerScreen extends React.Component {
+export default class advDataViewerScreen extends React.Component {
     constructor() {
         super();
         this.state = {
-            // State change on API call
-            results: {
-                result: [{
-                    adType: '',
-                    payment: '',
-                    optionId: '',
-                    companyId: '',
-                    amount: '',
-                    audienceReached: ''
-                }]
-            },
-            // Chart Results Response
-            chartResults: {
-                payment: 'No',
-                amount: '0',
-                audienceReached: '0',
-                optionid: '',
-                cost: '',
-                audiencereach: '',
-                companyid: '',
-            },
-            // OptionId no exist check.
-            chartResultsCheck: {
-                optionid: '',
-                cost: '',
-                audiencereach: ''
-            },
-
+            results: [],
+            loaded: true,
+            error: null,
             // Cache items.
             cacheData: {},
             cacheKeys: [],
 
-            // Content State identifiers.
-            loaded: true,
-            error: null,
-            modalOpen: false,
+            // Parsed into API
+            companyIdParse: '',
+            audienceReachParse: '',
+            costParse: '',
+            // Changed on text change, parsed into the parse above only when Filter is clicked.
+            // Prevents override of search result without filter button click consent.
+            companyIdParam: '',
+            audienceReachParam: '',
+            costParam: '',
 
-            optionIds: '',
-            budget: '',
-            companyIdArray: [],
-
-            // Used by Chart
-            chartOptionid: [],
-            chartCost: [],
-            chartAudiencereach: [],
-            totalCost: '',
-            totalPax: '',
-            tabulationComplete: false,
+            rowCount: null,
+            pageNo: 0,
+            pageSize: 5, //default 5 rows in one page
         }
-        this.getResult = this.getResult.bind(this);
-        this.getChart = this.getChart.bind(this);
+        this.getData = this.getData.bind(this);
     }
     // Kelyn's IP
     // baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
     baseURL = 'http://192.168.86.1:3000';
 
-    //School IP
+    // School IP
     // baseURL ='http://172.22.1.9:3000'
 
-    // RUN 1st.
-    clearForComputation() { // Set states for computation.
-        totalCost = 0;
-        totalPax = 0;
-        this.setState({
-            loaded: true,
-            error: null,
-            modalOpen: false,
-            chartOptionid: [],
-            chartCost: [],
-            chartAudiencereach: [],
-            companyIdArray: [],
-            totalCost: 0,
-            totalPax: 0,
-            chartResults: '',
-            modalOpen: false,
-            results: {
-                result: [{
-                    adType: '',
-                    payment: '',
-                    optionId: '',
-                    companyId: '',
-                    amount: '',
-                    audienceReached: ''
-                }]
-            },
-            tabulationComplete: false,
-        }, () => {
-            this.validation(); // Run validation(2nd).
-        });
+    componentDidMount() {
+        this.getRowCount();
+        // Clear all caches. For assignment use.
+        cacheManager.clearAll();
+    }
+
+    // RUN 0. (When filter button is pressed)
+    parseParam = (ev) => {
+        // Validation: 
+        if (!this.state.companyIdParam && !this.state.audienceReachParam && !this.state.costParam) {
+            Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        } else {
+            // If pass the validation checks, go through.
+            if (this.state.audienceReachParam && this.state.companyIdParam && this.state.costParam) {
+                if (this.companyIdValidation() && this.audienceReachValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam == '' && this.state.costParam == '') {
+                if (this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam == '') {
+                if (this.companyIdValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam == '' && this.state.costParam) {
+                if (this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam && this.state.costParam == '') {
+                if (this.companyIdValidation() && this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam == '' && this.state.costParam) {
+                if (this.audienceReachValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam) {
+                if (this.companyIdValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+        }
     }
 
     // RUN 2nd.
-    validation() {
-        if (this.state.optionIds == '' && this.state.budget == '') {
-            Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else if (this.state.optionIds == '') {
-            Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else if (this.state.optionIds.search(",") == -1) {
-            Alert.alert('OOPS!', "Please enter at least 2 optionIds, seperated by a comma!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        else {
-            optionList = this.state.optionIds.toString().split(','); //optionList array
-            if (optionList.length < 2) {
-                Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
-                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                ]);
-            }
-            else {
-                var lengthCheck = [];
-                // var isIntCheck = [];
-                for (let i = 0; i < optionList.length; i++) {
-                    optionList[i] = parseInt(optionList[i]);
-                    optionList[i] = optionList[i].toString();
+    getRowCount = (ev) => {
+        console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
+        console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
+        console.log('this.state.costParse: ' + this.state.costParse);
 
-                    if (optionList[i].length == 10) {
-                        lengthCheck[i] = true;
-                        console.log("Pass2" + optionList[i]);
-                    } else {
-                        lengthCheck[i] = false;
-                        console.log("Failed2" + optionList[i]);
-                    }
-                    // optionList[i] = optionList[i].toString();
-                }
-                var same = false
-                for (let j = 0; j < optionList.length; j++) {
-                    for (let k = 0; k < optionList.length; k++) {
-                        if (optionList[j] == optionList[k] && j != k) {
-                            same = true
-                        }
-                    }
-                }
-                if (!lengthCheck.every(v => v == true)) {
-                    Alert.alert('OOPS!', "Please make sure your optionIds are exactly 10 digits each, and digits only!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (same == true) {
-                    Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (this.state.budget == '') {
-                    Alert.alert('OOPS!', "Please enter a Budget!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (isNaN(this.state.budget)) {
-                    Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else if (this.state.budget <= 0) {
-                    Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
-                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                    ]);
-                }
-                else {
-                    this.getChart(); //Get chart
-                }
-            }
-        }
-    }
-
-    // RUN 3rd.
-    getChart = (ev) => {
-        console.log('this.state.optionIds: ' + this.state.optionIds);
         this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/advance/allChartData?optionIds=${this.state.optionIds}`;
+        let url = this.baseURL + `/advance/getRowCount?companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}&cost=${this.state.costParse}`;
 
         let req = new Request(url, {
             method: 'GET',
         });
 
-        //If error, get from cache.
         fetch(req)
-            .then(response => response.json())
+            .then((response) => response.json())
             .then((json) => { // When network is available..
-                console.log("Response JSON (Chart):");
+                console.log("Show Row Count Response");
                 console.log(json);
-                // Show Chart Representation of options.
-                this.showChart(json);
+                // Show Row Count
+                this.showRowCount(json);
                 // Set Cache
                 cacheManager
                     .set(url, json)
                     .then(
-                        console.log("Cache Set Completed! (Chart)")
+                        console.log("Set Show Row Count Cache!")
                     )
                     .catch((error) => { //correct. 
-                        console.log("Internal SET Cache Error (Chart)!:")
+                        console.log("Internal Set Show Row Count Cache Error!:")
+                        // Works
+                        // this.setState({
+                        //     error: "Cache(Chart) Internal Set Error!"
+                        // });
                         this.setState({ error: error.message });
                     });
             })
             .catch((error) => { // When no network or Error.
-                console.log("CHART ERROR CATCH");
+                console.log("Show Row Count ERROR CATCH");
                 console.log(error);
                 console.log(error.message);
                 this.setState({ error: error.message });
@@ -244,12 +217,12 @@ export default class dataViewerScreen extends React.Component {
 
                         if (!cacheData) { // If Cache does not exist.
                             console.log("Cache does not exist:");
-                            result.cacheMessage = 'Chart Results for this query are not cached!';
+                            result.cacheMessage = 'Row Count for this query are not cached!';
                             this.setState({ error: result.cacheMessage, loaded: true });
                         } else {
                             this.setState({ cacheData: cacheData }, () => {
                                 console.log("Show Cache Data Chart");
-                                this.showChart(this.state.cacheData);
+                                this.showRowCount(this.state.cacheData);
                             });
                         }
                     })
@@ -258,223 +231,189 @@ export default class dataViewerScreen extends React.Component {
                         this.setState({ error: error.message });
                     });
             })
+        // .catch(this.badStuff)
     }
 
-    // RUN 4th.
-    showChart = (data) => {
+    // RUN 3rd.
+    showRowCount = (data) => {
         this.setState({
-            chartResultsCheck: data
-        }, () => {
-            // Option id existence check.
-            console.log("this.state.chartResultsCheck.length: " + this.state.chartResultsCheck.length);
-            if (this.state.chartResultsCheck.length == undefined) {
-                Alert.alert('OOPS!', "Please enter optionIds that are valid!", [
-                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                ]);
-                this.setState({ loaded: true });
-            } else if (this.state.chartResultsCheck.length != optionList.length) {
-                Alert.alert('OOPS!', "One or more of the optionId you have entered is invalid!", [
-                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
-                ]);
-                this.setState({ loaded: true });
-            } else {
-                function addAttributes(x) {
-                    if (Array.isArray(x)) { // if data is an array
-                        x.forEach(addAttributes); // call the function on each item
-                    } else if (x instanceof Object) { // otherwise, if data is an object
-                        // add attribute to each object index.
-                        x.payment = 'No';
-                        x.amount = '0';
-                        x.audienceReached = '0';
-                    }
-                }
-                addAttributes(data);
-                this.setState({
-                    chartResults: data
-                }, () => {
-                    console.log(this.state.chartResults);
-                    // Sets items to previous state as such that the whole state isn't re-written.
-                    for (let i = 0; i < this.state.chartResults.length; i++) {
-                        // Adding results to states needed by chart.
-                        this.setState(prevState => ({
-                            chartOptionid: [...prevState.chartOptionid, this.state.chartResults[i].optionid],
-                            chartCost: [...prevState.chartCost, this.state.chartResults[i].cost],
-                            chartAudiencereach: [...prevState.chartAudiencereach, this.state.chartResults[i].audiencereach],
-                            companyIdArray: [...prevState.companyIdArray, this.state.chartResults[i].companyid],
-                        }));
-                    }
-                    this.getResult();
-                });
-            }
+            rowCount: data
         });
+        console.log("ROW COUNT:" + this.state.rowCount[0].count);
+        this.setState({ loaded: true });
+
+        this.getData();
     }
 
-    // RUN 5th
-    getResult = (ev) => {
-        console.log('this.state.optionIds: ' + this.state.optionIds);
-        console.log('this.state.budget: ' + this.state.budget);
+    // RUN 4th. 
+    getData = (ev) => { // On Filter
+
         this.setState({ loaded: false, error: null });
-        let url = this.baseURL + `/advance/result?optionIds=${this.state.optionIds}&budget=${this.state.budget}`;
+        console.log(this.state.companyIdParse);
+        console.log(this.state.audienceReachParse);
+        console.log(this.state.costParse);
 
-        let req = new Request(url, {
-            method: 'GET',
-        });
+        let url = this.baseURL + `/advance/Alldata?pageNo=${this.state.pageNo}&pageSize=${this.state.pageSize}&companyId=${this.state.companyIdParse}&audienceReach=${this.state.audienceReachParse}&cost=${this.state.costParse}`;
 
-        fetch(req)
-            .then(response => response.json())
+        fetch(url, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',  // It can be used to overcome cors errors
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
             .then((json) => { // When network is available..
-                console.log("Response JSON (Results):");
+                console.log("Get Data Response");
                 console.log(json);
+                // Show Row Count
+                this.showData(json);
                 // Set Cache
-                this.showResult(json);
                 cacheManager
                     .set(url, json)
                     .then(
-                        console.log("Cache Set Completed! (Results)")
+                        console.log("Set Get Data Cache!")
                     )
-                    .catch((error) => {
-                        console.log("Internal SET Cache Error (Results)!:")
+                    .catch((error) => { //correct. 
+                        console.log("Internal Get Data Cache Error!:")
                         // Works
+                        // this.setState({
+                        //     error: "Cache(Chart) Internal Set Error!"
+                        // });
                         this.setState({ error: error.message });
                     });
             })
-            .catch((error) => { // When no network or Error..
-                console.log("RESULT COMPUTATION CATCH")
+            .catch((error) => { // When no network or Error.
+                console.log("Get Data ERROR CATCH");
                 console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
 
                 cacheManager
                     .get(url)
                     .then((cacheData) => {
-                        console.log("CACHE DATA RESULTS");
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
                         console.log(cacheData);
-                        // this.setState({ chartResultsCheck: cacheData });
-                        let result = { error: error.message }
-                        // Add to cacheData array!
-                        if (!cacheData) {
-                            result.cacheMessage = 'Results for this query are not cached!';
-                            this.setState({ error: result.cacheMessage, loaded: true });
 
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Get Data for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
                         } else {
                             this.setState({ cacheData: cacheData }, () => {
-                                console.log("Show Results via Cache");
-                                this.showResult(this.state.cacheData);
+                                console.log("Show Cache Data Chart");
+                                this.showData(this.state.cacheData);
                             });
                         }
                     })
-                    .catch((error) => { // When no network or Error.
-                        console.log("RESULT COMPUTATION CATCH")
-                        console.log("GET Cache Error! (Results)")
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
                         this.setState({ error: error.message });
                     });
             })
+
+        // .catch(this.badStuff)
     }
 
-    // RUN 6th
-    showResult = (data) => {
-        // Retrieve overall total result.
-        totalCost = 0;
-        totalPax = 0;
-        console.log("DATA LENGTH:" + data.result.length);
-        if (data.result.length != 0) {
-            for (var i = 0; i < data.result.length; i++) {
-                totalCost += data.result[i].amount;
-                totalPax += data.result[i].audienceReached;
-            }
-        }
-        // Parse to 3 d.p. for output.
-        totalPax = parseFloat(totalPax.toFixed(3));
-
-        this.setState({ totalCost: totalCost });
-        this.setState({ totalPax: totalPax });
-        console.log(this.state.totalCost);
-        console.log(this.state.totalPax);
-
+    // RUN 5th.
+    showData = (data) => {
         this.setState({
             results: data
         });
 
-        // Make a copy of this.state.results to append it and place back into this.state.results
-        let resultsCopy = JSON.parse(JSON.stringify(this.state.results))
-
-        this.setState({
-            results: resultsCopy
-        }, () => {
-
-            var x = this.state.chartResults;
-            var y = this.state.results.result;
-            console.log("LENGTH2" + y.length);
-            if (y.length != 0) {
-                for (var i = 0; i < x.length; i++) {
-
-                    for (var j = 0; j < y.length; j++) {
-                        if (x[i].optionid == y[j].optionId) {
-                            x[i].payment = 'Full'; // add prop to object
-                            x[i].amount = y[j].amount;
-                            x[i].audienceReached = y[j].audienceReached;
-                        }
-                    }
-                }
-                this.setState({ chartResults: x });
-            }
-            console.log(this.state.results.result);
-            console.log(this.state.chartResults);
-            console.log("totalPax: " + totalPax);
-            console.log("totalCost: " + totalCost);
-            this.setState({ loaded: true });
-            this.setState({ tabulationComplete: true });
-        })
+        console.log(this.state.results);
+        this.setState({ loaded: true });
     }
 
-    // Error handler.
-    error = (err) => {
+    badStuff = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
 
-    // Clear text.
     clearText() {
         this.setState({
-            loaded: true,
-            error: null,
-            modalOpen: false,
-            chartOptionid: [],
-            chartCost: [],
-            chartAudiencereach: [],
-            companyIdArray: [],
-            totalCost: 0,
-            totalPax: 0,
-            chartResults: '',
-            modalOpen: false,
-            results: {
-                result: [{
-                    adType: '',
-                    payment: '',
-                    optionId: '',
-                    companyId: '',
-                    amount: '',
-                    audienceReached: ''
-                }]
-            },
-            chartResults: '',
-            optionIds: '',
-            budget: '',
-            tabulationComplete: false,
-        })
+            companyIdParse: '',
+            audienceReachParse: '',
+            costParse: '',
+            companyIdParam: '',
+            audienceReachParam: '',
+            costParam: '',
+            pageNo: 0
+        }, () => {
+            this.componentDidMount();
+        });
     }
 
-    // Check Modal
-    checkModal() {
-        console.log("RESULTS LENGTH" + this.state.results.result.length);
-        // In the case of input budget being less than option costs.
-        if (this.state.results.result.length == undefined) {
-            this.setState({ modalOpen: false });
-        } else if (this.state.results.result.length == 0) {
-            this.setState({ modalOpen: true });
-        } else {
-            if (this.state.results.result[0].amount == '') {
-                this.setState({ modalOpen: false });
+    // Validation
+    companyIdValidation() {
+        console.log("this.state.companyIdParam.length: " + this.state.companyIdParam.length)
+        if (this.state.companyIdParam) {
+            if (isNaN(this.state.companyIdParam) == true) {
+                this.setState({ companyIdParam: '' });
+                Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else if (this.state.companyIdParam % 1 != 0) {
+                this.setState({ companyIdParam: '' });
+                Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else if (this.state.companyIdParam.length != 10) {
+                this.setState({ companyIdParam: '' });
+                Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
             } else {
-                this.setState({ modalOpen: true });
+                return true;
+            }
+        }
+    }
+
+    audienceReachValidation() {
+        if (this.state.audienceReachParam) {
+            // If filterAudienceReach exists
+            // If is not number.
+            if (isNaN(this.state.audienceReachParam) == true) {
+                this.setState({ audienceReachParam: '' });
+                Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                // If smaller than 1.
+            } else if (this.state.audienceReachParam < 1) {
+                this.setState({ audienceReachParam: '' });
+                Alert.alert('OOPS!', "Audience reach has to be 1 or more!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                // If decimal.
+            } else if (this.state.audienceReachParam % 1 != 0) {
+                this.setState({ audienceReachParam: '' });
+                Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            }
+            else {
+                return true;
+            }
+        }
+    }
+
+    costValidation() {
+        if (this.state.costParam) {
+            // If not a number
+            if (isNaN(this.state.costParam) == true) {
+                this.setState({ costParam: '' });
+                Alert.alert('OOPS!', "Cost has to be a numeric number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                // If lesser than 0
+            } else if (this.state.costParam <= 0) {
+                this.setState({ costParam: '' });
+                Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else {
+                return true;
             }
         }
     }
@@ -485,164 +424,183 @@ export default class dataViewerScreen extends React.Component {
 
                 <View style={styles.row1}>
                     <View style={styles.row1Title}>
-                        <Text style={styles.filterText}>Enter:</Text>
-
+                        <Text style={styles.filterText}>Filter by:</Text>
                     </View>
+
+
                     <View style={styles.row1Params}>
-                        <View style={styles.textInputContainer}>
-                            <View style={styles.icon}>
-                                <Ionicons name="ios-menu" size={30}></Ionicons>
+                        <View style={styles.parameters}>
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <Ionicons name="ios-business" size={30}></Ionicons>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="CompanyId"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={false}
+                                        onChangeText={(text) => this.setState({ companyIdParam: text })}
+                                        value={this.state.companyIdParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={styles.paramArea}>
-                                <TextInput
-                                    style={[styles.bodyText]}
-                                    placeholder="OptionIds"
-                                    placeholderTextColor='rgb(0,0,0)'
-                                    multiline={false}
-                                    onChangeText={(text) => this.setState({ optionIds: text })}
-                                    value={this.state.optionIds}
-                                    keyboardType='numeric' />
-                            </TouchableOpacity>
-                            <Button style={styles.buttonCompute} mode='contained' onPress={() => { this.clearForComputation() }}>
-                                <Text style={styles.buttonText}>Compute</Text>
-                            </Button>
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <Ionicons name="ios-person" size={30}></Ionicons>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="Audience Reach"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={true}
+                                        onChangeText={(text) => this.setState({ audienceReachParam: text })}
+                                        value={this.state.audienceReachParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
+                            </View>
+
+
+                            <View style={styles.textInputContainer}>
+                                <View style={styles.icon}>
+                                    <FontAwesome name="dollar" size={30}></FontAwesome>
+                                </View>
+                                <TouchableOpacity style={styles.paramArea}>
+                                    <TextInput
+                                        style={[styles.bodyText]}
+                                        placeholder="Cost"
+                                        placeholderTextColor='rgb(0,0,0)'
+                                        multiline={true}
+                                        onChangeText={(text) => { this.setState({ costParam: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
+                                        value={this.state.costParam}
+                                        keyboardType='numeric' />
+                                </TouchableOpacity>
+
+                            </View>
                         </View>
 
-
-                        <View style={styles.textInputContainer}>
-                            <View style={styles.icon}>
-                                <FontAwesome name="dollar" size={30}></FontAwesome>
-                            </View>
-                            <TouchableOpacity style={styles.paramArea}>
-                                <TextInput
-                                    style={[styles.bodyText]}
-                                    placeholder="Budget"
-                                    placeholderTextColor='rgb(0,0,0)'
-                                    multiline={true}
-                                    onChangeText={(text) => { this.setState({ budget: text.toString().split(".").map((el, i) => i ? el.split("").slice(0, 2).join("") : el).join(".") }) }}
-                                    value={this.state.budget}
-                                    keyboardType='numeric' />
-                            </TouchableOpacity>
+                        <View style={styles.paramButtons}>
+                            <Button style={styles.buttonFilter} mode='contained' onPress={() => { this.parseParam() }}>
+                                <Text style={styles.testText}>Filter</Text>
+                            </Button>
                             <Button style={styles.buttonClear} mode='contained' onPress={() => { this.clearText() }}>
-                                <Text style={styles.buttonText}>Clear</Text>
+                                <Text style={styles.testText}>Clear</Text>
                             </Button>
                         </View>
                     </View>
+
+
                 </View>
 
                 <View style={styles.row2}>
-                    <View style={styles.row2Results}>
+                    <View style={styles.pageSizeContainer}>
+                        <Dropdown style={styles.dropdown}
+                            label='Page size'
+                            data={data}
+                            // pickerStyle={}
+                            value={this.state.pageSize}
+                            fontSize={25}
+                            labelFontSize={18}
+                            onChangeText={value => {
+                                this.setState({ pageNo: 0 });
+                                this.setState({ pageSize: value }, () => this.getData());
+                            }}
+                        />
+                    </View>
 
-                        <View style={styles.resultsArea}>
-                            {this.state.tabulationComplete && (
-                                <Text style={styles.resultsText}>Results: ${totalCost} for {totalPax}pax</Text>
+                    <View style={styles.tableContainer}>
+                        <DataTable style={styles.colourTest}>
+                            <DataTable.Header style={styles.colourTest}>
+                                <DataTable.Title style={styles.cell1} numeric
+                                    sortDirection='ascending'
+                                    numberOfLines={4}
+                                >
+                                    OptionId
+                                </DataTable.Title>
+                                <DataTable.Title style={styles.cell2} numeric
+                                    // sortDirection='ascending'
+                                    numberOfLines={4}
+                                >
+                                    CompanyId
+                                </DataTable.Title>
+                                <DataTable.Title style={styles.cell3} numeric
+                                    // sortDirection='ascending'
+                                    numberOfLines={2}
+                                >
+                                    Cost
+                                </DataTable.Title>
+                                <DataTable.Title style={styles.cell4} numeric
+                                    // sortDirection='ascending'
+                                    numberOfLines={2}
+                                >
+                                    Reach
+                                </DataTable.Title>
+
+                                <DataTable.Title style={styles.cell5}
+                                    // sortDirection='ascending'
+                                    numberOfLines={3}
+                                >
+                                    Ad Type
+                                </DataTable.Title>
+                            </DataTable.Header>
+
+                            {!this.state.loaded && (
+                                <ActivityIndicator size="large" color="black"></ActivityIndicator>
                             )}
-                        </View>
-                        <Button style={styles.tabButtonContainer} mode='contained' onPress={() => { this.checkModal() }}>
-                            <Ionicons style={styles.tabButton} name="ios-menu" size={30}></Ionicons>
-                        </Button>
 
-                    </View>
-                    <View style={styles.row2Chart}>
+                            {this.state.error && (
+                                <Text style={styles.err}>{this.state.error}</Text>
+                            )}
 
-                        {!this.state.loaded && (
-                            <ActivityIndicator size="large" color="black"></ActivityIndicator>
-                        )}
-
-                        {!!this.state.error && (
-                            <Text style={styles.err}>{this.state.error}</Text>
-                        )}
-                        
-                        <View>
-                            <ScrollView>
-                                {!!this.state.chartResults && !!this.state.chartResults.length > 0 && (
-                                    <BarChart
-                                        data={{
-                                            labels: this.state.chartOptionid,
-                                            datasets: [
-                                                {
-                                                    data: this.state.chartCost,
-                                                },
-                                            ],
-                                        }}
-                                        width={Dimensions.get('window').width - 16}
-                                        height={220}
-                                        yAxisLabel={'$'}
-                                        fromZero={true}
-                                        chartConfig={{
-                                            backgroundColor: '#1cc910',
-                                            backgroundGradientFrom: '#eff3ff',
-                                            backgroundGradientTo: '#efefef',
-                                            decimalPlaces: 2,
-                                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                            style: {
-                                                borderRadius: 16,
-                                            },
-                                        }}
-                                        style={{
-                                            marginVertical: 8,
-                                            borderRadius: 16,
-                                            marginLeft: 10,
-                                        }}
-                                    />
-                                )}
-
-                                {!!this.state.chartResults && !!this.state.chartResults.length > 0 && (
-                                    <BarChart
-                                        data={{
-                                            labels: this.state.chartOptionid,
-                                            datasets: [
-                                                {
-                                                    data: this.state.chartAudiencereach,
-                                                },
-                                            ],
-                                        }}
-                                        width={Dimensions.get('window').width - 16}
-                                        height={220}
-                                        yAxisSuffix={'pax'}
-
-                                        fromZero={true}
-                                        chartConfig={{
-                                            backgroundColor: '#1cc910',
-                                            backgroundGradientFrom: '#eff3ff',
-                                            backgroundGradientTo: '#efefef',
-                                            decimalPlaces: 2,
-                                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                                            style: {
-                                                borderRadius: 16,
-                                            },
-                                        }}
-                                        style={{
-                                            marginVertical: 8,
-                                            borderRadius: 16,
-                                            marginLeft: 10,
-
-                                        }}
-                                    />
-                                )}
-                            </ScrollView>
-                        </View>
-
-                        <Modal visible={this.state.modalOpen}>
-                            <View style={styles.tabulationArea}>
-                                <View style={styles.modalBar}>
-                                    <Ionicons.Button name="chevron-back" size={25} backgroundColor='#009387' onPress={() => this.setState({ modalOpen: false })}>
-                                        <Text style={styles.barText}>Tabulation</Text>
-
-                                    </Ionicons.Button>
-                                </View>
-                                {!!this.state.chartResults && !!this.state.chartResults.length > 0 && (this.state.chartResults.map((data, i) => (
-                                    <View key={i} style={styles.cardContent}>
-                                        <Text style={styles.cardText}>{data.payment} payment for</Text>
-                                        <Text style={styles.cardText}>option {data.optionid}</Text>
-                                        <Text style={styles.cardText}>from company {data.companyid}</Text>
-                                        <Text style={styles.cardText}>${data.amount} for {data.audienceReached}pax</Text>
-                                    </View>
-                                ))
-                                )}
+                            <View style={styles.dataTableContent}>
+                                <ScrollView>
+                                    {this.state.results && this.state.results.length > 0 && (this.state.results.map((result, i) => (
+                                        <DataTable.Row key={i} style={styles.colourTest}>
+                                            <DataTable.Cell style={styles.cell1} numeric>{result.optionid}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell2} numeric>{result.companyid}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell3} numeric>{result.cost}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell4} numeric>{result.audiencereach}</DataTable.Cell>
+                                            <DataTable.Cell style={styles.cell5}>{result.adtype}</DataTable.Cell>
+                                        </DataTable.Row>
+                                    )))}
+                                </ScrollView>
                             </View>
-                        </Modal>
+
+                        </DataTable>
                     </View>
+                    <View style={styles.paginationContainer}>
+
+
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: 0 }, () => this.getData()); }}>
+                            <Text style={styles.buttonText}>First</Text>
+                        </Button>
+                        <Button style={styles.pageButton} mode='contained' onPress={() => { this.setState({ pageNo: Math.floor(this.state.rowCount[0].count / this.state.pageSize) }, () => this.getData()); }}>
+                            <Text style={styles.buttonText}>Last</Text>
+                        </Button>
+                        {this.state.rowCount && (
+                            <DataTable.Pagination style={styles.pagination}
+                                page={this.state.pageNo} //Page is the current page
+                                numberOfPages={Math.floor(this.state.rowCount[0].count / this.state.pageSize + 1)} //Correct
+                                onPageChange={pagee => {
+                                    console.log('change', pagee) //pagee = current page index
+
+                                    this.setState({ pageNo: pagee }, () => this.getData()); //Set State actually takes time to set a state. So callbacks must be done.
+
+                                    // console.log("TEST" + this.state.pageNo)
+                                    // this.getData();
+                                }}
+                                label={`${((this.state.pageNo) * this.state.pageSize) + 1}-${
+
+
+                                    ((this.state.pageNo + 1) * this.state.pageSize) >= this.state.rowCount[0].count ? this.state.rowCount[0].count : ((this.state.pageNo + 1) * this.state.pageSize)
+                                    } of ${this.state.rowCount[0].count}`} //correct
+                            />
+                        )}
+                    </View>
+
                 </View>
             </View>
         );
@@ -650,62 +608,58 @@ export default class dataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    // Tabulation Modal Styles -------
-    barText: {
-        color: 'white',
-        fontSize: 20
-    },
-    cardText: {
-        color: 'black',
-        fontSize: 20
-    },
-    cardContent: {
-        // backgroundColor: 'blue',
-        marginHorizontal: 18,
-        marginVertical: 10,
-        fontSize: 50,
-        borderBottomWidth: 3,
-        borderColor: '#000000',
-    },
-    modalBar: {
-        height: 45,
-        width: '100%',
-        backgroundColor: '#009387',
-        color: 'white',
-    },
-    tabulationArea: {
-        // backgroundColor: 'green',
-        borderRadius: 6,
-        backgroundColor: '#fff',
-        shadowOffset: { width: 1, height: 1 },
-        shadowColor: "#333",
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        fontSize: 50,
-    },
-
-    // Main styles: ----------
     err: {
         fontSize: 20,
         color: 'red',
         textAlign: 'center',
     },
-    container: {
-        // backgroundColor: 'powderblue',
+    parameters: {
+        flex: 8,
+        backgroundColor: 'green',
+    },
+    dataTableContent: {
+        height: 230,
+    },
+    pageButton: {
         flex: 1,
+        textAlign: 'center',
+        justifyContent: 'center',
+        backgroundColor: null,
+        shadowRadius: 0,
+        elevation: 0,
+    },
+    buttonText: {
+        color: 'black',
+        textDecorationLine: 'underline',
+    },
+    colourTest: {
+        // flex: 4,
+        // backgroundColor: 'green',
+        margin: 0,
+        //IMPORTANT
+        paddingLeft: 0,
+        paddingRight: 0,
+    },
+    colourTest2: {
+        flex: 4
+    },
+    container: {
+        flex: 1,
+        // backgroundColor: 'powderblue',
         flexDirection: 'column',
         fontFamily: 'Montserrat-Regular',
     },
     // Row 1 -----------------
     row1: {
+        flex: 5,
         backgroundColor: 'skyblue',
-        flex: 3,
         flexDirection: 'column'
+
     },
 
     row1Title: {
+        flex: 0.7,
         // backgroundColor: 'blue'
-        flex: 1,
     },
     filterText: {
         height: 30,
@@ -714,13 +668,15 @@ const styles = StyleSheet.create({
         marginTop: "3%",
     },
     textInputContainer: {
-        backgroundColor: "#808080",
         flexDirection: 'row',
+        // marginTop: "3%",
         alignItems: 'center',
+        backgroundColor: "#808080",
         flex: 1,
         borderWidth: 1,
         borderColor: '#000000',
     },
+
     icon: {
         flex: 1,
         alignItems: 'center',
@@ -728,57 +684,65 @@ const styles = StyleSheet.create({
     paramArea: {
         flex: 6
     },
+    paramButtons: {
+        flex: 3,
+        // backgroundColor: 'red',
+    },
     bodyText: {
-        backgroundColor: '#fff',
         fontSize: 17,
+        // marginTop: '5%',
         paddingLeft: 10,
         paddingRight: 10,
+        backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#000000',
     },
-    buttonCompute: {
-        backgroundColor: 'green',
+    buttonFilter: {
         fontSize: 10,
         flex: 1,
         height: "100%",
         justifyContent: 'center',
         alignItems: "center",
+        backgroundColor: 'green',
         borderWidth: 2,
         borderColor: '#000000',
     },
     buttonClear: {
-        backgroundColor: 'gold',
         fontSize: 10,
         flex: 1,
         height: "100%",
         justifyContent: 'center',
         alignItems: "center",
+        backgroundColor: 'gold',
         borderWidth: 2,
         borderColor: '#000000',
     },
-    buttonText: {
+
+    testText: {
         fontSize: 13,
     },
+
     row1Params: {
-        backgroundColor: 'powderblue',
         flex: 2,
         padding: 0,
+        backgroundColor: 'powderblue',
+        flexDirection: 'row'
     },
     // Row 2 -------------
     row2: {
-        backgroundColor: 'steelblue',
         flex: 9,
+        // backgroundColor: 'steelblue',
     },
     // Results Area
     row2Results: {
-        backgroundColor: 'grey',
         flex: 2,
+        backgroundColor: 'red',
         flexDirection: 'row',
     },
 
     resultsArea: {
-        backgroundColor: 'gold',
         flex: 11.9,
+        backgroundColor: 'gold',
         justifyContent: "center",
 
     },
@@ -787,20 +751,58 @@ const styles = StyleSheet.create({
         fontSize: 22,
         textAlign: 'left',
         marginLeft: "3%",
-    },
-    tabButtonContainer: {
-        flex: 0.1,
-        alignItems: 'center',
-        backgroundColor: '#2d2e2e',
-        paddingTop: 5,
-    },
-    tabButton: {
-        textAlign: "center",
+        // marginTop: "3%",
+        // fontFamily: 'Montserrat-Regular',
     },
 
+
+    dropdown: {
+        textAlign: "center",
+    },
     // Chart Area
-    row2Chart: {
-        flex: 12,
-        backgroundColor: 'grey'
-    }
+    tableContainer: {
+        flex: 10,
+        // maxHeight: 40,
+        // backgroundColor: 'grey'
+        width: "100%",
+    },
+    cell1: {
+        flex: 2,
+        justifyContent: 'center',
+        // backgroundColor: 'blue',
+    },
+    cell2: {
+        flex: 2,
+        justifyContent: 'center',
+        // backgroundColor: 'green'
+    },
+    cell3: {
+        flex: 1,
+        justifyContent: 'center',
+        // backgroundColor: 'red'
+    },
+    cell4: {
+        flex: 1,
+        justifyContent: 'center',
+        // backgroundColor: 'gold'
+    },
+    cell5: {
+        flex: 1.5,
+        justifyContent: 'center',
+        // backgroundColor: 'grey'
+    },
+
+    pageSizeContainer: {
+        flex: 2,
+        // backgroundColor: 'red'
+    },
+    paginationContainer: {
+        flexDirection: 'row',
+        flex: 2,
+        backgroundColor: '#009387'
+    },
+    pagination: {
+        flex: 5,
+        fontSize: 30,
+    },
 });

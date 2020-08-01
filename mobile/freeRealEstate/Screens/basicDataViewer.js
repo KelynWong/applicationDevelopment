@@ -8,6 +8,10 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Activi
 import { DataTable, Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-material-dropdown';
 
+// Cache Manager
+import cacheManager from '../cacheManager'
+
+// Icons from React Native Vector Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -41,6 +45,10 @@ export default class basicDataViewerScreen extends React.Component {
             results: [],
             loaded: true,
             error: null,
+            // Cache items.
+            cacheData: {},
+            cacheKeys: [],
+
             // Parsed into API
             companyIdParse: '',
             audienceReachParse: '',
@@ -65,6 +73,8 @@ export default class basicDataViewerScreen extends React.Component {
 
     componentDidMount() {
         this.getRowCount();
+        // Clear all caches. For assignment use.
+        cacheManager.clearAll();
     }
 
     // RUN 0. (When filter button is pressed)
@@ -96,7 +106,6 @@ export default class basicDataViewerScreen extends React.Component {
                     });
                 }
             } else if (this.state.audienceReachParam != '' && this.state.companyIdParam == '') {
-                console.log("HI");
                 if (this.audienceReachValidation()) {
                     this.setState({
                         companyIdParse: this.state.companyIdParam,
@@ -109,7 +118,7 @@ export default class basicDataViewerScreen extends React.Component {
         }
     }
 
-    // RUN 1st
+    // RUN 1st.
     getRowCount = (ev) => {
         console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
         console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
@@ -122,8 +131,52 @@ export default class basicDataViewerScreen extends React.Component {
 
         fetch(req)
             .then((response) => response.json())
-            .then(this.showRowCount)
-            .catch(this.badStuff)
+            .then((json) => { // When network is available..
+                console.log("Show Row Count Response");
+                console.log(json);
+                // Show Row Count
+                this.showRowCount(json);
+                // Set Cache
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Set Show Row Count Cache!")
+                    )
+                    .catch((error) => { //correct. 
+                        console.log("Internal Set Show Row Count Cache Error!:")
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("Show Row Count ERROR CATCH");
+                console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Row Count for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showRowCount(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
+                    });
+            })
+        // .catch(this.badStuff)
     }
 
     // RUN 2nd.
@@ -136,6 +189,7 @@ export default class basicDataViewerScreen extends React.Component {
 
         this.getData();
     }
+
     // RUN 3rd. 
     getData = (ev) => { // On Filter
         this.setState({ loaded: false, error: null });
@@ -152,8 +206,52 @@ export default class basicDataViewerScreen extends React.Component {
             }
         })
             .then((response) => response.json())
-            .then(this.showData)
-            .catch(this.badStuff)
+            .then((json) => { // When network is available..
+                console.log("Get Data Response");
+                console.log(json);
+                // Show Row Count
+                this.showData(json);
+                // Set Cache
+                cacheManager
+                    .set(url, json)
+                    .then(
+                        console.log("Set Get Data Cache!")
+                    )
+                    .catch((error) => { //correct. 
+                        console.log("Internal Get Data Cache Error!:")
+                        this.setState({ error: error.message });
+                    });
+            })
+            .catch((error) => { // When no network or Error.
+                console.log("Get Data ERROR CATCH");
+                console.log(error);
+                console.log(error.message);
+                this.setState({ error: error.message });
+
+                cacheManager
+                    .get(url)
+                    .then((cacheData) => {
+                        let result = { error: error.message };
+                        console.log("CACHE DATA");
+                        console.log(cacheData);
+
+                        if (!cacheData) { // If Cache does not exist.
+                            console.log("Cache does not exist:");
+                            result.cacheMessage = 'Get Data for this query are not cached!';
+                            this.setState({ error: result.cacheMessage, loaded: true });
+                        } else {
+                            this.setState({ cacheData: cacheData }, () => {
+                                console.log("Show Cache Data Chart");
+                                this.showData(this.state.cacheData);
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log("Get Cache Error! (Chart):")
+                        this.setState({ error: error.message });
+                    });
+            })
+        // .catch(this.badStuff)
     }
 
     // RUN 4th.
@@ -166,13 +264,13 @@ export default class basicDataViewerScreen extends React.Component {
         this.setState({ loaded: true });
     }
 
-    // Error handler
+    // Error handler.
     badStuff = (err) => {
         console.log(err)
         this.setState({ loaded: true, error: err.message });
     }
 
-    // Clear Text
+    // Clear Text.
     clearText() {
         this.setState({
             companyIdParse: '',
@@ -185,22 +283,22 @@ export default class basicDataViewerScreen extends React.Component {
         });
     }
 
-    // Validation
+    // Validation.
     companyIdValidation() {
         console.log("this.state.companyIdParam.length: " + this.state.companyIdParam.length)
         if (this.state.companyIdParam) {
             if (isNaN(this.state.companyIdParam) == true) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             } else if (this.state.companyIdParam % 1 != 0) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             } else if (this.state.companyIdParam.length != 10) {
-                // this.setState({ companyIdParam: '' })
+                this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -214,12 +312,19 @@ export default class basicDataViewerScreen extends React.Component {
         if (this.state.audienceReachParam) {
             // If filterAudienceReach exists
             if (isNaN(this.state.audienceReachParam) == true) {
-                // this.setState({ audienceReachParam: '' })
+                this.setState({ audienceReachParam: '' });
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+                // If audienceReach is smaller than 1
+            } else if (this.state.audienceReachParam < 1) {
+                this.setState({ audienceReachParam: '' });
+                Alert.alert('OOPS!', "Audience reach has to be 1 or more!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+                // If decimal.
             } else if (this.state.audienceReachParam % 1 != 0) {
-                // this.setState({ audienceReachParam: '' })
+                this.setState({ audienceReachParam: '' });
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
@@ -229,6 +334,7 @@ export default class basicDataViewerScreen extends React.Component {
         }
     }
 
+    // Render
     render() {
         return (
             <View style={styles.container}>
@@ -384,7 +490,6 @@ export default class basicDataViewerScreen extends React.Component {
                             />
                         )}
                     </View>
-
                 </View>
             </View>
         );
@@ -392,6 +497,11 @@ export default class basicDataViewerScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    err: {
+        fontSize: 20,
+        color: 'red',
+        textAlign: 'center',
+    },
     dataTableContent: {
         height: 270,
         // flex: 12,
