@@ -58,9 +58,9 @@ export default class advDataViewerScreen extends React.Component {
         this.getData = this.getData.bind(this);
     }
     // Kelyn's IP
-    // baseURL = 'http://192.168.229.1:3000';
+    baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    baseURL = 'http://192.168.86.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
 
     // School IP
     // baseURL ='http://172.22.1.9:3000'
@@ -68,29 +68,98 @@ export default class advDataViewerScreen extends React.Component {
     componentDidMount() {
         this.getRowCount();
     }
-    // RUN 1st.
-    parseParam = (ev) => {
-        this.setState({
-            companyIdParse: this.state.companyIdParam,
-            audienceReachParse: this.state.audienceReachParam,
-            costParse: this.state.costParam
 
-        }, () => {
-            this.getRowCount();
-        });
-    }    
+    // RUN 0. (When filter button is pressed)
+    parseParam = (ev) => {
+        // Validation: 
+        if (!this.state.companyIdParam && !this.state.audienceReachParam && !this.state.costParam) {
+            Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
+                { text: 'Understood', onPress: () => console.log('Alert closed.') }
+            ]);
+        } else {
+            // If pass the validation checks, go through.
+            if (this.state.audienceReachParam && this.state.companyIdParam && this.state.costParam) {
+                if (this.companyIdValidation() && this.audienceReachValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam == '' && this.state.costParam == '') {
+                if (this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            } 
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam == '') {
+                if (this.companyIdValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam == '' && this.state.costParam) {
+                if (this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam && this.state.costParam == '') {
+                if (this.companyIdValidation() && this.audienceReachValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam && this.state.companyIdParam == '' && this.state.costParam) {
+                if (this.companyIdValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+            else if (this.state.audienceReachParam == '' && this.state.companyIdParam && this.state.costParam) {
+                if (this.audienceReachValidation() && this.costValidation()) {
+                    this.setState({
+                        companyIdParse: this.state.companyIdParam,
+                        audienceReachParse: this.state.audienceReachParam,
+                        costParse: this.state.costParam
+                    }, () => {
+                        this.getRowCount();
+                    });
+                }
+            }
+        }
+    }  
     
     // RUN 2nd.
     getRowCount = (ev) => {
-        // // Validation: 
-        // if (!this.state.companyIdParse && !this.state.audienceReachParse) {
-        //     Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
-        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
-        //     ]);
-        // } else {
-        //     this.companyIdValidation();
-        //     this.audienceReachValidation();
-        // }
         console.log('this.state.companyIdParse: ' + this.state.companyIdParse);
         console.log('this.state.audienceReachParse: ' + this.state.audienceReachParse);
         console.log('this.state.costParse: ' + this.state.costParse);
@@ -170,42 +239,74 @@ export default class advDataViewerScreen extends React.Component {
         });
     }
 
-    // Validation:
+    // Validation
     companyIdValidation() {
-        console.log("this.state.companyIdParse.length: " + this.state.companyIdParse.length)
-        if (this.state.companyIdParse) {
-            if (isNaN(this.state.companyIdParse) == true) {
-                this.setState({ companyIdParse: '' })
+        console.log("this.state.companyIdParam.length: " + this.state.companyIdParam.length)
+        if (this.state.companyIdParam) {
+            if (isNaN(this.state.companyIdParam) == true) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyIdParse % 1 != 0) {
-                this.setState({ companyIdParse: '' })
+            } else if (this.state.companyIdParam % 1 != 0) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.companyIdParse.length != 10) {
-                this.setState({ companyIdParse: '' })
+            } else if (this.state.companyIdParam.length != 10) {
+                // this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+            } else {
+                return true;
             }
         }
     }
 
     audienceReachValidation() {
-        if (this.state.audienceReachParse) {
+        if (this.state.audienceReachParam) {
             // If filterAudienceReach exists
-            if (isNaN(this.state.audienceReachParse) == true) {
-                this.setState({ audienceReachParse: '' })
+            if (isNaN(this.state.audienceReachParam) == true) {
+                // this.setState({ audienceReachParam: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
-            } else if (this.state.audienceReachParse % 1 != 0) {
-                this.setState({ audienceReachParse: '' })
+            } else if (this.state.audienceReachParam % 1 != 0) {
+                // this.setState({ audienceReachParam: '' })
                 Alert.alert('OOPS!', "Audience reach has to be a numeric number! Not a decimal!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
+            } else {
+                return true;
+            }
+        }
+    }
+
+    costValidation() {
+        if (filterCost) {
+            if (isNaN(filterCost) == true) {
+                filterCost = '';
+                document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                alert("Cost has to be a numeric number!");
+            } else if (filterCost == '') {
+                filterCost = '';
+    
+            } else {
+                filterCost = Math.abs(filterCost);
+            }
+        }
+        if (this.state.costParam) {
+            if (isNaN(this.state.costParam) == true) {
+                Alert.alert('OOPS!', "Cost has to be a numeric number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else if (this.state.costParam <= 0) {
+                Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else {
+                return true;
             }
         }
     }

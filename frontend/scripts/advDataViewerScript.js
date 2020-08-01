@@ -179,9 +179,10 @@ function checkCost() {
             filterCost = '';
             document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Cost has to be a numeric number!");
-        } else if (filterCost == '') {
+        } else if (filterCost <= 0) {
             filterCost = '';
-
+            document.getElementById('costInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Cost cannot be a negative number!");
         } else {
             filterCost = Math.abs(filterCost);
         }
