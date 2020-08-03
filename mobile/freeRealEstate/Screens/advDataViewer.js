@@ -65,9 +65,9 @@ export default class advDataViewerScreen extends React.Component {
         this.getData = this.getData.bind(this);
     }
     // Kelyn's IP
-    // baseURL = 'http://192.168.229.1:3000';
+    baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    baseURL = 'http://192.168.86.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
 
     // School IP
     // baseURL ='http://172.22.1.9:3000'
@@ -82,7 +82,7 @@ export default class advDataViewerScreen extends React.Component {
     parseParam = (ev) => {
         // Validation: 
         if (!this.state.companyIdParam && !this.state.audienceReachParam && !this.state.costParam) {
-            Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach)", [
+            Alert.alert('OOPS!', "Fill in at least one of the parameters!(CompanyId, Audience reach or cost)", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         } else {

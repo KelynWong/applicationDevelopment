@@ -80,9 +80,9 @@ export default class advResultViewerScreen extends React.Component {
         this.getChart = this.getChart.bind(this);
     }
     // Kelyn's IP
-    // baseURL = 'http://192.168.229.1:3000';
+    baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    baseURL = 'http://192.168.86.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
 
     //School IP
     // baseURL ='http://172.22.1.9:3000'
@@ -127,26 +127,21 @@ export default class advResultViewerScreen extends React.Component {
 
     // RUN 2nd.
     validation() {
-        // If optionIds and budget is empty.
+        // If optionIds and budget is empty
         if (this.state.optionIds == '' && this.state.budget == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionIds and budget!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
-        }// If optionIds is empty.
+        }
+        // If optionIds is empty
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
-        // OptionIds when parsed in would consist of the comma!!!
-        // else if (isNaN(this.state.optionIds) == true) { 
-        //     Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
-        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
-        //     ]);
-        // }
-        // If optionIds is a decimal.
-        else if (this.state.optionIds % 1 != 0) {
-            Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
+        // If optionIds is an alphabet
+        else if (this.state.optionIds.match(letters) == true) { 
+            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
@@ -173,17 +168,17 @@ export default class advResultViewerScreen extends React.Component {
                     // Length check
                     if (optionList[i].length == 10) {
                         lengthCheck[i] = true;
-                        console.log("Pass2" + optionList[i]);
+                        console.log("Passed: " + optionList[i]);
                     } else {
                         lengthCheck[i] = false;
-                        console.log("Failed2" + optionList[i]);
+                        console.log("Failed: " + optionList[i]);
                     }
                 }
                 var same = false
                 for (let j = 0; j < optionList.length; j++) {
                     for (let k = 0; k < optionList.length; k++) {
                         if (optionList[j] == optionList[k] && j != k) {
-                            same = true
+                            same = true;
                         }
                     }
                 }
@@ -198,17 +193,23 @@ export default class advResultViewerScreen extends React.Component {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                }
+                } // If optionIds is a decimal
+                else if (lengthCheck.every(v => v % 1 != 0)) {
+                    Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }// If budget is empty
                 else if (this.state.budget == '') {
                     Alert.alert('OOPS!', "Please enter a Budget!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                }
+                }// If budget is not a number.
                 else if (isNaN(this.state.budget)) {
                     Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
                 }
+                // If budget < $0.00.
                 else if (this.state.budget <= 0) {
                     Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }

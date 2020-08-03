@@ -23,6 +23,7 @@ import Card from '../myComponents/card'; //Disregard first
 var totalCost = 0;
 var totalPax = 0;
 var optionList;
+var letters = /[a-z]/;
 
 export default class basicResultViewerScreen extends React.Component {
     constructor() {
@@ -75,9 +76,9 @@ export default class basicResultViewerScreen extends React.Component {
         this.getChart = this.getChart.bind(this);
     }
     // Kelyn's IP
-    // baseURL = 'http://192.168.229.1:3000';
+    baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    baseURL = 'http://192.168.86.1:3000';
+    //baseURL = 'http://192.168.86.1:3000';
 
     //School IP
     // baseURL ='http://172.22.1.9:3000'
@@ -125,12 +126,6 @@ export default class basicResultViewerScreen extends React.Component {
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
-        // If budget is empty
-        else if (this.state.budget == '') {
-            Alert.alert('OOPS!', "Please enter a Budget!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
         // If optionIds is empty
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
@@ -138,26 +133,8 @@ export default class basicResultViewerScreen extends React.Component {
             ]);
         }
         // If optionIds is an alphabet
-        // else if (isNaN(this.state.optionIds) == true) { 
-        //     Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
-        //         { text: 'Understood', onPress: () => console.log('Alert closed.') }
-        //     ]);
-        // }
-        // If optionIds is a decimal
-        else if (this.state.optionIds % 1 != 0) {
-            Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        // If budget is not a number.
-        else if (isNaN(this.state.budget)) {
-            Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        // If budget < $0.00.
-        else if (this.state.budget <= 0) {
-            Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
+        else if (this.state.optionIds.match(letters) == true) { 
+            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
@@ -209,7 +186,29 @@ export default class basicResultViewerScreen extends React.Component {
                     Alert.alert('OOPS!', "Please make sure you don't enter the same optionId!", [
                         { text: 'Understood', onPress: () => console.log('Alert closed.') }
                     ]);
-                } else {
+                } // If optionIds is a decimal
+                else if (lengthCheck.every(v => v % 1 != 0)) {
+                    Alert.alert('OOPS!', "OptionIds cannot have decimals!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }// If budget is empty
+                else if (this.state.budget == '') {
+                    Alert.alert('OOPS!', "Please enter a Budget!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }// If budget is not a number.
+                else if (isNaN(this.state.budget)) {
+                    Alert.alert('OOPS!', "Please enter a numeric value for Budget!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }
+                // If budget < $0.00.
+                else if (this.state.budget <= 0) {
+                    Alert.alert('OOPS!', "Please enter a numeric value bigger than $0.00!", [
+                        { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                    ]);
+                }
+                else {
                     this.getChart(); //Get chart(3rd)
                 }
             }
@@ -458,7 +457,7 @@ export default class basicResultViewerScreen extends React.Component {
                             <TouchableOpacity style={styles.paramArea}>
                                 <TextInput
                                     style={[styles.bodyText]}
-                                    placeholder="OptionIddddddddddd"
+                                    placeholder="OptionIds"
                                     placeholderTextColor='rgb(0,0,0)'
                                     multiline={false}
                                     onChangeText={(text) => this.setState({ optionIds: text })}
