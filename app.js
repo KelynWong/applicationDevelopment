@@ -29,6 +29,18 @@ app.options('*', cors());
 const database = require('./database')
 const algo = require('./algo')
 
+app.get('/', (req, res) => {
+  return res.json({
+      message: "Welcome to JiBaBoom - <freerealestate>",
+      availableEndpoints: [
+           'POST /basic/insert { "data": [ {key1: value1, key2: value2, ...} ] }',
+           'POST /advance/insert { "data": [ {key1: value1, key2: value2, ...} ] }',
+           'GET /basic/result?para1=value1&para2=value2',
+           'GET /advance/result?para1=value1&para2=value2',
+      ]
+  });
+});
+
 app.get('/reset/', function (req, res, next) {
   database.resetTable((error, result) => {
     if (error) { //Return error if error.
