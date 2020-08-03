@@ -155,6 +155,10 @@ function checkAudienceReach() {
             filterAudienceReach = '';
             document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Audience reach has to be a numeric number!");
+        } else if (filterAudienceReach < 1) {
+            filterAudienceReach = '';
+            document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Audience reach cannot be smaller than 1!");
         } else if (filterAudienceReach % 1 != 0) {
             filterAudienceReach = '';
             document.getElementById('audienceReachInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid

@@ -2,7 +2,7 @@
 // Name: Wong En Ting Kelyn
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
-
+var letters = /[a-z]/;
 const baseUrl = "http://localhost:3000";
 $(document).ready(function () {
     $(document).on('click', '.computeBtn', function () { // On click compute button
@@ -19,15 +19,11 @@ $(document).ready(function () {
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionsIds!");
         }
-        // CHECK ON THIS
-        // else if (isNaN(optionIdsInput) == true) { //check if optionIds field is an alphabet
-        //     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-        //     alert("OptionIds cannot have alphabets!");
-        // }
-        else if (optionIdsInput % 1 != 0) { //check if optionIds field is an decimal
+        else if (optionIdsInput.match(letters) == true) { //check if optionIds field is an alphabet
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-            alert("OptionIds cannot have decimals!");
+            alert("OptionIds cannot have alphabets!");
         }
+        
         else if (optionIdsInput.search(",") == -1) { //check if there is a comma in the optionIds field
             document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Please enter at least 2 optionIds, seperated by a comma!");
@@ -63,13 +59,17 @@ $(document).ready(function () {
                         }
                     }
                 }
-                if (!lengthCheck.every(v => v == true)) { //check ebery optionId in the list if they are 10 digits each
+                if (!lengthCheck.every(v => v == true)) { //check every optionId in the list if they are 10 digits each
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                     alert("Please make sure your optionIds are exactly 10 digits each, and digits only!");
                 }
                 else if(same == true){ //check within the optionIds if have any repeated optionId
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                     alert("Please make sure you don't enter the same optionId!");
+                }
+                else if (lengthCheck.every(v => v % 1 != 0)) { //check if optionIds is an decimal
+                    document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                    alert("OptionIds cannot have decimals!");
                 }
                 else if (budgetInput == '') { //check if budget field is empty
                     document.getElementById('budgetInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
