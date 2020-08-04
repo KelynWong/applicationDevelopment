@@ -1,0 +1,5 @@
+-- backend --
+git subtree push -P backend origin heroku --squash
+
+-- frontend --
+git subtree push -P frontend origin gh-pages --squash
