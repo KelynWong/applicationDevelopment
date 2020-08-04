@@ -4,27 +4,25 @@ This report is for you to document the progres of your project. You should also 
 
 ## What have I done last week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Tried caching but kester took over
+-   Fixed up validation
+-   Presentation slides
 
 ## What do I plan to do next week (kelyn)
 
--   Worked on...
--   Worked on...
--   Changed....
+-   Continue presentation slides
+-   Hosting
+-   Release mobile apk
 
 ## What have I done last week (kester)
 
--   Done api documentation and database schema
--   Worked on...
--   Changed....
+-  Finished up caching for mobile.
+-  Fixed some validation errors.
 
 ## What do I plan to do next week (kester)
 
--   Worked on...
--   Worked on...
--   Changed....
+-  Check on presentation slides
+-  Aid in hosting
 
 ## Additional Thoughts
 
