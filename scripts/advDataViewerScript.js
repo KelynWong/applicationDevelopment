@@ -24,7 +24,7 @@ var paginationIndex = 0; //0 being the first page
 var startingNumber = 0; //For entries algo.
 var endingNumber = 0; //For entries algo.
 
-const baseUrl = "http://localhost:3000";
+const baseUrl = "https://free-real-estate.herokuapp.com";
 var filterCompanyId = "";
 var filterAudienceReach = "";
 var filterCost = "";

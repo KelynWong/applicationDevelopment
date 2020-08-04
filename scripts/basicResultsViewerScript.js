@@ -3,7 +3,7 @@
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
 var letters = /[a-z]/;
-const baseUrl = "http://localhost:3000";
+const baseUrl = "https://free-real-estate.herokuapp.com";
 $(document).ready(function () {
     $(document).on('click', '.computeBtn', function () { // On click compute button
         var optionIdsInput = document.getElementById("optionIdsInput").value; //Get option id input
