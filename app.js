@@ -44,13 +44,10 @@ app.get('/', (req, res) => {
 app.get('/reset/', function (req, res, next) {
   database.resetTable((error, result) => {
     if (error) { //Return error if error.
-      // res.json({ "error": error.detail, "code": error.code });
-      // return next(error);
       return res.send(error);
     }
     console.log(result)
     res.status(200).json({ "result": "success" });
-    // res.send(result);
   });
 });
 
@@ -58,11 +55,11 @@ app.get('/reset/', function (req, res, next) {
 // POST 1. BASIC Insert Advertisement details ---
 app.post('/basic/insert/', function (req, res, next) {
   const { data } = req.body;
+
   database.basicInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
       return res.json({ "error": error.detail, "code": error.code }); // OK
-      // return next(error);
     }
     console.log(result)
     res.json({ "result": "success" }); // Checked
@@ -72,11 +69,11 @@ app.post('/basic/insert/', function (req, res, next) {
 // POST 2. ADVANCE Insert Advertisement details ---
 app.post('/advance/insert/', function (req, res, next) {
   const { data } = req.body;
+
   database.advInsertAdvertisement(data, (error, result) => {
     if (error) { //Return error if error.
       console.log("data: ", data)
       return res.json({ "error": error.detail, "code": error.code }); //OK
-      // return next(error);
     }else{
       console.log(result)
       return res.json({ "result": "success" }); // Checked
@@ -116,12 +113,12 @@ app.get('/advance/allData', function (req, res) {
 // GET 5. BASIC: Retrieve all number of row data in table: advertisement ---
 app.get('/basic/getRowCount', function (req, res, next) {
   const { companyId, audienceReach } = req.query;
+
   database.basicGetRowCount(companyId, audienceReach, (error, result) => {
     if (result.length == 0) {
       return res.status(404).json({ "error": "Not found", "code": 404 });
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
-      // return next(error);
     }
     return res.json(result);
   })
@@ -130,12 +127,12 @@ app.get('/basic/getRowCount', function (req, res, next) {
 // GET 6. ADVANCED: Retrieve all number of row data in table: advertisement ---
 app.get('/advance/getRowCount', function (req, res, next) {
   const { companyId, audienceReach, cost } = req.query;
+
   database.advGetRowCount(companyId, audienceReach, cost, (error, result) => {
     if (result.length == 0) {
       return res.status(404).json({ "error": "Not found", "code": 404 });
     } else if (error) {
       return res.json({ "error": error.detail, "code": error.code });
-      // return next(error);
     }
     return res.json(result);
   })
@@ -212,12 +209,6 @@ app.get('/basic/result', function (req, res, next) {
       } else {
         payment.push('Partial');
         var factor = databaseResult[k].cost / updatedCost[k];
-        // To prevent people being cut up into pieces, we have to round down and get the price for the maximum amt of people.
-        // var updatedAudience = Math.floor(databaseResult[k].audiencereach / factor);
-        // databaseResult[k].cost = updatedAudience * (databaseResult[k].cost / databaseResult[k].audiencereach);
-        // databaseResult[k].audiencereach = updatedAudience;
-
-        //We cut people up now.
         var updatedAudience = databaseResult[k].audiencereach / factor;
         databaseResult[k].audiencereach = updatedAudience;
         console.log("Aud" + updatedAudience);
@@ -293,8 +284,6 @@ app.get('/advance/result', function (req, res, next) {
         companyId: parseInt(companyid[i]),
         amount: parseFloat(test[i]),
         audienceReached: parseFloat(audReach[i]),
-        // adType: databaseResult[i].adtype,
-        // payment: databaseResult[i].payment
       });
     }
     res.json({ result });

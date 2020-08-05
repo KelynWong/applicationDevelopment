@@ -250,7 +250,6 @@ function basicGetDataForChart(optionIds, callback) {
   if (optionIds.length == 0) {
     return callback(null, []); // Return empty dataset.
   }
-  // Note: Improve on validation.
   var optionList = optionIds.toString().split(','); //optionList array
   //This part below determines what sql query is produced based on the page state.
   const values = [];
@@ -283,7 +282,6 @@ function advGetDataForChart(optionIds, callback) {
   if (optionIds.length == 0) {
     return callback(null, []); // Return empty dataset.
   }
-  // Note: Improve on validation.
   var optionList = optionIds.toString().split(','); //optionList array
   //This part below determines what sql query is produced based on the page state.
   const values = [];
