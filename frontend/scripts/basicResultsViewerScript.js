@@ -3,7 +3,10 @@
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
 var letters = /[a-z]/;
+
+// const baseUrl = "http://localhost:3000";
 const baseUrl = "https://free-real-estate.herokuapp.com";
+
 $(document).ready(function () {
     $(document).on('click', '.computeBtn', function () { // On click compute button
         var optionIdsInput = document.getElementById("optionIdsInput").value; //Get option id input
@@ -36,7 +39,6 @@ $(document).ready(function () {
             }
             else {
                 var lengthCheck = [];
-                // var isIntCheck = [];
                 for (let i = 0; i < optionList.length; i++) {
                     optionList[i] = parseInt(optionList[i]);
                     optionList[i] = optionList[i].toString();
@@ -48,7 +50,6 @@ $(document).ready(function () {
                         lengthCheck[i] = false;
                         console.log("Failed2" + optionList[i]);
                     }
-                    // optionList[i] = optionList[i].toString();
                 }
                 var same = false
                 for (let j = 0; j < optionList.length; j++) {
@@ -62,7 +63,7 @@ $(document).ready(function () {
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                     alert("Please make sure your optionIds are exactly 10 digits each, and digits only!");
                 }
-                else if(same == true){ //check within the optionIds if have any repeated optionId
+                else if (same == true) { //check within the optionIds if have any repeated optionId
                     document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                     alert("Please make sure you don't enter the same optionId!");
                 }
@@ -85,7 +86,7 @@ $(document).ready(function () {
                     document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                     alert("Please enter a numeric value bigger than $0.00");
                 }
-                else{
+                else {
                     console.log("optionIdsInput: " + optionIdsInput);
                     console.log("budgetInput: " + budgetInput);
                     const requestBody = {
@@ -96,11 +97,11 @@ $(document).ready(function () {
                     };
                     axios.get(`${baseUrl}/basic/allChartData`, requestBody) // Links to app.js
                         .then((response) => {
-                            if(response.data.length != optionList.length){
+                            if (response.data.length != optionList.length) {
                                 document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
                                 document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
                                 alert("One or more of the optionId you have entered is invalid!")
-                            }else if(response.data.length == optionList.length){
+                            } else if (response.data.length == optionList.length) {
                                 console.log("response.data.error: " + response.data.error);
                                 google.charts.load('current', { 'packages': ['bar'] });
                                 google.charts.setOnLoadCallback(drawStuff);
@@ -128,8 +129,6 @@ $(document).ready(function () {
                                     var data = new google.visualization.arrayToDataTable(dataArray);
 
                                     var options = {
-                                        // width: 800,
-                                        //height:800,
                                         bars: 'horizontal', // Required for Material Bar Charts.
                                         series: {
                                             0: { axis: 'audiencereach' }, // Bind series 0 to an axis named 'audiencereach'.
@@ -149,21 +148,21 @@ $(document).ready(function () {
                         });
 
 
-                        axios.get(`${baseUrl}/basic/result?optionIds=${requestBody.params.optionIds}&budget=${requestBody.params.budget}`) // Links to app.js
-                            .then((response) => {
-                                if(response.data.result.length == 0){
-                                    document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
-                                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-                                    alert("Please enter optionIds that are valid!")
-                                }else if(response.data.result.length == optionList.length){
-                                    console.log("response.data: " + response);
-                                    var people = 0;
-                                    var maxAmount = 0;
-                                    console.log(response.data.result);
-                                    const tabulations = response.data.result;
-                                    $("#tabulation").empty();
-                                    tabulations.forEach((tabulation) => {
-                                        const postHtml1 = `
+                    axios.get(`${baseUrl}/basic/result?optionIds=${requestBody.params.optionIds}&budget=${requestBody.params.budget}`) // Links to app.js
+                        .then((response) => {
+                            if (response.data.result.length == 0) {
+                                document.getElementById('optionIdsInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+                                document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                alert("Please enter optionIds that are valid!")
+                            } else if (response.data.result.length == optionList.length) {
+                                console.log("response.data: " + response);
+                                var people = 0;
+                                var maxAmount = 0;
+                                console.log(response.data.result);
+                                const tabulations = response.data.result;
+                                $("#tabulation").empty();
+                                tabulations.forEach((tabulation) => {
+                                    const postHtml1 = `
                                     <div style="width: auto;" class="card" style="margin-top: 2rem;">
                                         <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);" class="card-body">
                                             <h5>${tabulation.payment} payment for option ${tabulation.optionId} from company ${tabulation.companyId}</h5>
@@ -171,20 +170,18 @@ $(document).ready(function () {
                                         </div>
                                     </div>
                                     `;
-                                        $("#tabulation").append(postHtml1);
-                                        people += parseFloat(tabulation.audienceReached.toFixed(3));
-                                        // people = people.toFixed(3);
-                                        maxAmount += parseFloat(tabulation.amount);
-                                    });
+                                    $("#tabulation").append(postHtml1);
+                                    people += parseFloat(tabulation.audienceReached.toFixed(3));
+                                    maxAmount += parseFloat(tabulation.amount);
+                                });
 
-                                    // console.log(Object.keys(response.data).length)
-                                    $("#resultsArea").empty();
-                                    const postHtml2 = `<h3>Result -> $ ${maxAmount} -> ${people} People</h3>`;
-                                    $("#resultsArea").append(postHtml2);
-                                    document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-                                    document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
-                                }
-                            });
+                                $("#resultsArea").empty();
+                                const postHtml2 = `<h3>Result -> $ ${maxAmount} -> ${people} People</h3>`;
+                                $("#resultsArea").append(postHtml2);
+                                document.getElementById('optionIdsInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                                document.getElementById('budgetInput').style.backgroundColor = "#55FF3D"; // Set background to green if valid
+                            }
+                        });
                 }
             }
         }

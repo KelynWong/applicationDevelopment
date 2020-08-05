@@ -82,11 +82,10 @@ export default class advResultViewerScreen extends React.Component {
     // Kelyn's IP
     //baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
-    //baseURL = 'http://192.168.86.1:3000';
-
+    // baseURL = 'http://192.168.86.1:3000';
     //School IP
     // baseURL ='http://172.22.1.9:3000'
-    
+
     //Backend heroku
     baseURL = 'https://free-real-estate.herokuapp.com';
 
@@ -139,12 +138,6 @@ export default class advResultViewerScreen extends React.Component {
         // If optionIds is empty
         else if (this.state.optionIds == '') {
             Alert.alert('OOPS!', "Please enter at least 2 optionsIds!", [
-                { text: 'Understood', onPress: () => console.log('Alert closed.') }
-            ]);
-        }
-        // If optionIds is an alphabet
-        else if (this.state.optionIds.match(letters) == true) { 
-            Alert.alert('OOPS!', "OptionIds cannot have alphabets!", [
                 { text: 'Understood', onPress: () => console.log('Alert closed.') }
             ]);
         }
@@ -372,7 +365,6 @@ export default class advResultViewerScreen extends React.Component {
                     .then((cacheData) => {
                         console.log("CACHE DATA RESULTS");
                         console.log(cacheData);
-                        // this.setState({ chartResultsCheck: cacheData });
                         let result = { error: error.message }
                         // Add to cacheData array!
                         if (!cacheData) {
@@ -508,11 +500,9 @@ export default class advResultViewerScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-
                 <View style={styles.row1}>
                     <View style={styles.row1Title}>
                         <Text style={styles.filterText}>Enter:</Text>
-
                     </View>
                     <View style={styles.row1Params}>
                         <View style={styles.textInputContainer}>

@@ -15,7 +15,6 @@ import cacheManager from '../cacheManager'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
 let data = [{
     value: '5',
 }, {
@@ -69,10 +68,9 @@ export default class basicDataViewerScreen extends React.Component {
     //baseURL = 'http://192.168.229.1:3000';
     // Kester's IP
     //baseURL = 'http://192.168.86.1:3000';
-
     //School IP
     // baseURL ='http://172.22.1.9:3000'
-    
+
     //Backend heroku
     baseURL = 'https://free-real-estate.herokuapp.com';
 
@@ -181,7 +179,6 @@ export default class basicDataViewerScreen extends React.Component {
                         this.setState({ error: error.message });
                     });
             })
-        // .catch(this.badStuff)
     }
 
     // RUN 2nd.
@@ -256,7 +253,6 @@ export default class basicDataViewerScreen extends React.Component {
                         this.setState({ error: error.message });
                     });
             })
-        // .catch(this.badStuff)
     }
 
     // RUN 4th.
@@ -348,7 +344,6 @@ export default class basicDataViewerScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-
                 <View style={styles.row1}>
                     <View style={styles.row1Title}>
                         <Text style={styles.filterText}>Filter by:</Text>
@@ -421,26 +416,22 @@ export default class basicDataViewerScreen extends React.Component {
                                     OptionId
                                 </DataTable.Title>
                                 <DataTable.Title style={styles.cell2} numeric
-                                    // sortDirection='ascending'
                                     numberOfLines={4}
                                 >
                                     CompanyId
                                 </DataTable.Title>
                                 <DataTable.Title style={styles.cell3} numeric
-                                    // sortDirection='ascending'
                                     numberOfLines={2}
                                 >
                                     Cost
                                 </DataTable.Title>
                                 <DataTable.Title style={styles.cell4} numeric
-                                    // sortDirection='ascending'
                                     numberOfLines={2}
                                 >
                                     Reach
                                 </DataTable.Title>
 
                                 <DataTable.Title style={styles.cell5}
-                                    // sortDirection='ascending'
                                     numberOfLines={3}
                                 >
                                     Ad Type
@@ -486,15 +477,9 @@ export default class basicDataViewerScreen extends React.Component {
                                 numberOfPages={Math.floor(this.state.rowCount[0].count / this.state.pageSize + 1)} //Correct
                                 onPageChange={pagee => {
                                     console.log('change', pagee) //pagee = current page index
-
                                     this.setState({ pageNo: pagee }, () => this.getRowCount()); //Set State actually takes time to set a state. So callbacks must be done.
-
-                                    // console.log("TEST" + this.state.pageNo)
-                                    // this.getRowCount();
                                 }}
                                 label={`${((this.state.pageNo) * this.state.pageSize) + 1}-${
-
-
                                     ((this.state.pageNo + 1) * this.state.pageSize) >= this.state.rowCount[0].count ? this.state.rowCount[0].count : ((this.state.pageNo + 1) * this.state.pageSize)
                                     } of ${this.state.rowCount[0].count}`} //correct
                             />

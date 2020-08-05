@@ -273,7 +273,7 @@ app.get('/advance/result', function (req, res, next) {
     let audReach = [];
 
     choices = algo.fullKnapsack(audience, cost, budget);
-
+ 
     for (let k = 0; k < choices.length; k++) {
       if (choices[k] == 1) { // full payment
         options.push(databaseResult[k].optionid);
