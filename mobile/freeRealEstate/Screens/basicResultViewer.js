@@ -16,7 +16,6 @@ import cacheManager from '../cacheManager'
 
 // Chart
 import { BarChart } from "react-native-chart-kit";
-import Card from '../myComponents/card'; //Disregard first 
 
 
 var totalCost = 0;
