@@ -3,28 +3,13 @@
 // Name: Teh Huan Xi Kester
 // Class: DIT/FT/2B/01
 
-// Forcing sequential execution:
-// https://stackoverflow.com/questions/1859185/how-to-force-sequential-javascript-execution
-// function myfunction() {
-//     longfunctionfirst(shortfunctionsecond());
-// }
-// function longfunctionfirst(callback) {
-//     // setTimeout(function() {
-//         alert('first function finished');
-//         if(typeof callback == 'function')
-//             callback();
-//     // }, 1);
-// };
-
-// function shortfunctionsecond() {
-//     setTimeout('alert("second function finished");', 200);
-// };
-// myfunction();
 var paginationIndex = 0; //0 being the first page
 var startingNumber = 0; //For entries algo.
 var endingNumber = 0; //For entries algo.
 
+// const baseUrl = "http://localhost:3000";
 const baseUrl = "https://free-real-estate.herokuapp.com";
+
 var filterCompanyId = "";
 var filterAudienceReach = "";
 var filterCost = "";
@@ -175,7 +160,6 @@ function checkAudienceReach() {
             alert("Audience reach has to be a numeric number! Not a decimal!");
         } else {
             filterAudienceReach = Math.abs(filterAudienceReach);
-            // paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, fillTable);
         }
     }
 }
