@@ -28,6 +28,7 @@ const baseUrl = "https://free-real-estate.herokuapp.com";
 var filterCompanyId = "";
 var filterAudienceReach = "";
 var filterCost = "";
+const digits = /^\d+$/;
 // Pagination algorithm:
 function paginationAlgorithm(table, filterCompanyId, filterAudienceReach, filterCost, callback) { // callback calls the next function(fill table) to run after function complete.
     var openingTag = '<a class="paginateButton" id="generatedButton" tabindex="';
@@ -137,6 +138,10 @@ function checkCompanyId() {
             filterCompanyId = '';
             document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
             alert("Company Id has to be a 10 digit number!");
+        } else if (filterCompanyId.match(digits) == null) {
+            filterCompanyId = '';
+            document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid
+            alert("Company Id can only contain numbers!");
         } else if (filterCompanyId % 1 != 0) {
             filterCompanyId = '';
             document.getElementById('companyIdInput').style.backgroundColor = "#FF4A31"; // Set background to red if invalid

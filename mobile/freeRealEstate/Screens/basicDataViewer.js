@@ -38,6 +38,8 @@ let data = [{
     value: '50',
 }];
 
+const digits = /^\d+$/;
+
 export default class basicDataViewerScreen extends React.Component {
     constructor() {
         super();
@@ -293,6 +295,11 @@ export default class basicDataViewerScreen extends React.Component {
             if (isNaN(this.state.companyIdParam) == true) {
                 this.setState({ companyIdParam: '' })
                 Alert.alert('OOPS!', "Company Id has to be a 10 digit number!", [
+                    { text: 'Understood', onPress: () => console.log('Alert closed.') }
+                ]);
+            } else if (this.state.companyIdParam.match(digits) == null) {
+                this.setState({ companyIdParam: '' });
+                Alert.alert('OOPS!', "Company Id can only contain numbers!", [
                     { text: 'Understood', onPress: () => console.log('Alert closed.') }
                 ]);
             } else if (this.state.companyIdParam % 1 != 0) {
