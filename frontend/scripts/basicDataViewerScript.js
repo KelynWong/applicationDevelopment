@@ -8,7 +8,7 @@ var startingNumber = 0; //For entries algo.
 var endingNumber = 0; //For entries algo.
 
 // const baseUrl = "http://localhost:3000";
-const baseUrl = "https://free-real-estate.herokuapp.com";
+const baseUrl = "https://applicationdev.herokuapp.com/";
 
 var filterCompanyId = "";
 var filterAudienceReach = "";

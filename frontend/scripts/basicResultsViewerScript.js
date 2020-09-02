@@ -5,7 +5,7 @@
 var letters = /[a-z]/;
 
 // const baseUrl = "http://localhost:3000";
-const baseUrl = "https://free-real-estate.herokuapp.com";
+const baseUrl = "https://applicationdev.herokuapp.com/";
 
 $(document).ready(function () {
     $(document).on('click', '.computeBtn', function () { // On click compute button
